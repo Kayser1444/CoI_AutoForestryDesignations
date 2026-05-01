@@ -1,0 +1,22 @@
+{
+  "id": "AutoForestryDesignations",
+  "version": "0.1.0",
+  "display_name": "Kayser's Automatic Forestry Designations",
+  "description_short": "Create forestry designations for Forestry Towers and inspect planting coverage.",
+  "description_long": "<b>Auto Forestry Designations</b>\n\nAutomatically creates <b>forestry designations</b> for your Forestry Towers — no manual painting required.\n\n<b>Planned features</b>\n- <b>Create Designations</b>: Scan the tower area and place valid forestry designations.\n- <b>Clear Designations</b>: Remove forestry designations managed by the selected tower.\n- <b>Information Panel</b>: Show planting coverage, existing designations, trees, and stumps.\n\n<i>Compatible with vanilla saves — can be added to or removed from existing saves safely.</i>",
+  "authors": [
+    "Kayser"
+  ],
+  "min_game_version": "0.8.2",
+  "primary_dlls": [
+    "0Harmony.dll",
+    "AutoForestryDesignations.dll"
+  ],
+  "mod_dependencies": [],
+  "optional_mod_dependencies": [],
+  "incompatible_mods": [],
+  "non_locking_dll_load": true,
+  "can_add_to_saved_game": true,
+  "can_remove_from_saved_game": true,
+  "primary_mod_class_name": "AutoForestryDesignationsMod"
+}

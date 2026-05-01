@@ -1,0 +1,36 @@
+# Build outputs
+bin/
+obj/
+*.dll
+*.pdb
+*.mdb
+
+# Generated mod packages
+artifacts/
+archive/
+*.zip
+
+# Local/editor state
+.vs/
+.vscode/*
+!.vscode/tasks.json
+Backlog.md
+*.code-workspace
+ui-icons.txt
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# OS noise
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# NuGet
+packages/
+*.nupkg
+project.assets.json
+project.nuget.cache
+*.nuget.g.props
+*.nuget.g.targets

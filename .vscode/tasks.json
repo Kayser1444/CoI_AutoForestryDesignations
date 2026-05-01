@@ -1,0 +1,57 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build AutoForestryDesignations",
+      "type": "shell",
+      "command": "dotnet",
+      "args": [
+        "build",
+        "AutoForestryDesignations.sln",
+        "-c",
+        "Debug"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "Build AutoForestryDesignations (Release)",
+      "type": "shell",
+      "command": "dotnet",
+      "args": [
+        "build",
+        "AutoForestryDesignations.sln",
+        "-c",
+        "Release"
+      ],
+      "group": "build"
+    },
+    {
+      "label": "Clean AutoForestryDesignations",
+      "type": "shell",
+      "command": "dotnet",
+      "args": [
+        "clean",
+        "AutoForestryDesignations.sln"
+      ],
+      "group": "build"
+    },
+    {
+      "label": "Build AutoForestryDesignations (Release with Package)",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "./build.ps1",
+        "-Configuration",
+        "Release",
+        "-Package"
+      ],
+      "group": "build"
+    }
+  ]
+}
