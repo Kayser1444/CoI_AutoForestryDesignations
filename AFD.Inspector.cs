@@ -22,14 +22,14 @@ namespace AutoForestryDesignations
                 LogDebug("[AutoDepth] Apply() called");
                 
                 var assembly = typeof(Mafi.Unity.Entities.EntityMb).Assembly;
-                var inspectorType = assembly.GetType("Mafi.Unity.Ui.Inspectors.MineTowerInspector");
+                var inspectorType = assembly.GetType("Mafi.Unity.Ui.Inspectors.ForestryTowerInspector");
                 if (inspectorType == null)
                 {
-                    Log.Warning("[AutoDepth] MineTowerInspector type not found");
+                    Log.Warning("[AutoDepth] ForestryTowerInspector type not found");
                     return;
                 }
 
-                LogDebug("[AutoDepth] Found MineTowerInspector type");
+                LogDebug("[AutoDepth] Found ForestryTowerInspector type");
 
                 var ctors = inspectorType.GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
                 LogDebug($"[AutoDepth] Found {ctors.Length} constructors");
@@ -41,8 +41,8 @@ namespace AutoForestryDesignations
                     LogDebug("[AutoDepth] Patched first constructor");
                 }
 
-                // Patch OnActivated() on MineTowerInspector (DeclaredOnly — safe, does not affect
-                // other inspector types). Only resets the Ore Composition panel to its prompt;
+                // Patch OnActivated() on ForestryTowerInspector (DeclaredOnly — safe, does not affect
+                // other inspector types). Only resets the status panel to its prompt;
                 // no scan is triggered so there are no timing issues.
                 try
                 {
@@ -67,7 +67,6 @@ namespace AutoForestryDesignations
         public static void InspectorActivatePostfix(object __instance)
         {
             DesignationPanel.RefreshDisplays(__instance);
-            OreCompositionPanel.ResetContent(__instance);
         }
 
         public static void InspectorCtorPostfix(object __instance)
@@ -115,7 +114,6 @@ namespace AutoForestryDesignations
                     if (mainBody != null)
                     {
                         mainBody.InsertAt(0, atdPanel);
-                        OreCompositionPanel.Inject(mainBody, entityProp, inspector);
                         mainBody.Show();
                         LogDebug("[AutoDepth] AFD panel and Ore Composition panel inserted");
                     }

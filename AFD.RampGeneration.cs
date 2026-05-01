@@ -165,7 +165,7 @@ namespace AutoForestryDesignations
         {
             s_lastRampFailureReason = null;
 
-            if (tileDepths.Count == 0 || s_desigManager == null || s_miningProto == null)
+            if (tileDepths.Count == 0 || s_desigManager == null || s_forestryProto == null)
             {
                 s_lastRampFailureReason = "No excavation tiles were available for ramp planning.";
                 return false;
@@ -872,7 +872,7 @@ namespace AutoForestryDesignations
 
         private static void PlaceDesignation(Tile2i tile, int nwHeight, int neHeight, int seHeight, int swHeight)
         {
-            if (s_desigManager == null || s_miningProto == null)
+            if (s_desigManager == null || s_forestryProto == null)
             {
                 return;
             }
@@ -881,7 +881,7 @@ namespace AutoForestryDesignations
                 new HeightTilesI(nwHeight), new HeightTilesI(neHeight),
                 new HeightTilesI(seHeight), new HeightTilesI(swHeight));
 
-            if (!s_desigManager.AddOrReplaceDesignation(s_miningProto, data))
+            if (!s_desigManager.AddOrReplaceDesignation(s_forestryProto, data))
             {
                 Log.Warning(string.Format("Failed to create ramp designation for tile {0}", tile));
             }

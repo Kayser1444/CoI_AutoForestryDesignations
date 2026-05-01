@@ -14,6 +14,7 @@ using Mafi.Core.Prototypes;
 using Mafi.Core.Terrain;
 using Mafi.Core.Terrain.Designation;
 using Mafi.Core.Terrain.Resources;
+using Mafi.Core.Terrain.Trees;
 using UnityEngine;
 
 namespace AutoForestryDesignations
@@ -22,245 +23,108 @@ namespace AutoForestryDesignations
     {
         private static IEnumerator CreateDesignationsCoroutine(IAreaManagingTower tower, bool generateRamps, object? inspectorInstance = null)
         {
-            if (s_desigManager == null || s_miningProto == null) yield break;
+            if (s_desigManager == null || s_forestryProto == null) yield break;
 
             var area = tower.Area;
             if (area.IsEmpty) yield break;
 
             var terrMgr = s_desigManager.TerrainManager;
-
-            List<LooseProductProto> scanProducts = GetScanProducts(tower);
-            if (scanProducts.Count == 0) yield break;
-
-            var productSet = HybridSet<LooseProductProto>.From(scanProducts);
-            var tempResults = new Lyst<ProductResource>();
+            var treesManager = s_desigManager.TreesManager;
+            var towerSettings = GetOrCreateTowerSettings(tower);
+            bool avoidInfertile = towerSettings.AvoidInfertileTiles;
+            bool avoidWithTrees = towerSettings.AvoidTilesWithTrees;
+            int maxTiles = towerSettings.MaxTiles;
+            bool markFullyGrown = towerSettings.MarkFullyGrownForHarvest;
 
             var bbMin = TerrainDesignation.GetOrigin(area.BoundingBoxMin);
             var bbMax = TerrainDesignation.GetOrigin(area.BoundingBoxMax);
 
+            LogDebug(string.Format("Scanning forestry area from {0} to {1} for planting zones...", bbMin, bbMax));
+
+            int designCount = 0;
             int scanCount = 0;
+            bool limitReached = false;
 
-            var productCounts = new Dictionary<LooseProductProto, int>();
-            var resourceDetailsByTile = new Dictionary<Tile2i, List<ProductResource>>();
-            var towerSettings = GetOrCreateTowerSettings(tower);
-            int maxHeightDiff = towerSettings.MaxHeightDiff;
-            int maxLayersToExcavate = towerSettings.MaxLayersToExcavate;
-            int? maxDepthToDigTo = towerSettings.MaxDepthToDigTo;
-            int purityLevel = towerSettings.OrePurityLevel;
-            int corridorClearance = towerSettings.CorridorClearance;
-
-            LogDebug(string.Format("Scanning mine area from {0} to {1} for ore depth...", bbMin, bbMax));
-
-            for (int y = bbMin.Y; y < bbMax.Y; y += 4)
+            for (int y = bbMin.Y; y <= bbMax.Y && !limitReached; y += 4)
             {
-                for (int x = bbMin.X; x < bbMax.X; x += 4)
+                for (int x = bbMin.X; x <= bbMax.X && !limitReached; x += 4)
                 {
-                    var coord = new Tile2i(x, y);
-                    
-                    // Sample every terrain tile inside the 4x4 designation tile so ore decisions
-                    // do not miss interior pockets or contamination.
-                    if (!TryGetResourcesFromAllTiles(coord, area, terrMgr, productSet, tempResults, out List<ProductResource> resourcesForTile))
+                    if (maxTiles > 0 && designCount >= maxTiles) { limitReached = true; break; }
+
+                    // Reject if any sub-tile is outside the polygon area
+                    bool inArea = true;
+                    for (int dy = 0; dy < 4 && inArea; dy++)
+                        for (int dx = 0; dx < 4 && inArea; dx++)
+                            if (!area.ContainsTile(new Tile2i(x + dx, y + dy)))
+                                inArea = false;
+                    if (!inArea) { scanCount++; continue; }
+
+                    // Check fertility and tree presence across all sub-tiles
+                    bool allFertile = true;
+                    bool anyTree = false;
+                    for (int dy = 0; dy < 4; dy++)
                     {
-                        LogDebug(string.Format("Skipping tile with cells outside area: {0}", coord));
-                        continue;
-                    }
-
-                    if (resourcesForTile.Count == 0)
-                    {
-                        LogDebug(string.Format("Tile {0}: No resources found in sampled cells", coord));
-                        continue;
-                    }
-
-                    try
-                    {
-                        HashSet<LooseProductProto> tileProducts = new HashSet<LooseProductProto>();
-
-                        for (int i = 0; i < resourcesForTile.Count; i++)
+                        for (int dx = 0; dx < 4; dx++)
                         {
-                            ProductResource resource = resourcesForTile[i];
-                            tileProducts.Add(resource.Product);
-                        }
-
-                        if (resourcesForTile.Count > 0)
-                        {
-                            resourceDetailsByTile[coord] = resourcesForTile;
-                        }
-
-                        foreach (LooseProductProto product in tileProducts)
-                        {
-                            if (productCounts.TryGetValue(product, out int existingCount))
-                            {
-                                productCounts[product] = existingCount + 1;
-                            }
-                            else
-                            {
-                                productCounts[product] = 1;
-                            }
+                            var sub = new Tile2i(x + dx, y + dy);
+                            if (avoidInfertile && allFertile && !treesManager.IsGroundFertileAtPosition(sub))
+                                allFertile = false;
+                            if (avoidWithTrees && !anyTree && treesManager.HasTree(new TreeId(sub.AsSlim)))
+                                anyTree = true;
                         }
                     }
-                    catch
-                    {
-                    }
+                    if (!allFertile || anyTree) { scanCount++; continue; }
+
+                    // Place flat designation at surface height at each corner
+                    var tile = new Tile2i(x, y);
+                    int hNW = (int)terrMgr.GetHeight(tile).Value.ToFloat();
+                    int hNE = (int)terrMgr.GetHeight(tile.AddX(4)).Value.ToFloat();
+                    int hSE = (int)terrMgr.GetHeight(tile.AddXy(4)).Value.ToFloat();
+                    int hSW = (int)terrMgr.GetHeight(tile.AddY(4)).Value.ToFloat();
+
+                    var data = new DesignationData(tile,
+                        new HeightTilesI(hNW), new HeightTilesI(hNE),
+                        new HeightTilesI(hSE), new HeightTilesI(hSW));
+
+                    if (s_desigManager.AddOrReplaceDesignation(s_forestryProto, data))
+                        designCount++;
 
                     scanCount++;
-                    int effectiveBatchSize = GetEffectiveBatchSize();
-                    if (scanCount % effectiveBatchSize == 0)
+                    if (scanCount % GetEffectiveBatchSize() == 0)
                         yield return null;
                 }
             }
 
-            if (productCounts.Count == 0) yield break;
+            LogDebug(string.Format("Created {0} forestry designations", designCount));
 
-            ProductProto? selectedProduct = GetSelectedOre(tower);
-            var targetProductIds = BuildTargetProductIdSet(scanProducts);
-            var maxOreDepths = new Dict<Tile2i, int>();
-
-            float minBottomOreDensity = s_minBottomOreDensityByLevel[purityLevel];
-            float minOrePurity    = s_minOrePurityByLevel[purityLevel];
-            float minOreHeight    = s_minOreHeightByLevel[purityLevel];
-
-            foreach (KeyValuePair<Tile2i, List<ProductResource>> kvp in resourceDetailsByTile)
-            {
-                float terrainH = GetMinSurfaceHeightInDesignatableTile(kvp.Key, terrMgr);
-
-                // Criterion 3: contamination ratio — skip tiles where ore fraction is too low
-                if (minOrePurity > 0f)
-                {
-                    float purityRatio = ComputeTilePurityRatio(kvp.Key, terrMgr, targetProductIds);
-                    if (purityRatio < minOrePurity)
-                    {
-                        LogDebug(string.Format("Tile {0} rejected: purity {1:P0} < threshold {2:P0}", kvp.Key, purityRatio, minOrePurity));
-                        continue;
-                    }
-                }
-
-                // Criterion 2: ore height — skip tiles with too little ore (not just isolated)
-                if (minOreHeight > 0f)
-                {
-                    float tileOreHeight = GetTargetProductAmount(kvp.Value, targetProductIds);
-                    if (tileOreHeight < minOreHeight)
-                    {
-                        LogDebug(string.Format("Tile {0} rejected: ore height {1:F2} < threshold {2:F2}", kvp.Key, tileOreHeight, minOreHeight));
-                        continue;
-                    }
-                }
-
-                // Criterion 1: bottom density trim — stop at the deepest ore zone still meeting the min density threshold
-                bool depthFound = minBottomOreDensity > 0f
-                    ? TryGetPurityAdjustedDepth(kvp.Value, targetProductIds, terrainH, minBottomOreDensity, out int depthInt)
-                    : TryGetDeepestResourceDepth(kvp.Value, targetProductIds, terrainH, out depthInt);
-
-                if (depthFound)
-                {
-                    // Apply max-layers constraint (0 = unlimited)
-                    if (maxLayersToExcavate > 0)
-                        depthInt = Math.Max(depthInt, (int)terrainH - maxLayersToExcavate);
-
-                    // Apply absolute min-elevation constraint
-                    if (maxDepthToDigTo.HasValue)
-                        depthInt = Math.Max(depthInt, maxDepthToDigTo.Value);
-
-                    maxOreDepths[kvp.Key] = depthInt;
-                }
-            }
-
-            if (maxOreDepths.Count == 0) yield break;
-
-            LogDebug(string.Format("Before filtering: {0} tiles in designations", maxOreDepths.Count));
-            FilterIsolatedDesignations(maxOreDepths, targetProductIds, resourceDetailsByTile, purityLevel);
-
-            if (maxOreDepths.Count == 0) yield break;
-
-            FillRectilinearHull(maxOreDepths, targetProductIds, resourceDetailsByTile, corridorClearance);
-
-            LogDebug(string.Format("After filtering+connecting: {0} tiles in designations", maxOreDepths.Count));
-            LogDebug(selectedProduct != null
-                ? "Selected product: " + selectedProduct.Id
-                : "Selected product mode: None (all useful products, excluding dirt/rock)");
-
-            var maxOreDepthOverall = maxOreDepths.Values.Min();
-
-            LogDebug(string.Format("Creating designations for {0} tiles with overall max depth {1}", maxOreDepths.Count, maxOreDepthOverall));
-
-            var cornerHeights = BuildAndSmoothCornerHeights(maxOreDepths, maxHeightDiff);
-
-            int designCount = 0;
-            foreach (var kvp in maxOreDepths)
-            {
-                var tile = kvp.Key;
-                var nwCorner = tile;
-                var neCorner = tile.AddX(4);
-                var seCorner = tile.AddXy(4);
-                var swCorner = tile.AddY(4);
-
-                if (!cornerHeights.TryGetValue(nwCorner, out int hNW) ||
-                    !cornerHeights.TryGetValue(neCorner, out int hNE) ||
-                    !cornerHeights.TryGetValue(seCorner, out int hSE) ||
-                    !cornerHeights.TryGetValue(swCorner, out int hSW))
-                {
-                    Log.Warning(string.Format("Missing corner heights for tile {0}", tile));
-                    continue;
-                }
-
-                var data = new DesignationData(tile,
-                    new HeightTilesI(hNW), new HeightTilesI(hNE),
-                    new HeightTilesI(hSE), new HeightTilesI(hSW));
-
-                if (!s_desigManager.AddOrReplaceDesignation(s_miningProto, data))
-                {
-                    Log.Warning(string.Format("Failed to create designation for tile {0}", tile));
-                }
-
-                designCount++;
-                int effectiveBatchSize = GetEffectiveBatchSize();
-                if (designCount % effectiveBatchSize == 0)
-                    yield return null;
-            }
-
-            LogDebug(string.Format("Created {0} designations", designCount));
-
-            if (generateRamps)
-            {
-                LogDebug("Creating access ramp...");
-                bool rampCreated = CreateAccessRamp(tower, maxOreDepths, cornerHeights, terrMgr, towerSettings.RampWidth);
-                if (!rampCreated)
-                {
-                    string reason = string.IsNullOrWhiteSpace(s_lastRampFailureReason)
-                        ? "Ramp could not be generated."
-                        : s_lastRampFailureReason!;
-                    Log.Warning("Ramp generation failed: " + reason);
-                }
-            }
-            else
-            {
-                LogDebug("Ramp generation is disabled in settings.");
-            }
-
-            RemoveFulfilledDesignationsForTower(tower);
-            CleanupIsolatedLeftoverDesignationsForTower(tower, maxOreDepths);
-
-            // Refresh ore composition panel after creating designations
-            if (inspectorInstance != null)
-            {
-                OreCompositionPanel.ResetContent(inspectorInstance);
-            }
+            if (markFullyGrown)
+                MarkFullyGrownTreesForHarvest(treesManager, area, bbMin, bbMax);
         }
 
+        private static void MarkFullyGrownTreesForHarvest(
+            TreesManager treesManager,
+            PolygonTerrainArea2i area,
+            Tile2i bbMin,
+            Tile2i bbMax)
+        {
+            var currentStep = s_simLoopEvents?.CurrentStep ?? default;
+            foreach (var kvp in treesManager.Trees)
+            {
+                Tile2i pos = kvp.Value.Position2i;
+                if (pos.X < bbMin.X || pos.X > bbMax.X || pos.Y < bbMin.Y || pos.Y > bbMax.Y) continue;
+                if (!area.ContainsTile(pos)) continue;
+                if (kvp.Value.IsFullyGrownAt(currentStep) && !treesManager.IsTreeSelected(kvp.Key))
+                    treesManager.AddToHarvest(kvp.Key);
+            }
+        }
         internal static void CreateDesignationsForTower(IAreaManagingTower tower)
         {
-            var towerSettings = GetOrCreateTowerSettings(tower);
-            s_coroutineHost?.StartCoroutine(CreateDesignationsCoroutine(tower, towerSettings.RampWidth > 0, null));
+            s_coroutineHost?.StartCoroutine(CreateDesignationsCoroutine(tower, false, null));
         }
 
-        /// <summary>
-        /// Same as <see cref="CreateDesignationsForTower(IAreaManagingTower)"/> but passes
-        /// <paramref name="panelKey"/> to the coroutine so that the Ore Composition panel
-        /// registered under that key auto-refreshes when the scan completes.
-        /// </summary>
         internal static void CreateDesignationsForTower(IAreaManagingTower tower, object? panelKey)
         {
-            var towerSettings = GetOrCreateTowerSettings(tower);
-            s_coroutineHost?.StartCoroutine(CreateDesignationsCoroutine(tower, towerSettings.RampWidth > 0, panelKey));
+            s_coroutineHost?.StartCoroutine(CreateDesignationsCoroutine(tower, false, panelKey));
         }
 
         private static List<LooseProductProto> GetScanProducts(IAreaManagingTower tower)

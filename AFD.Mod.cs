@@ -8,6 +8,7 @@ using Mafi.Core.Entities;
 using Mafi.Core.Game;
 using Mafi.Core.GameLoop;
 using Mafi.Core.Mods;
+using Mafi.Core.Simulation;
 using Mafi.Core.Prototypes;
 using Mafi.Core.Console;
 using Mafi.Core.Terrain.Designation;
@@ -38,7 +39,7 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
     {
         Manifest = manifest;
         ModVersion = manifest.Version.ToString();
-        JsonConfig = new ModJsonConfig();
+        JsonConfig = new ModJsonConfig(this);
     }
 
     public void RegisterPrototypes(ProtoRegistrator registrator)
@@ -110,6 +111,24 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
         MinCorridorClearance = Math.Max(0, Math.Min(2, value));
     }
 
+    // --- Forestry-specific global defaults ---
+
+    /// <summary>Skip tiles where the ground is not fertile for tree growth. Default: true.</summary>
+    public static bool AvoidInfertileTiles { get; private set; } = true;
+    public static void SetAvoidInfertileTiles(bool value) => AvoidInfertileTiles = value;
+
+    /// <summary>Skip tiles that already have a tree. Default: false.</summary>
+    public static bool AvoidTilesWithTrees { get; private set; } = false;
+    public static void SetAvoidTilesWithTrees(bool value) => AvoidTilesWithTrees = value;
+
+    /// <summary>Maximum number of forestry designation tiles to place per run. 0 = no limit.</summary>
+    public static int MaxTiles { get; private set; } = 0;
+    public static void SetMaxTiles(int value) => MaxTiles = Math.Max(0, value);
+
+    /// <summary>After placing designations, mark all fully grown trees in the area for harvest.</summary>
+    public static bool MarkFullyGrownForHarvest { get; private set; } = false;
+    public static void SetMarkFullyGrownForHarvest(bool value) => MarkFullyGrownForHarvest = value;
+
     public void Initialize(DependencyResolver resolver, bool gameWasLoaded)
     {
         try
@@ -138,8 +157,9 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
             IEntitiesManager entitiesManager = resolver.Resolve<IEntitiesManager>();
             AutoForestryDesignationsTicker ticker = new GameObject("AutoForestryDesignationsTicker").AddComponent<AutoForestryDesignationsTicker>();
             UnityEngine.Object.DontDestroyOnLoad(ticker.gameObject);
+            ISimLoopEvents simLoopEvents = resolver.Resolve<ISimLoopEvents>();
             AutoDepthDesignation.SetModRootDirectoryPath(Manifest.RootDirectoryPath);
-            AutoDepthDesignation.Initialize(desigManager, protosDb, worldMapManager, ticker, entitiesManager);
+            AutoDepthDesignation.Initialize(desigManager, protosDb, worldMapManager, ticker, entitiesManager, simLoopEvents);
         }
         catch (Exception ex)
         {

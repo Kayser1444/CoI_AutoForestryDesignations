@@ -30,26 +30,23 @@ namespace AutoForestryDesignations
         private sealed class Bindings
         {
             public Func<IAreaManagingTower?> GetTower { get; }
-            public Mafi.Unity.Ui.Library.Display RampWidthDisplay { get; }
-            public Mafi.Unity.Ui.Library.Display MaxLayersDisplay { get; }
-            public Mafi.Unity.Ui.Library.Display MinElevDisplay { get; }
-            public Mafi.Unity.Ui.Library.Display OrePurityDisplay { get; }
-            public Mafi.Unity.Ui.Library.Display ClearanceDisplay { get; }
+            public Mafi.Unity.Ui.Library.Display AvoidInfertileDisplay { get; }
+            public Mafi.Unity.Ui.Library.Display AvoidWithTreesDisplay { get; }
+            public Mafi.Unity.Ui.Library.Display MaxTilesDisplay { get; }
+            public Mafi.Unity.Ui.Library.Display MarkGrownDisplay { get; }
 
             public Bindings(
                 Func<IAreaManagingTower?> getTower,
-                Mafi.Unity.Ui.Library.Display rampWidthDisplay,
-                Mafi.Unity.Ui.Library.Display maxLayersDisplay,
-                Mafi.Unity.Ui.Library.Display minElevDisplay,
-                Mafi.Unity.Ui.Library.Display orePurityDisplay,
-                Mafi.Unity.Ui.Library.Display clearanceDisplay)
+                Mafi.Unity.Ui.Library.Display avoidInfertileDisplay,
+                Mafi.Unity.Ui.Library.Display avoidWithTreesDisplay,
+                Mafi.Unity.Ui.Library.Display maxTilesDisplay,
+                Mafi.Unity.Ui.Library.Display markGrownDisplay)
             {
                 GetTower = getTower;
-                RampWidthDisplay = rampWidthDisplay;
-                MaxLayersDisplay = maxLayersDisplay;
-                MinElevDisplay = minElevDisplay;
-                OrePurityDisplay = orePurityDisplay;
-                ClearanceDisplay = clearanceDisplay;
+                AvoidInfertileDisplay = avoidInfertileDisplay;
+                AvoidWithTreesDisplay = avoidWithTreesDisplay;
+                MaxTilesDisplay = maxTilesDisplay;
+                MarkGrownDisplay = markGrownDisplay;
             }
         }
 
@@ -70,11 +67,10 @@ namespace AutoForestryDesignations
             if (!s_bindings.TryGetValue(key, out var b)) return;
             var tower = b.GetTower();
             if (tower == null) return;
-            b.RampWidthDisplay.SetValue(new LocStrFormatted(RampWidthText(AutoDepthDesignation.GetTowerRampWidth(tower))));
-            b.MaxLayersDisplay.SetValue(new LocStrFormatted(MaxLayersText(AutoDepthDesignation.GetTowerMaxLayersToExcavate(tower))));
-            b.MinElevDisplay.SetValue(new LocStrFormatted(MinElevText(AutoDepthDesignation.GetTowerMaxDepthToDigTo(tower))));
-            b.OrePurityDisplay.SetValue(new LocStrFormatted(OrePurityLevelText(AutoDepthDesignation.GetTowerOrePurityLevel(tower))));
-            b.ClearanceDisplay.SetValue(new LocStrFormatted(ClearanceLevelText(AutoDepthDesignation.GetTowerCorridorClearance(tower))));
+            b.AvoidInfertileDisplay.SetValue(new LocStrFormatted(BoolText(AutoDepthDesignation.GetTowerAvoidInfertileTiles(tower))));
+            b.AvoidWithTreesDisplay.SetValue(new LocStrFormatted(BoolText(AutoDepthDesignation.GetTowerAvoidTilesWithTrees(tower))));
+            b.MaxTilesDisplay.SetValue(new LocStrFormatted(MaxTilesText(AutoDepthDesignation.GetTowerMaxTiles(tower))));
+            b.MarkGrownDisplay.SetValue(new LocStrFormatted(BoolText(AutoDepthDesignation.GetTowerMarkFullyGrownForHarvest(tower))));
         }
 
         /// <summary>
@@ -93,52 +89,8 @@ namespace AutoForestryDesignations
         /// </param>
         internal static PanelWithHeader Build(Func<IAreaManagingTower?> getTower, object key)
         {
-            // --- Ore picker ---
-            SingleProductPickerUi? orePicker = null;
-            if (s_protosDb != null)
-            {
-                try
-                {
-                    var minableProducts = s_protosDb.All<TerrainMaterialProto>()
-                        .Select(m => (ProductProto)m.MinedProduct)
-                        .Distinct()
-                        .ToList();
-
-                    orePicker = new SingleProductPickerUi(
-                        () => minableProducts,
-                        delegate(ProductProto selected)
-                        {
-                            var tower = getTower();
-                            if (tower == null) return;
-                            if (selected is LooseProductProto loose)
-                                AutoDepthDesignation.SetSelectedOre(tower, loose);
-                        },
-                        () =>
-                        {
-                            var tower = getTower();
-                            if (tower == null) return Option.None;
-                            var sel = AutoDepthDesignation.GetSelectedOre(tower);
-                            return sel != null ? Option.Some((ProductProto)sel) : Option.None;
-                        },
-                        delegate
-                        {
-                            var tower = getTower();
-                            if (tower == null) return;
-                            AutoDepthDesignation.SetSelectedOre(tower, null);
-                        },
-                        new LocStrFormatted("None (all useful products)"),
-                        compact: true,
-                        primaryButtonIfNoProtoSet: false
-                    );
-                }
-                catch (Exception ex)
-                {
-                    Log.Warning($"[AFD] EXCEPTION creating ore picker in DesignationPanel: {ex}");
-                }
-            }
-
-            // --- Dig button ---
-            var digBtn = new ButtonIconText(
+            // --- Create / Clear buttons ---
+            var createBtn = new ButtonIconText(
                 Button.Primary,
                 "Assets/Unity/UserInterface/EntityIcons/Designation.png",
                 new LocStrFormatted("Create Designations"))
@@ -150,12 +102,11 @@ namespace AutoForestryDesignations
                         if (tower == null) return;
                         AutoDepthDesignation.CreateDesignationsForTower(tower, key);
                     }
-                    catch (Exception ex) { Debug.Log($"[AFD] Dig button click EXCEPTION: {ex}"); }
+                    catch (Exception ex) { Debug.Log($"[AFD] Create button EXCEPTION: {ex}"); }
                 });
-            digBtn.Tooltip(new LocStrFormatted("Scan and place mining designations in this tower's area."));
-            digBtn.Icon.Size(Px.Auto, 24.px());
+            createBtn.Tooltip(new LocStrFormatted("Scan the tower area and place forestry designations."));
+            createBtn.Icon.Size(Px.Auto, 24.px());
 
-            // --- Clear button ---
             var clearBtn = new ButtonIcon(
                 Button.General,
                 "Assets/Unity/UserInterface/General/Trash128.png",
@@ -167,175 +118,123 @@ namespace AutoForestryDesignations
                         if (tower == null) return;
                         AutoDepthDesignation.ClearDesignationsForTower(tower);
                     }
-                    catch (Exception ex) { Debug.Log($"[AFD] Clear button click EXCEPTION: {ex}"); }
+                    catch (Exception ex) { Debug.Log($"[AFD] Clear button EXCEPTION: {ex}"); }
                 })
-                .Tooltip(new LocStrFormatted("Clear all mining designations in this tower's area."));
+                .Tooltip(new LocStrFormatted("Clear all forestry designations in this tower's area."));
 
-            digBtn.MarginTopBottom(1.pt());
+            createBtn.MarginTopBottom(1.pt());
             clearBtn.MarginTopBottom(1.pt()).AlignSelfEnd();
 
             var contentRow = new Row().Gap(3.pt()).AlignItemsEnd();
             contentRow.Add(new UiComponent().FlexGrow(1f));
-            contentRow.Add(digBtn);
+            contentRow.Add(createBtn);
             contentRow.Add(new UiComponent().FlexGrow(1f));
             contentRow.Add(clearBtn);
 
             var panel = new PanelWithHeader()
-                .Title(new LocStrFormatted("Terrain Designations"),
-                       new LocStrFormatted($"Create automatic terrain designations for this tower. [Kayser's AutoForestryDesignations v{AutoForestryDesignationsMod.ModVersion}]"));
+                .Title(new LocStrFormatted("Forestry Designations"),
+                       new LocStrFormatted($"Create automatic forestry designations. [AutoForestryDesignations v{AutoForestryDesignationsMod.ModVersion}]"));
             panel.Collapsed(false);
             panel.BodyAdd(contentRow);
 
-            // Read initial values from tower if available, fall back to globals
             var initialTower = getTower();
 
-            // --- Ramp width ---
-            int initRamp = initialTower != null
-                ? AutoDepthDesignation.GetTowerRampWidth(initialTower)
-                : AutoForestryDesignationsMod.RampWidth;
-            var rampWidthDisplay = new Mafi.Unity.Ui.Library.Display(new LocStrFormatted(RampWidthText(initRamp)))
+            // --- Avoid infertile tiles ---
+            bool initAvoidInfertile = initialTower != null
+                ? AutoDepthDesignation.GetTowerAvoidInfertileTiles(initialTower)
+                : AutoForestryDesignationsMod.AvoidInfertileTiles;
+            var avoidInfertileDisplay = new Mafi.Unity.Ui.Library.Display(new LocStrFormatted(BoolText(initAvoidInfertile)))
                 .MinDigits(3).AlignSelfStretch().MarginTopBottom(2.px());
-            panel.BodyAdd(BuildStepRow(
-                new LocStrFormatted("Ramp width"),
-                new LocStrFormatted("Width of generated access ramps (0 = disable ramp)."),
-                rampWidthDisplay,
+            panel.BodyAdd(BuildToggleRow(
+                new LocStrFormatted("Avoid infertile tiles"),
+                new LocStrFormatted("Skip tiles where the ground is not fertile for tree growth (e.g. rock, sand, ocean). Infertile tiles show as yellow designations."),
+                avoidInfertileDisplay,
                 (Action)delegate
                 {
                     var tower = getTower(); if (tower == null) return;
-                    AutoDepthDesignation.SetTowerRampWidth(tower, AutoDepthDesignation.GetTowerRampWidth(tower) + ModifierStepSize());
-                    rampWidthDisplay.SetValue(new LocStrFormatted(RampWidthText(AutoDepthDesignation.GetTowerRampWidth(tower))));
+                    AutoDepthDesignation.SetTowerAvoidInfertileTiles(tower, true);
+                    avoidInfertileDisplay.SetValue(new LocStrFormatted(BoolText(true)));
                 },
                 (Action)delegate
                 {
                     var tower = getTower(); if (tower == null) return;
-                    AutoDepthDesignation.SetTowerRampWidth(tower, AutoDepthDesignation.GetTowerRampWidth(tower) - ModifierStepSize());
-                    rampWidthDisplay.SetValue(new LocStrFormatted(RampWidthText(AutoDepthDesignation.GetTowerRampWidth(tower))));
+                    AutoDepthDesignation.SetTowerAvoidInfertileTiles(tower, false);
+                    avoidInfertileDisplay.SetValue(new LocStrFormatted(BoolText(false)));
                 }));
 
-            // --- Max layers ---
-            int initLayers = initialTower != null
-                ? AutoDepthDesignation.GetTowerMaxLayersToExcavate(initialTower)
-                : AutoForestryDesignationsMod.MaxLayersToExcavate;
-            var maxLayersDisplay = new Mafi.Unity.Ui.Library.Display(new LocStrFormatted(MaxLayersText(initLayers)))
+            // --- Avoid tiles with trees ---
+            bool initAvoidTrees = initialTower != null
+                ? AutoDepthDesignation.GetTowerAvoidTilesWithTrees(initialTower)
+                : AutoForestryDesignationsMod.AvoidTilesWithTrees;
+            var avoidWithTreesDisplay = new Mafi.Unity.Ui.Library.Display(new LocStrFormatted(BoolText(initAvoidTrees)))
                 .MinDigits(3).AlignSelfStretch().MarginTopBottom(2.px());
-            panel.BodyAdd(BuildStepRow(
-                new LocStrFormatted("Max layers to excavate"),
-                new LocStrFormatted("Maximum layers to excavate from the surface. (\u221e = no limit.)"),
-                maxLayersDisplay,
+            panel.BodyAdd(BuildToggleRow(
+                new LocStrFormatted("Avoid tiles with trees"),
+                new LocStrFormatted("Skip tiles that already contain a tree. When off, designations are placed on all fertile tiles including occupied ones (they show yellow until the tree is harvested)."),
+                avoidWithTreesDisplay,
                 (Action)delegate
                 {
                     var tower = getTower(); if (tower == null) return;
-                    int cur = AutoDepthDesignation.GetTowerMaxLayersToExcavate(tower);
-                    int step = ModifierStepSize();
-                    if (cur != 0)
-                        AutoDepthDesignation.SetTowerMaxLayersToExcavate(tower, cur + step > 50 ? 0 : cur + step);
-                    maxLayersDisplay.SetValue(new LocStrFormatted(MaxLayersText(AutoDepthDesignation.GetTowerMaxLayersToExcavate(tower))));
+                    AutoDepthDesignation.SetTowerAvoidTilesWithTrees(tower, true);
+                    avoidWithTreesDisplay.SetValue(new LocStrFormatted(BoolText(true)));
                 },
                 (Action)delegate
                 {
                     var tower = getTower(); if (tower == null) return;
-                    int cur = AutoDepthDesignation.GetTowerMaxLayersToExcavate(tower);
-                    AutoDepthDesignation.SetTowerMaxLayersToExcavate(tower, cur == 0 ? 50 : Math.Max(1, cur - ModifierStepSize()));
-                    maxLayersDisplay.SetValue(new LocStrFormatted(MaxLayersText(AutoDepthDesignation.GetTowerMaxLayersToExcavate(tower))));
+                    AutoDepthDesignation.SetTowerAvoidTilesWithTrees(tower, false);
+                    avoidWithTreesDisplay.SetValue(new LocStrFormatted(BoolText(false)));
                 }));
 
-            // --- Elevation limit ---
-            int? initElev = initialTower != null
-                ? AutoDepthDesignation.GetTowerMaxDepthToDigTo(initialTower)
-                : AutoForestryDesignationsMod.MaxDepthToDigTo;
-            var minElevDisplay = new Mafi.Unity.Ui.Library.Display(new LocStrFormatted(MinElevText(initElev)))
+            // --- Max tiles ---
+            int initMaxTiles = initialTower != null
+                ? AutoDepthDesignation.GetTowerMaxTiles(initialTower)
+                : AutoForestryDesignationsMod.MaxTiles;
+            var maxTilesDisplay = new Mafi.Unity.Ui.Library.Display(new LocStrFormatted(MaxTilesText(initMaxTiles)))
                 .MinDigits(3).AlignSelfStretch().MarginTopBottom(2.px());
             panel.BodyAdd(BuildStepRow(
-                new LocStrFormatted("Elevation limit"),
-                new LocStrFormatted("Maximum (absolute) excavation depth (-\u221e = no limit.)"),
-                minElevDisplay,
+                new LocStrFormatted("Max tiles"),
+                new LocStrFormatted("Maximum number of designation tiles to place per run. 0 = no limit (\u221e)."),
+                maxTilesDisplay,
                 (Action)delegate
                 {
                     var tower = getTower(); if (tower == null) return;
-                    int? cur = AutoDepthDesignation.GetTowerMaxDepthToDigTo(tower);
-                    AutoDepthDesignation.SetTowerMaxDepthToDigTo(tower, cur == null ? -50 : cur.Value + ModifierStepSize());
-                    minElevDisplay.SetValue(new LocStrFormatted(MinElevText(AutoDepthDesignation.GetTowerMaxDepthToDigTo(tower))));
+                    int cur = AutoDepthDesignation.GetTowerMaxTiles(tower);
+                    AutoDepthDesignation.SetTowerMaxTiles(tower, cur == 0 ? ModifierStepSize() : cur + ModifierStepSize());
+                    maxTilesDisplay.SetValue(new LocStrFormatted(MaxTilesText(AutoDepthDesignation.GetTowerMaxTiles(tower))));
                 },
                 (Action)delegate
                 {
                     var tower = getTower(); if (tower == null) return;
-                    int? cur = AutoDepthDesignation.GetTowerMaxDepthToDigTo(tower);
-                    if (cur != null)
-                    {
-                        int next = cur.Value - ModifierStepSize();
-                        AutoDepthDesignation.SetTowerMaxDepthToDigTo(tower, next < -50 ? (int?)null : next);
-                    }
-                    minElevDisplay.SetValue(new LocStrFormatted(MinElevText(AutoDepthDesignation.GetTowerMaxDepthToDigTo(tower))));
+                    int cur = AutoDepthDesignation.GetTowerMaxTiles(tower);
+                    if (cur > 0)
+                        AutoDepthDesignation.SetTowerMaxTiles(tower, Math.Max(0, cur - ModifierStepSize()));
+                    maxTilesDisplay.SetValue(new LocStrFormatted(MaxTilesText(AutoDepthDesignation.GetTowerMaxTiles(tower))));
                 }));
 
-            // --- Ore purity ---
-            int initPurity = initialTower != null
-                ? AutoDepthDesignation.GetTowerOrePurityLevel(initialTower)
-                : AutoForestryDesignationsMod.OrePurityLevel;
-            var orePurityDisplay = new Mafi.Unity.Ui.Library.Display(new LocStrFormatted(OrePurityLevelText(initPurity)))
+            // --- Mark fully grown for harvest ---
+            bool initMarkGrown = initialTower != null
+                ? AutoDepthDesignation.GetTowerMarkFullyGrownForHarvest(initialTower)
+                : AutoForestryDesignationsMod.MarkFullyGrownForHarvest;
+            var markGrownDisplay = new Mafi.Unity.Ui.Library.Display(new LocStrFormatted(BoolText(initMarkGrown)))
                 .MinDigits(3).AlignSelfStretch().MarginTopBottom(2.px());
-            panel.BodyAdd(BuildStepRow(
-                new LocStrFormatted("Ore purity"),
-                new LocStrFormatted(
-                    "How strictly the scan filters for ore quality.\n" +
-                    "Off: include all tiles, dig to full depth.\n" +
-                    "Low: exclude very sparse tiles, trim thin trailing ore at the bottom.\n" +
-                    "Med: moderate quality — skip tiles with heavy overburden or little ore.\n" +
-                    "High: only rich tiles with a clean ore column.\n" +
-                    "Max: near-pure ore only — strict on overburden, depth and ore density."),
-                orePurityDisplay,
+            panel.BodyAdd(BuildToggleRow(
+                new LocStrFormatted("Mark grown for harvest"),
+                new LocStrFormatted("When enabled, all fully grown trees in the tower area are marked for harvesting each time Create Designations is run."),
+                markGrownDisplay,
                 (Action)delegate
                 {
                     var tower = getTower(); if (tower == null) return;
-                    AutoDepthDesignation.SetTowerOrePurityLevel(tower, AutoDepthDesignation.GetTowerOrePurityLevel(tower) + 1);
-                    orePurityDisplay.SetValue(new LocStrFormatted(OrePurityLevelText(AutoDepthDesignation.GetTowerOrePurityLevel(tower))));
+                    AutoDepthDesignation.SetTowerMarkFullyGrownForHarvest(tower, true);
+                    markGrownDisplay.SetValue(new LocStrFormatted(BoolText(true)));
                 },
                 (Action)delegate
                 {
                     var tower = getTower(); if (tower == null) return;
-                    AutoDepthDesignation.SetTowerOrePurityLevel(tower, AutoDepthDesignation.GetTowerOrePurityLevel(tower) - 1);
-                    orePurityDisplay.SetValue(new LocStrFormatted(OrePurityLevelText(AutoDepthDesignation.GetTowerOrePurityLevel(tower))));
+                    AutoDepthDesignation.SetTowerMarkFullyGrownForHarvest(tower, false);
+                    markGrownDisplay.SetValue(new LocStrFormatted(BoolText(false)));
                 }));
 
-            // --- Corridor clearance ---
-            int initClearance = initialTower != null
-                ? AutoDepthDesignation.GetTowerCorridorClearance(initialTower)
-                : AutoForestryDesignationsMod.MinCorridorClearance;
-            var clearanceDisplay = new Mafi.Unity.Ui.Library.Display(new LocStrFormatted(ClearanceLevelText(initClearance)))
-                .MinDigits(3).AlignSelfStretch().MarginTopBottom(2.px());
-            panel.BodyAdd(BuildStepRow(
-                new LocStrFormatted("Corridor clearance"),
-                new LocStrFormatted(
-                    "Minimum corridor width for connecting ore regions and enforcing passability.\n" +
-                    "0 = disabled (regions left separate, no corridors or hole-filling).\n" +
-                    "1 = 1-tile corridors (small and medium vehicles).\n" +
-                    "2 = 2-tile corridors (mega vehicles).\n"),
-                clearanceDisplay,
-                (Action)delegate
-                {
-                    var tower = getTower(); if (tower == null) return;
-                    AutoDepthDesignation.SetTowerCorridorClearance(tower, AutoDepthDesignation.GetTowerCorridorClearance(tower) + 1);
-                    clearanceDisplay.SetValue(new LocStrFormatted(ClearanceLevelText(AutoDepthDesignation.GetTowerCorridorClearance(tower))));
-                },
-                (Action)delegate
-                {
-                    var tower = getTower(); if (tower == null) return;
-                    AutoDepthDesignation.SetTowerCorridorClearance(tower, AutoDepthDesignation.GetTowerCorridorClearance(tower) - 1);
-                    clearanceDisplay.SetValue(new LocStrFormatted(ClearanceLevelText(AutoDepthDesignation.GetTowerCorridorClearance(tower))));
-                }));
-
-            // --- Ore picker row ---
-            if (orePicker != null)
-            {
-                var oreRow = new Row().MarginTop(1.pt());
-                oreRow.Add(new Label(new LocStrFormatted("Target product:"))
-                    .Tooltip(new LocStrFormatted("Force the scan to target a specific product (None = all useful products, excluding dirt/rock).")));
-                oreRow.Add(new UiComponent().FlexGrow(1f));
-                oreRow.Add(orePicker);
-                panel.BodyAdd(oreRow);
-            }
-
-            s_bindings[key] = new Bindings(getTower, rampWidthDisplay, maxLayersDisplay, minElevDisplay, orePurityDisplay, clearanceDisplay);
+            s_bindings[key] = new Bindings(getTower, avoidInfertileDisplay, avoidWithTreesDisplay, maxTilesDisplay, markGrownDisplay);
             return panel;
         }
 
@@ -359,6 +258,26 @@ namespace AutoForestryDesignations
             return row;
         }
 
+        private static Row BuildToggleRow(
+            LocStrFormatted label,
+            LocStrFormatted tooltip,
+            Mafi.Unity.Ui.Library.Display display,
+            Action onYes,
+            Action onNo)
+        {
+            var yesBtn = new ButtonIcon(Button.General, "Assets/Unity/UserInterface/General/Plus128.png")
+                .Compact().IconSize(14.px()).OnClick(onYes, allowKeyPresses: true);
+            var noBtn = new ButtonIcon(Button.General, "Assets/Unity/UserInterface/General/Minus128.png")
+                .Compact().IconSize(14.px()).OnClick(onNo, allowKeyPresses: true);
+            var row = new Row().MarginTop(1.pt());
+            row.Add(new Label(label).Tooltip(tooltip));
+            row.Add(new UiComponent().FlexGrow(1f));
+            row.Add(noBtn);
+            row.Add(display);
+            row.Add(yesBtn);
+            return row;
+        }
+
         private static int ModifierStepSize()
         {
             if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) return 10;
@@ -366,38 +285,7 @@ namespace AutoForestryDesignations
             return 1;
         }
 
-        private static string RampWidthText(int value) => value.ToString();
-
-        private static string MaxLayersText(int value) => value == 0 ? "\u221e" : value.ToString();
-
-        private static string MinElevText(int? value)
-        {
-            if (value == null) return "-\u221e";
-            return value.Value > 0 ? "+" + value.Value : value.Value.ToString();
-        }
-
-        private static string OrePurityLevelText(int value)
-        {
-            switch (value)
-            {
-                case 0: return "Off";
-                case 1: return "Low";
-                case 2: return "Med";
-                case 3: return "High";
-                case 4: return "Max";
-                default: return value.ToString();
-            }
-        }
-
-        private static string ClearanceLevelText(int value)
-        {
-            switch (value)
-            {
-                case 0: return "Off";
-                case 1: return "1";
-                case 2: return "2";
-                default: return value.ToString();
-            }
-        }
+        private static string BoolText(bool value) => value ? "YES" : "NO";
+        private static string MaxTilesText(int value) => value == 0 ? "\u221e" : value.ToString();
     }
 }

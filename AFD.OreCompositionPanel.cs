@@ -76,11 +76,7 @@ namespace AutoForestryDesignations
             }
         }
 
-        internal static void ResetContent(object inspectorInstance)
-        {
-            if (s_resetContentCallbacks.TryGetValue(inspectorInstance, out var cb))
-                try { cb?.Invoke(); } catch { }
-        }
+        internal static void ResetContent(object inspectorInstance) { }
 
         // ------------------------------------------------------------------
         // UI injection
@@ -91,52 +87,7 @@ namespace AutoForestryDesignations
         /// mainBody at position 1 (below the AFD panel). The Refresh button reads
         /// live ManagedDesignations, so the panel works independently of AFD scans.
         /// </summary>
-        internal static void Inject(Column mainBody, PropertyInfo entityProp, object inspector)
-        {
-            try
-            {
-                var contentCol = new Column(2.pt());
-                var promptLabel = new Label(new LocStrFormatted("Press \u21ba to scan ore composition."))
-                    .Color(Theme.InactiveColor);
-                contentCol.Add(promptLabel);
-
-                s_resetContentCallbacks[inspector] = (Action)delegate
-                {
-                    // After creating designations, re-populate the composition instead of just clearing
-                    var t = entityProp.GetValue(inspector) as IAreaManagingTower;
-                    if (t != null)
-                        PopulateContent(contentCol, t);
-                    else
-                    {
-                        contentCol.Clear();
-                        contentCol.Add(promptLabel);
-                    }
-                };
-
-                var orePanel = new PanelWithHeader()
-                    .Title(new LocStrFormatted("Ore Composition"),
-                           new LocStrFormatted("Ore resources within this tower's current mining designations. (Does not account for potential landslides.)"));
-
-                orePanel.Header.Add(new ButtonIcon(Button.General,
-                    "Assets/Unity/UserInterface/General/Repeat.svg",
-                    (Action)delegate
-                    {
-                        var t = entityProp.GetValue(inspector) as IAreaManagingTower;
-                        PopulateContent(contentCol, t);
-                    })
-                    .Compact()
-                    .IconSize(14.px())
-                    .MarginLeft(4.pt())
-                    .Tooltip(new LocStrFormatted("Scan ore composition")));
-
-                orePanel.BodyAdd(contentCol);
-                mainBody.InsertAt(1, orePanel);
-            }
-            catch (Exception ex)
-            {
-                Log.Warning($"[AFD] OreCompositionPanel.Inject EXCEPTION: {ex}");
-            }
-        }
+        internal static void Inject(Column mainBody, PropertyInfo entityProp, object inspector) { }
 
         /// <summary>
         /// Builds an "Ore Composition" panel and returns it. Insert the result at any position

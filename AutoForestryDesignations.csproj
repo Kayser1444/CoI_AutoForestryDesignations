@@ -6,6 +6,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Nullable>enable</Nullable>
     <CaptainIndustryManagedPath Condition="'$(CaptainIndustryManagedPath)' == '' and '$(CAPTAIN_INDUSTRY_MANAGED_PATH)' != ''">$(CAPTAIN_INDUSTRY_MANAGED_PATH)</CaptainIndustryManagedPath>
+    <CaptainIndustryManagedPath Condition="'$(CaptainIndustryManagedPath)' == '' and Exists('$(MSBuildProjectDirectory)\..\..\Mafi\Mafi.Base.dll')">$(MSBuildProjectDirectory)\..\..\Mafi</CaptainIndustryManagedPath>
     <CaptainIndustryManagedPath Condition="'$(CaptainIndustryManagedPath)' == ''">C:\Program Files (x86)\Steam\steamapps\common\Captain of Industry\Captain of Industry_Data\Managed</CaptainIndustryManagedPath>
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <AssemblyName>AutoForestryDesignations</AssemblyName>
@@ -21,17 +22,11 @@
   </Target>
 
   <ItemGroup>
-    <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.2">
-      <IncludeAssets>build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Mafi.Base" Publicize="true">
+    <Reference Include="Mafi.Base">
       <HintPath>$(CaptainIndustryManagedPath)\Mafi.Base.dll</HintPath>
       <Private>false</Private>
     </Reference>
-    <Reference Include="Mafi.Core" Publicize="true">
+    <Reference Include="Mafi.Core">
       <HintPath>$(CaptainIndustryManagedPath)\Mafi.Core.dll</HintPath>
       <Private>false</Private>
     </Reference>
@@ -39,7 +34,7 @@
       <HintPath>$(CaptainIndustryManagedPath)\Mafi.dll</HintPath>
       <Private>false</Private>
     </Reference>
-    <Reference Include="Mafi.Unity" Publicize="true">
+    <Reference Include="Mafi.Unity">
       <HintPath>$(CaptainIndustryManagedPath)\Mafi.Unity.dll</HintPath>
       <Private>false</Private>
     </Reference>
