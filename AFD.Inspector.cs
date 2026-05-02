@@ -67,6 +67,7 @@ namespace AutoForestryDesignations
         public static void InspectorActivatePostfix(object __instance)
         {
             DesignationPanel.RefreshDisplays(__instance);
+            ForestryInfoPanel.RefreshContent(__instance);
         }
 
         public static void InspectorCtorPostfix(object __instance)
@@ -99,6 +100,7 @@ namespace AutoForestryDesignations
                 Func<IAreaManagingTower?> getTower = () => entityProp.GetValue(inspector) as IAreaManagingTower;
 
                 var afdPanel = DesignationPanel.Build(getTower, inspector);
+                var forestryInfoPanel = ForestryInfoPanel.Build(getTower, inspector);
 
                 FieldInfo? mainBodyField = null;
                 var searchType = inspectorType;
@@ -114,6 +116,7 @@ namespace AutoForestryDesignations
                     if (mainBody != null)
                     {
                         mainBody.InsertAt(0, afdPanel);
+                        mainBody.InsertAt(1, forestryInfoPanel);
                         mainBody.Show();
                         LogDebug("[AFD] Forestry Designations panel inserted");
                     }

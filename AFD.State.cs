@@ -147,5 +147,9 @@ namespace AutoForestryDesignations
         /// <summary>Returns true once Initialize has completed successfully.</summary>
         internal static bool IsInitialized => s_desigManager != null && s_coroutineHost != null;
 
+        internal static TreesManager? GetTreesManager() => s_desigManager?.TreesManager;
+
+        internal static SimStep? GetCurrentSimStep() => s_simLoopEvents?.CurrentStep;
+
     }
 }
