@@ -70,7 +70,7 @@ namespace AutoForestryDesignations
 
             var panel = new PanelWithHeader()
                 .Title(new LocStrFormatted("Forestry Information"),
-                       new LocStrFormatted("Current trees and projected wood output in this tower's forestry area."));
+                       new LocStrFormatted($"Current trees and projected wood output in this tower's forestry area. [Kayser's Automatic Forestry Designations v{AutoForestryDesignationsMod.ModVersion}]"));
 
             var refreshButton = new ButtonIcon(Button.General,
                 "Assets/Unity/UserInterface/General/Repeat.svg",
@@ -129,15 +129,25 @@ namespace AutoForestryDesignations
                 return;
             }
 
-            var stats = CollectStats(forestryTower, treesManager, currentStep.Value);
-            if (stats.TreeCount == 0)
+            if (!HasManagedForestryDesignation(forestryTower))
             {
-                col.Add(new Label(new LocStrFormatted("No managed trees found.")));
+                col.Add(new Label(new LocStrFormatted("No forestry designations.")));
                 return;
             }
 
+            var stats = CollectStats(forestryTower, treesManager, currentStep.Value);
             col.Add(BuildKpiRow(stats));
             col.Add(BuildGrowthSection(forestryTower, stats));
+        }
+
+        private static bool HasManagedForestryDesignation(ForestryTower tower)
+        {
+            foreach (TerrainDesignation designation in tower.ManagedDesignations)
+            {
+                if (designation.IsForestry)
+                    return true;
+            }
+            return false;
         }
 
         private static ForestryStats CollectStats(ForestryTower tower, TreesManager treesManager, SimStep currentStep)
