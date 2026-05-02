@@ -6,7 +6,6 @@ using System.Linq;
 using Mafi;
 using Mafi.Collections;
 using Mafi.Core;
-using Mafi.Core.Buildings.Mine;
 using Mafi.Core.Buildings.Towers;
 using Mafi.Core.Entities;
 using Mafi.Core.Products;
@@ -14,19 +13,16 @@ using Mafi.Core.Prototypes;
 using Mafi.Core.Simulation;
 using Mafi.Core.Terrain;
 using Mafi.Core.Terrain.Designation;
-using Mafi.Core.Terrain.Resources;
 using Mafi.Core.Terrain.Trees;
-using Mafi.Core.Vehicles.Excavators;
 using Mafi.Core.World;
 using UnityEngine;
 
 namespace AutoForestryDesignations
 {
-    public static partial class AutoDepthDesignation
+    public static partial class AutoForestryDesignation
     {
         private static TerrainDesignationsManager? s_desigManager;
         private static TerrainDesignationProto? s_forestryProto;
-        private static TerrainMaterialProto? s_bedrockTerrainMaterial;
         private static MonoBehaviour? s_coroutineHost;
         private static ProtosDb? s_protosDb;
         private static WorldMapManager? s_worldMapManager;
@@ -37,95 +33,40 @@ namespace AutoForestryDesignations
         private const int BATCH_SIZE = 30;
         private const int MAX_BATCH_SIZE = 200;
         private const int PAUSED_BATCH_MULTIPLIER = 4;
-        private const int HULL_CONNECTION_WIDTH = 2;
         private static int s_batchSize = BATCH_SIZE;
 
-        private sealed class ATDTowerSettings
+        private sealed class AFDTowerSettings
         {
-            public int MaxHeightDiff { get; private set; }
-            public int RampWidth { get; private set; }
-            public int MaxLayersToExcavate { get; private set; }
-            public int? MaxDepthToDigTo { get; private set; }
-            public int OrePurityLevel { get; private set; }
-            public int CorridorClearance { get; private set; }
-
-            // Forestry settings
             public bool AvoidInfertileTiles { get; private set; }
             public bool AvoidTilesWithTrees { get; private set; }
+            public bool AvoidMiningDesignations { get; private set; }
             public int MaxTiles { get; private set; }
             public bool MarkFullyGrownForHarvest { get; private set; }
 
-            public ATDTowerSettings(int maxHeightDiff, int rampWidth, int maxLayersToExcavate, int? maxDepthToDigTo, int orePurityLevel, int corridorClearance)
+            public AFDTowerSettings()
             {
-                SetMaxHeightDiff(maxHeightDiff);
-                SetRampWidth(rampWidth);
-                SetMaxLayersToExcavate(maxLayersToExcavate);
-                SetMaxDepthToDigTo(maxDepthToDigTo);
-                SetOrePurityLevel(orePurityLevel);
-                SetCorridorClearance(corridorClearance);
                 AvoidInfertileTiles = AutoForestryDesignationsMod.AvoidInfertileTiles;
                 AvoidTilesWithTrees = AutoForestryDesignationsMod.AvoidTilesWithTrees;
+                AvoidMiningDesignations = AutoForestryDesignationsMod.AvoidMiningDesignations;
                 MaxTiles = AutoForestryDesignationsMod.MaxTiles;
                 MarkFullyGrownForHarvest = AutoForestryDesignationsMod.MarkFullyGrownForHarvest;
             }
 
-            public static ATDTowerSettings FromGlobalDefaults() => new ATDTowerSettings(
-                AutoForestryDesignationsMod.MaxHeightDiff,
-                AutoForestryDesignationsMod.RampWidth,
-                AutoForestryDesignationsMod.MaxLayersToExcavate,
-                AutoForestryDesignationsMod.MaxDepthToDigTo,
-                AutoForestryDesignationsMod.OrePurityLevel,
-                AutoForestryDesignationsMod.MinCorridorClearance);
+            public static AFDTowerSettings FromGlobalDefaults() => new AFDTowerSettings();
 
-            public void SetMaxHeightDiff(int value) => MaxHeightDiff = Math.Max(1, Math.Min(3, value));
-            public void SetRampWidth(int value) => RampWidth = Math.Max(0, Math.Min(5, value));
-            public void SetMaxLayersToExcavate(int value) => MaxLayersToExcavate = Math.Max(0, value);
-            public void SetMaxDepthToDigTo(int? value) => MaxDepthToDigTo = value;
-            public void SetOrePurityLevel(int value) => OrePurityLevel = Math.Max(0, Math.Min(4, value));
-            public void SetCorridorClearance(int value) => CorridorClearance = Math.Max(0, Math.Min(2, value));
             public void SetAvoidInfertileTiles(bool value) => AvoidInfertileTiles = value;
             public void SetAvoidTilesWithTrees(bool value) => AvoidTilesWithTrees = value;
+            public void SetAvoidMiningDesignations(bool value) => AvoidMiningDesignations = value;
             public void SetMaxTiles(int value) => MaxTiles = Math.Max(0, value);
             public void SetMarkFullyGrownForHarvest(bool value) => MarkFullyGrownForHarvest = value;
         }
 
-        private static readonly Tile2i[] s_cardinalDirections =
-        {
-            new Tile2i(4, 0),
-            new Tile2i(-4, 0),
-            new Tile2i(0, 4),
-            new Tile2i(0, -4),
-        };
-
-        // Per-tower ore selection: tower -> selected ore (null = "Auto" = all ores)
-        private static readonly Dictionary<IAreaManagingTower, ProductProto?> s_selectedOrePerTower = 
-            new Dictionary<IAreaManagingTower, ProductProto?>();
-        private static readonly Dictionary<EntityId, ATDTowerSettings> s_towerSettingsByEntityId =
-            new Dictionary<EntityId, ATDTowerSettings>();
-        private static readonly Dictionary<EntityId, LooseProductProto> s_excavatorPriorityByTowerEntityId =
-            new Dictionary<EntityId, LooseProductProto>();
-        private static bool s_startupTowerPrioritySyncCompleted;
-        private static int s_startupTowerPrioritySyncAttempts;
-
+        private static readonly Dictionary<EntityId, AFDTowerSettings> s_towerSettingsByEntityId =
+            new Dictionary<EntityId, AFDTowerSettings>();
         [System.Diagnostics.Conditional("DEBUG")]
         private static void LogDebug(string message)
         {
             Log.Info(message);
-        }
-
-        internal static ProductProto? GetSelectedOre(IAreaManagingTower tower)
-        {
-            if (tower == null) return null;
-            return s_selectedOrePerTower.TryGetValue(tower, out var ore) ? ore : null;
-        }
-
-        internal static void SetSelectedOre(IAreaManagingTower tower, ProductProto? ore)
-        {
-            if (tower == null) return;
-            if (ore == null)
-                s_selectedOrePerTower.Remove(tower);
-            else
-                s_selectedOrePerTower[tower] = ore;
         }
 
         private static bool TryGetTowerEntityId(IAreaManagingTower tower, out EntityId entityId)
@@ -140,41 +81,21 @@ namespace AutoForestryDesignations
             return false;
         }
 
-        private static ATDTowerSettings GetOrCreateTowerSettings(IAreaManagingTower tower)
+        private static AFDTowerSettings GetOrCreateTowerSettings(IAreaManagingTower tower)
         {
             if (TryGetTowerEntityId(tower, out EntityId entityId))
             {
-                if (!s_towerSettingsByEntityId.TryGetValue(entityId, out ATDTowerSettings settings))
+                if (!s_towerSettingsByEntityId.TryGetValue(entityId, out AFDTowerSettings settings))
                 {
-                    settings = ATDTowerSettings.FromGlobalDefaults();
+                    settings = AFDTowerSettings.FromGlobalDefaults();
                     s_towerSettingsByEntityId[entityId] = settings;
                 }
 
                 return settings;
             }
 
-            return ATDTowerSettings.FromGlobalDefaults();
+            return AFDTowerSettings.FromGlobalDefaults();
         }
-
-        // --- Per-tower settings accessors (used by API) ---
-
-        internal static int GetTowerMaxHeightDiff(IAreaManagingTower tower) => GetOrCreateTowerSettings(tower).MaxHeightDiff;
-        internal static void SetTowerMaxHeightDiff(IAreaManagingTower tower, int value) => GetOrCreateTowerSettings(tower).SetMaxHeightDiff(value);
-
-        internal static int GetTowerRampWidth(IAreaManagingTower tower) => GetOrCreateTowerSettings(tower).RampWidth;
-        internal static void SetTowerRampWidth(IAreaManagingTower tower, int value) => GetOrCreateTowerSettings(tower).SetRampWidth(value);
-
-        internal static int GetTowerMaxLayersToExcavate(IAreaManagingTower tower) => GetOrCreateTowerSettings(tower).MaxLayersToExcavate;
-        internal static void SetTowerMaxLayersToExcavate(IAreaManagingTower tower, int value) => GetOrCreateTowerSettings(tower).SetMaxLayersToExcavate(value);
-
-        internal static int? GetTowerMaxDepthToDigTo(IAreaManagingTower tower) => GetOrCreateTowerSettings(tower).MaxDepthToDigTo;
-        internal static void SetTowerMaxDepthToDigTo(IAreaManagingTower tower, int? value) => GetOrCreateTowerSettings(tower).SetMaxDepthToDigTo(value);
-
-        internal static int GetTowerOrePurityLevel(IAreaManagingTower tower) => GetOrCreateTowerSettings(tower).OrePurityLevel;
-        internal static void SetTowerOrePurityLevel(IAreaManagingTower tower, int value) => GetOrCreateTowerSettings(tower).SetOrePurityLevel(value);
-
-        internal static int GetTowerCorridorClearance(IAreaManagingTower tower) => GetOrCreateTowerSettings(tower).CorridorClearance;
-        internal static void SetTowerCorridorClearance(IAreaManagingTower tower, int value) => GetOrCreateTowerSettings(tower).SetCorridorClearance(value);
 
         // --- Forestry per-tower settings accessors ---
         internal static bool GetTowerAvoidInfertileTiles(IAreaManagingTower tower) => GetOrCreateTowerSettings(tower).AvoidInfertileTiles;
@@ -182,6 +103,9 @@ namespace AutoForestryDesignations
 
         internal static bool GetTowerAvoidTilesWithTrees(IAreaManagingTower tower) => GetOrCreateTowerSettings(tower).AvoidTilesWithTrees;
         internal static void SetTowerAvoidTilesWithTrees(IAreaManagingTower tower, bool value) => GetOrCreateTowerSettings(tower).SetAvoidTilesWithTrees(value);
+
+        internal static bool GetTowerAvoidMiningDesignations(IAreaManagingTower tower) => GetOrCreateTowerSettings(tower).AvoidMiningDesignations;
+        internal static void SetTowerAvoidMiningDesignations(IAreaManagingTower tower, bool value) => GetOrCreateTowerSettings(tower).SetAvoidMiningDesignations(value);
 
         internal static int GetTowerMaxTiles(IAreaManagingTower tower) => GetOrCreateTowerSettings(tower).MaxTiles;
         internal static void SetTowerMaxTiles(IAreaManagingTower tower, int value) => GetOrCreateTowerSettings(tower).SetMaxTiles(value);
@@ -206,20 +130,12 @@ namespace AutoForestryDesignations
             s_worldMapManager = worldMapManager as WorldMapManager;
             s_entitiesManager = entitiesManager;
             s_simLoopEvents = simLoopEvents;
-            s_startupTowerPrioritySyncCompleted = false;
-            s_startupTowerPrioritySyncAttempts = 0;
 
             if (protosDb.TryGetProto(new Proto.ID("ForestryDesignator"), out TerrainDesignationProto proto))
                 s_forestryProto = proto;
             else
-                UnityEngine.Debug.Log("AutoDepth: ForestryDesignator proto not found");
+                UnityEngine.Debug.Log("[AFD] ForestryDesignator proto not found");
 
-            if (protosDb.TryGetProto(new Proto.ID("Bedrock_Terrain"), out TerrainMaterialProto bedrockProto))
-                s_bedrockTerrainMaterial = bedrockProto;
-            else
-                Log.Warning("[AFD] Bedrock terrain material not found");
-
-            OreCompositionPanel.Initialize(s_desigManager, s_protosDb, s_bedrockTerrainMaterial);
             DesignationPanel.Initialize(s_protosDb);
         }
 

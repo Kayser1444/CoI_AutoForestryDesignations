@@ -45,7 +45,7 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
     public void RegisterPrototypes(ProtoRegistrator registrator)
     {
         m_harmony = new Harmony("com.auto-forestry-designations.mod");
-        AutoDepthDesignation.Apply(m_harmony);
+        AutoForestryDesignation.Apply(m_harmony);
     }
 
     public void RegisterDependencies(DependencyResolverBuilder depBuilder, ProtosDb protosDb, bool gameWasLoaded)
@@ -56,70 +56,16 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
     {
     }
 
-    public static int MaxHeightDiff { get; private set; } = 1;
-
-    public static void SetMaxHeightDiff(int value)
-    {
-        MaxHeightDiff = Math.Max(1, Math.Min(3, value));
-    }
-
-    /// <summary>Ramp width in tiles. Allowed range: 0..5. 0 disables ramp generation.</summary>
-    public static int RampWidth { get; private set; } = 2;
-
-    public static void SetRampWidth(int value)
-    {
-        RampWidth = Math.Max(0, Math.Min(5, value));
-    }
-
-    /// <summary>Maximum number of layers to excavate from the surface. 0 = no limit.</summary>
-    public static int MaxLayersToExcavate { get; private set; } = 30;
-
-    public static void SetMaxLayersToExcavate(int value)
-    {
-        MaxLayersToExcavate = Math.Max(0, value);
-    }
-
-    /// <summary>Absolute minimum terrain elevation to excavate to. null = no limit.</summary>
-    public static int? MaxDepthToDigTo { get; private set; } = null;
-
-    public static void SetMaxDepthToDigTo(int? value)
-    {
-        MaxDepthToDigTo = value;
-    }
-
-    /// <summary>
-    /// Ore purity threshold level (0=Off, 1=Low, 2=Medium, 3=High, 4=Max).
-    /// Controls how aggressively poor-quality tiles and deep sparse ore are excluded.
-    /// </summary>
-    public static int OrePurityLevel { get; private set; } = 0;
-
-    public static void SetOrePurityLevel(int value)
-    {
-        OrePurityLevel = Math.Max(0, Math.Min(4, value));
-    }
-
-    /// <summary>
-    /// Minimum corridor clearance for designation connectivity.
-    /// 0 = disabled — no corridors drawn, components left separate (for vehicle-less excavation);
-    /// 1 = 1-tile corridors (small/medium vehicles);
-    /// 2 = 2-tile corridors (mega vehicles, current default).
-    /// </summary>
-    public static int MinCorridorClearance { get; private set; } = 2;
-
-    public static void SetMinCorridorClearance(int value)
-    {
-        MinCorridorClearance = Math.Max(0, Math.Min(2, value));
-    }
-
-    // --- Forestry-specific global defaults ---
-
-    /// <summary>Skip tiles where the ground is not fertile for tree growth. Default: true.</summary>
     public static bool AvoidInfertileTiles { get; private set; } = true;
     public static void SetAvoidInfertileTiles(bool value) => AvoidInfertileTiles = value;
 
     /// <summary>Skip tiles that already have a tree. Default: false.</summary>
     public static bool AvoidTilesWithTrees { get; private set; } = false;
     public static void SetAvoidTilesWithTrees(bool value) => AvoidTilesWithTrees = value;
+
+    /// <summary>Skip tiles that already have mining or level designations. Default: true.</summary>
+    public static bool AvoidMiningDesignations { get; private set; } = true;
+    public static void SetAvoidMiningDesignations(bool value) => AvoidMiningDesignations = value;
 
     /// <summary>Maximum number of forestry designation tiles to place per run. 0 = no limit.</summary>
     public static int MaxTiles { get; private set; } = 0;
@@ -158,8 +104,8 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
             AutoForestryDesignationsTicker ticker = new GameObject("AutoForestryDesignationsTicker").AddComponent<AutoForestryDesignationsTicker>();
             UnityEngine.Object.DontDestroyOnLoad(ticker.gameObject);
             ISimLoopEvents simLoopEvents = resolver.Resolve<ISimLoopEvents>();
-            AutoDepthDesignation.SetModRootDirectoryPath(Manifest.RootDirectoryPath);
-            AutoDepthDesignation.Initialize(desigManager, protosDb, worldMapManager, ticker, entitiesManager, simLoopEvents);
+            AutoForestryDesignation.SetModRootDirectoryPath(Manifest.RootDirectoryPath);
+            AutoForestryDesignation.Initialize(desigManager, protosDb, worldMapManager, ticker, entitiesManager, simLoopEvents);
         }
         catch (Exception ex)
         {

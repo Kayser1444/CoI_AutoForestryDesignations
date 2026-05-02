@@ -22,7 +22,7 @@ applyTo: "change log.md"
 - API additions visible to external modders are documented (e.g. new `AutoForestryDesignationsApi` methods).
 - Settings file additions are documented with the key name(s) and what they control.
 - Start each bullet with a capital letter; no trailing period.
-- Use **bold** for setting names and UI control names (e.g. **Ore Purity Level**, **Ramp Width**).
+- Use **bold** for setting names and UI control names (e.g. **Avoid infertile tiles**, **Max tiles**).
 - Fixes start with `Fixed:` followed by a short description.
 - Sub-bullets are used when a single feature has multiple related details worth calling out.
 
@@ -36,6 +36,6 @@ applyTo: "change log.md"
 ## Example entry
 ```markdown
 ## 0.1.13
-* **Terrain Designations** panel and **Ore Composition** panel can now be embedded in external mod inspectors via `AutoForestryDesignationsApi.BuildDesignationPanel` and `BuildOreCompositionPanel`
-* Removed `generateRamps` parameter from `CreateDesignationsForTower` API — ramp generation is now always controlled by the per-tower **Ramp Width** setting (0 = disabled)
+* **Forestry Designations** panel can now be embedded in external mod inspectors via `AutoForestryDesignationsApi.BuildDesignationPanel`
+* Added **AFDsettings.json** defaults for **Avoid infertile tiles**, **Avoid tiles with trees**, **Avoid mining designations**, **Max tiles**, and **Mark grown for harvest**
 ```

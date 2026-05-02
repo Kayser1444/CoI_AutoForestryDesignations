@@ -61,7 +61,7 @@ $filesToInclude = @(
     'change log.md',
     'readme.md',
     'LICENSE',
-    'settings.json'
+    'AFDsettings.json'
 )
 
 foreach ($file in $filesToInclude) {

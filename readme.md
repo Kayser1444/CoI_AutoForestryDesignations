@@ -2,13 +2,16 @@
 
 A sister mod to AutoTerrainDesignations for Captain of Industry.
 
-Auto Forestry Designations is planned to add Create/Clear controls and an information panel to Forestry Towers, generating valid forestry designations inside the selected tower area.
+Auto Forestry Designations adds Create/Clear controls to Forestry Towers, generating valid forestry designations inside the selected tower area.
 
-## Planned Features
+## Features
 - Create forestry designations inside a Forestry Tower area
-- Clear forestry designations managed by the selected tower
-- Show planting coverage, existing designations, trees, and stumps
-- Settings for spacing and generation behavior
+- Clear forestry designations in the selected tower area without removing other designation types
+- Skip infertile tiles or tiles that already contain trees
+- Skip existing mining and leveling designations by default
+- Limit the number of tiles created per run
+- Optionally mark fully grown trees in the area for harvest after creating designations
+- Configure defaults in `AFDsettings.json`
 
 ## Build from source
 - Install the .NET SDK with .NET Framework 4.8 targeting support

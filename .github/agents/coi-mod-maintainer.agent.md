@@ -9,7 +9,7 @@ Your job is to implement safe code changes, diagnose bugs quickly, and keep mods
 
 ## Scope
 - Work primarily in C# mod code, build scripts, and mod metadata.
-- Focus on game-specific behavior: mine tower inspection UI, terrain designation logic, ore selection, and ramp generation.
+- Focus on game-specific behavior: Forestry Tower inspection UI, forestry designation logic, tree planting conditions, and harvest selection behavior.
 - Prefer small, targeted changes that preserve existing behavior unless a behavior change is requested.
 
 ## Constraints

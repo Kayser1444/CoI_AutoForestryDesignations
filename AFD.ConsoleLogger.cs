@@ -47,7 +47,7 @@ public static class ConsoleLogger
     private static void OnLogReceived(LogEntry logEntry)
     {
         // Filter for AutoForestryDesignations logs only (optional - remove if you want all logs)
-        if (!logEntry.Message.Contains("[AFD]") && !logEntry.Message.Contains("[AutoDepth]"))
+        if (!logEntry.Message.Contains("[AFD]"))
             return;
 
         // Format the log entry similar to the file logger

@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Kayser
 // SPDX-License-Identifier: MIT
-// Auto Forestry Designations - Mine Tower Inspector Patching
+// Auto Forestry Designations - Forestry Tower Inspector Patching
 using System;
 using System.Reflection;
 using HarmonyLib;
@@ -13,32 +13,32 @@ using UnityEngine;
 
 namespace AutoForestryDesignations
 {
-    public static partial class AutoDepthDesignation
+    public static partial class AutoForestryDesignation
     {
         public static void Apply(Harmony harmony)
         {
             try
             {
-                LogDebug("[AutoDepth] Apply() called");
+                LogDebug("[AFD] Apply() called");
                 
                 var assembly = typeof(Mafi.Unity.Entities.EntityMb).Assembly;
                 var inspectorType = assembly.GetType("Mafi.Unity.Ui.Inspectors.ForestryTowerInspector");
                 if (inspectorType == null)
                 {
-                    Log.Warning("[AutoDepth] ForestryTowerInspector type not found");
+                    Log.Warning("[AFD] ForestryTowerInspector type not found");
                     return;
                 }
 
-                LogDebug("[AutoDepth] Found ForestryTowerInspector type");
+                LogDebug("[AFD] Found ForestryTowerInspector type");
 
                 var ctors = inspectorType.GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-                LogDebug($"[AutoDepth] Found {ctors.Length} constructors");
+                LogDebug($"[AFD] Found {ctors.Length} constructors");
                 
                 if (ctors.Length > 0)
                 {
                     harmony.Patch(ctors[0],
-                        postfix: new HarmonyMethod(typeof(AutoDepthDesignation), nameof(InspectorCtorPostfix)));
-                    LogDebug("[AutoDepth] Patched first constructor");
+                        postfix: new HarmonyMethod(typeof(AutoForestryDesignation), nameof(InspectorCtorPostfix)));
+                    LogDebug("[AFD] Patched first constructor");
                 }
 
                 // Patch OnActivated() on ForestryTowerInspector (DeclaredOnly — safe, does not affect
@@ -50,17 +50,17 @@ namespace AutoForestryDesignations
                         BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
                     if (onActivatedMethod != null)
                         harmony.Patch(onActivatedMethod,
-                            postfix: new HarmonyMethod(typeof(AutoDepthDesignation), nameof(InspectorActivatePostfix)));
+                            postfix: new HarmonyMethod(typeof(AutoForestryDesignation), nameof(InspectorActivatePostfix)));
                 }
                 catch (Exception ex2)
                 {
-                    Log.Warning($"[AutoDepth] EXCEPTION patching OnActivated: {ex2}");
+                    Log.Warning($"[AFD] EXCEPTION patching OnActivated: {ex2}");
                 }
 
             }
             catch (Exception ex)
             { 
-                Log.Warning($"AutoDepth.Apply EXCEPTION: {ex}");
+                Log.Warning($"[AFD] Apply EXCEPTION: {ex}");
             }
         }
 
@@ -76,7 +76,7 @@ namespace AutoForestryDesignations
                 if (!s_settingsLoadAttempted)
                     LoadSettingsFromJson();
 
-                LogDebug("[AutoDepth] InspectorCtorPostfix called");
+                LogDebug("[AFD] InspectorCtorPostfix called");
 
                 var inspectorType = __instance.GetType();
                 var baseType = inspectorType;
@@ -91,14 +91,14 @@ namespace AutoForestryDesignations
 
                 if (entityProp == null)
                 {
-                    Log.Warning("[AutoDepth] Entity property not found on inspector");
+                    Log.Warning("[AFD] Entity property not found on inspector");
                     return;
                 }
 
                 var inspector = __instance;
                 Func<IAreaManagingTower?> getTower = () => entityProp.GetValue(inspector) as IAreaManagingTower;
 
-                var atdPanel = DesignationPanel.Build(getTower, inspector);
+                var afdPanel = DesignationPanel.Build(getTower, inspector);
 
                 FieldInfo? mainBodyField = null;
                 var searchType = inspectorType;
@@ -113,21 +113,21 @@ namespace AutoForestryDesignations
                     var mainBody = mainBodyField.GetValue(__instance) as Column;
                     if (mainBody != null)
                     {
-                        mainBody.InsertAt(0, atdPanel);
+                        mainBody.InsertAt(0, afdPanel);
                         mainBody.Show();
-                        LogDebug("[AutoDepth] AFD panel and Ore Composition panel inserted");
+                        LogDebug("[AFD] Forestry Designations panel inserted");
                     }
                     else
                     {
-                        Log.Warning("[AutoDepth] MainBody field is not a Column");
+                        Log.Warning("[AFD] MainBody field is not a Column");
                     }
                 }
                 else
                 {
-                    Log.Warning("[AutoDepth] MainBody field not found");
+                    Log.Warning("[AFD] MainBody field not found");
                 }
             }
-            catch (Exception ex) { Debug.Log($"AutoDepth InspectorCtorPostfix EXCEPTION: {ex}"); }
+            catch (Exception ex) { Debug.Log($"[AFD] InspectorCtorPostfix EXCEPTION: {ex}"); }
         }
     }
 }

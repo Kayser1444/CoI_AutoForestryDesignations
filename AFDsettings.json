@@ -1,0 +1,21 @@
+{
+  "_comment": "AutoForestryDesignations settings. These values set the defaults loaded at game start. Most settings can also be changed per Forestry Tower in-game via the tower inspector.",
+
+  "_comment_batchSize": "How many designations are placed per coroutine frame before yielding to the game. Lower values keep the game more responsive during large scans; higher values complete scans faster. While paused, the effective batch size is boosted by x4 and clamped. Absolute max: 200. Default: 30.",
+  "batchSize": 30,
+
+  "_comment_avoidInfertileTiles": "Default for new tower panels. When true, Create Designations skips tiles where the ground is not fertile for tree growth. Default: true.",
+  "avoidInfertileTiles": true,
+
+  "_comment_avoidTilesWithTrees": "Default for new tower panels. When true, Create Designations skips tiles that already contain a tree. Default: false.",
+  "avoidTilesWithTrees": false,
+
+  "_comment_avoidMiningDesignations": "Default for new tower panels. When true, Create Designations skips tiles that already contain mining or level designations. Default: true.",
+  "avoidMiningDesignations": true,
+
+  "_comment_maxTiles": "Default maximum number of forestry designation tiles to place per run. 0 = no limit. Default: 0.",
+  "maxTiles": 0,
+
+  "_comment_markFullyGrownForHarvest": "Default for new tower panels. When true, fully grown trees in the tower area are marked for harvest after creating designations. Default: false.",
+  "markFullyGrownForHarvest": false
+}
