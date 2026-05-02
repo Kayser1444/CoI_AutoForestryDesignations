@@ -22,7 +22,7 @@ namespace AutoForestryDesignations
     {
         private const int BUCKET_COUNT = 6;
         private const int GROWTH_STAGE_BUCKET_COUNT = BUCKET_COUNT - 1;
-        private const int PANEL_GAP_PT = 3;
+        private const int PANEL_GAP_PT = 2;
         private const int CARD_PADDING_PT = 6;
 
         private static readonly ColorRgba[] s_belowHarvestColors =
