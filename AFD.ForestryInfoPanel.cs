@@ -14,6 +14,7 @@ using Mafi.Unity.UiToolkit.Component;
 using Mafi.Unity.UiToolkit.Library;
 using Mafi.Unity.Ui.Library;
 using Row = Mafi.Unity.UiToolkit.Library.Row;
+using ClickEvent = UnityEngine.UIElements.ClickEvent;
 
 namespace AutoForestryDesignations
 {
@@ -66,7 +67,7 @@ namespace AutoForestryDesignations
                 .Title(new LocStrFormatted("Forestry Composition"),
                        new LocStrFormatted("Current trees and projected wood output in this tower's forestry area."));
 
-            panel.Header.Add(new ButtonIcon(Button.General,
+            var refreshButton = new ButtonIcon(Button.General,
                 "Assets/Unity/UserInterface/General/Repeat.svg",
                 (Action)delegate
                 {
@@ -75,9 +76,12 @@ namespace AutoForestryDesignations
                 .Compact()
                 .IconSize(14.px())
                 .MarginLeft(4.pt())
-                .Tooltip(new LocStrFormatted("Scan forestry composition")));
+                .Tooltip(new LocStrFormatted("Refresh forestry composition"));
+            refreshButton.OnClick((ClickEvent evt) => evt.StopPropagation());
 
+            panel.Header.Add(refreshButton);
             panel.BodyAdd(contentCol);
+            panel.Collapsed(false);
             return panel;
         }
 
