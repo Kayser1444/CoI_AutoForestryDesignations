@@ -22,6 +22,8 @@ namespace AutoForestryDesignations
     {
         private const int BUCKET_COUNT = 6;
         private const int GROWTH_STAGE_BUCKET_COUNT = BUCKET_COUNT - 1;
+        private const int PANEL_GAP_PT = 3;
+        private const int CARD_PADDING_PT = 6;
 
         private static readonly ColorRgba[] s_belowHarvestColors =
         {
@@ -52,7 +54,7 @@ namespace AutoForestryDesignations
 
         internal static PanelWithHeader Build(Func<IAreaManagingTower?> getTower, object key)
         {
-            var contentCol = new Column(2.pt());
+            var contentCol = new Column(PANEL_GAP_PT.pt());
             var promptLabel = new Label(new LocStrFormatted("Press \u21ba to scan forestry composition."))
                 .Color(Theme.InactiveColor);
             contentCol.Add(promptLabel);
@@ -403,7 +405,7 @@ namespace AutoForestryDesignations
 
         private static Row BuildKpiRow(ForestryStats stats)
         {
-            var row = new Row().Gap(1.pt()).AlignItemsStretch().AlignSelfStretch().MarginLeft(1.pt()).MarginRight(1.pt());
+            var row = new Row().Gap(PANEL_GAP_PT.pt()).AlignItemsStretch().AlignSelfStretch();
             row.Add(BuildKpi(
                 "Trees",
                 string.Format("{0}/{1}", stats.TreeCount, stats.TreeCapacity),
@@ -428,7 +430,7 @@ namespace AutoForestryDesignations
                 .FlexGrow(1f)
                 .Background(Theme.BackgroundDark)
                 .OverflowHidden()
-                .Padding(6.pt())
+                .Padding(CARD_PADDING_PT.pt())
                 .Gap(2.pt());
 
             col.BorderRadius(8);
@@ -458,9 +460,8 @@ namespace AutoForestryDesignations
 
             var section = new Column(2.pt())
                 .AlignSelfStretch()
-                .MarginTop(2.pt())
                 .Background(Theme.BackgroundDark)
-                .Padding(4.pt())
+                .Padding(CARD_PADDING_PT.pt())
                 .Gap(2.pt());
             section.BorderRadius(8);
             section.Border(1.px(), Theme.BorderColor, 8);

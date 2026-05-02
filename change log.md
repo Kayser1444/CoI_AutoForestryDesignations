@@ -12,3 +12,4 @@
 - Made **Forestry Composition** collapsible and fixed its manual refresh button so it does not also toggle the panel
 - Fixed **Forestry Composition** tree capacity to scan actual plantable designation tiles instead of using the vanilla approximate capacity helper
 - Refresh **Forestry Composition** automatically after creating or clearing forestry designations
+- Tightened **Forestry Composition** card alignment and spacing
