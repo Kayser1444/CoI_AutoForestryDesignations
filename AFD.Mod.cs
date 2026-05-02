@@ -76,7 +76,7 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
     /// Reachability target square size (n*n) used when matching candidate designation tiles
     /// to visited pathable tiles. Hidden tuning parameter; configurable via settings/console.
     /// </summary>
-    public static int PathabilityTargetSize { get; private set; } = 4;
+    public static int PathabilityTargetSize { get; private set; } = 3;
     public static void SetPathabilityTargetSize(int value) => PathabilityTargetSize = Math.Max(1, Math.Min(9, value));
 
     /// <summary>Maximum number of forestry designation tiles to place per run. 0 = no limit.</summary>

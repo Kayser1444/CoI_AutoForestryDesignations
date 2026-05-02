@@ -138,6 +138,9 @@ namespace AutoForestryDesignations
                 bool canEvaluateReachability = s_vehiclePathFindingManager != null && s_standardVehiclePathFindingParams != null;
                 bool filterUnreachableCandidates = onlyReachableTiles && canEvaluateReachability;
                 int filteredOutCount = 0;
+                var placedOrigins = new HashSet<Tile2i>();
+                List<DesignationCandidate>? unreachableCandidates =
+                    (filterUnreachableCandidates && maxTiles == 0) ? new List<DesignationCandidate>() : null;
 
                 if (onlyReachableTiles && !canEvaluateReachability)
                     Log.Warning("[AFD] Only reachable tiles is enabled, but pathfinding is unavailable; skipping reachability filter for this run.");
@@ -150,13 +153,38 @@ namespace AutoForestryDesignations
                     if (filterUnreachableCandidates && !candidate.DrivingDistanceToTower.HasValue)
                     {
                         filteredOutCount++;
+                        if (unreachableCandidates != null)
+                            unreachableCandidates.Add(candidate);
                         continue;
                     }
 
                     if (s_desigManager.AddOrReplaceDesignation(s_forestryProto, candidate.Data))
+                    {
                         designCount++;
+                        placedOrigins.Add(candidate.Origin);
+                    }
                     if (designCount % GetEffectiveBatchSize() == 0)
                         yield return null;
+                }
+
+                if (unreachableCandidates != null && unreachableCandidates.Count > 0)
+                {
+                    int filledHoleCount = 0;
+                    foreach (DesignationCandidate candidate in unreachableCandidates)
+                    {
+                        if (!IsInteriorHoleCandidate(candidate.Origin, placedOrigins))
+                            continue;
+
+                        if (s_desigManager.AddOrReplaceDesignation(s_forestryProto, candidate.Data))
+                        {
+                            designCount++;
+                            filledHoleCount++;
+                            placedOrigins.Add(candidate.Origin);
+                        }
+                    }
+
+                    if (filledHoleCount > 0)
+                        LogDebug(string.Format("Backfilled {0} interior hole designations in unlimited mode", filledHoleCount));
                 }
 
                 if (filterUnreachableCandidates && filteredOutCount > 0)
@@ -297,6 +325,14 @@ namespace AutoForestryDesignations
                 }
             }
             return result;
+        }
+
+        private static bool IsInteriorHoleCandidate(Tile2i origin, HashSet<Tile2i> placedOrigins)
+        {
+            return placedOrigins.Contains(origin + new RelTile2i(4, 0))
+                && placedOrigins.Contains(origin + new RelTile2i(-4, 0))
+                && placedOrigins.Contains(origin + new RelTile2i(0, 4))
+                && placedOrigins.Contains(origin + new RelTile2i(0, -4));
         }
 
         private static bool TryFindNearestPathableTile(
