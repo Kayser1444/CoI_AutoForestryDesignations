@@ -2,16 +2,18 @@
 
 A sister mod to AutoTerrainDesignations for Captain of Industry.
 
-Auto Forestry Designations adds Create/Clear controls to Forestry Towers, generating valid forestry designations inside the selected tower area.
+Auto Forestry Designations adds Create/Clear controls to Forestry Towers, generating valid forestry designations inside the selected tower area. It also extends the Forestry Tower inspector with a live composition panel showing tree counts, maturity distribution, and yield estimates.
 
 ## Features
-- Create forestry designations inside a Forestry Tower area
-- Clear forestry designations in the selected tower area without removing other designation types
-- Require fertile tiles or skip tiles that already contain trees
-- Skip existing mining and leveling designations by default
-- Limit the number of tiles created per run
-- Optionally mark harvest-ready trees in the area after creating designations, respecting the tower's Harvesting Options
-- Configure defaults in `AFDsettings.json`
+- **Create Designations** – scan the tower area and place forestry designations automatically
+- **Clear Designations** – remove forestry designations in the selected tower area without touching other designation types
+- **Forestry Composition panel** – live KPI cards for tree count, average maturity, and production capacity, plus a color-coded maturity distribution chart relative to the tower's harvest threshold
+- **Only fertile tiles** – place designations only where the ground supports tree growth
+- **Avoid terrain designations** – skip tiles that already have mining, dumping, or leveling designations
+- **Only reachable tiles** – skip candidate tiles not reachable by vehicle pathfinding; interior holes are back-filled automatically in unlimited mode
+- **Designations sorted by driving distance** – closest reachable tiles are filled first
+- **Limit tiles per run** – cap the number of designations placed per Create Designations call
+- **Configure defaults** in `AFDsettings.json`; most options are also adjustable per tower in the inspector
 
 ## Build from source
 - Install the .NET SDK with .NET Framework 4.8 targeting support
