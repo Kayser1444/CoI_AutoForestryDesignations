@@ -14,6 +14,7 @@ using Mafi.Unity.UiToolkit.Component;
 using Mafi.Unity.UiToolkit.Library;
 using Mafi.Unity.Ui.Library;
 using UnityEngine;
+using UiImage = UnityEngine.UIElements.Image;
 using Row = Mafi.Unity.UiToolkit.Library.Row;
 using ClickEvent = UnityEngine.UIElements.ClickEvent;
 
@@ -411,7 +412,7 @@ namespace AutoForestryDesignations
             row.Add(BuildKpi(
                 "Trees",
                 string.Format("{0}/{1}", stats.TreeCount, stats.TreeCapacity),
-                () => BuildMatureTreeIcon(40),
+                () => BuildMatureTreeIcon(44),
                 "Managed trees currently inside this tower's forestry designations. First number is current managed trees. Second number is estimated capacity based on currently valid planting positions."));
             row.Add(BuildKpi(
                 "Average Maturity",
@@ -523,7 +524,7 @@ namespace AutoForestryDesignations
             barWithLegend.Add(new Icon("Assets/Base/Products/Icons/TreeSapling.svg").NoTint().Size(16.px())
                 .Tooltip(new LocStrFormatted("Newly planted / lowest maturity")));
             barWithLegend.Add(bar.FlexGrow(1f));
-            barWithLegend.Add(BuildMatureTreeIcon(16)
+            barWithLegend.Add(BuildMatureTreeIcon(18)
                 .Tooltip(new LocStrFormatted("Fully grown / highest maturity")));
 
             section.Add(barWithLegend);
@@ -600,11 +601,9 @@ namespace AutoForestryDesignations
             return value >= 10f ? value.ToString("F0") + "%" : value.ToString("F1") + "%";
         }
 
-        private static StretchedImg BuildMatureTreeIcon(int sizePx)
+        private static UiComponent BuildMatureTreeIcon(int sizePx)
         {
-            return new StretchedImg(GetMatureTreeTexture())
-                .ImageFit()
-                .Size(sizePx.px());
+            return new RuntimeTextureIcon(GetMatureTreeTexture(), sizePx);
         }
 
         private static Texture2D GetMatureTreeTexture()
@@ -691,7 +690,17 @@ namespace AutoForestryDesignations
         {
             if (x < 0 || x >= size || y < 0 || y >= size)
                 return;
-            pixels[y * size + x] = color;
+            pixels[(size - 1 - y) * size + x] = color;
+        }
+
+        private sealed class RuntimeTextureIcon : UiComponent<UiImage>
+        {
+            public RuntimeTextureIcon(Texture2D texture, int sizePx)
+                : base(new UiImage())
+            {
+                Element.image = texture;
+                this.Size(sizePx.px());
+            }
         }
 
         private readonly struct PlantingCandidate
