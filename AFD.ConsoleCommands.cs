@@ -41,7 +41,7 @@ public sealed class AfdConsoleCommands
         return $"[AFD] AvoidTilesWithTrees set to {AutoForestryDesignationsMod.AvoidTilesWithTrees}.";
     }
 
-    [ConsoleCommand(false, false, "Sets whether existing mining and level designations are skipped (true/false).", null)]
+    [ConsoleCommand(false, false, "Sets whether existing terrain designations are skipped (true/false).", null)]
     private string afdSetAvoidMiningDesignations(bool value)
     {
         AutoForestryDesignationsMod.SetAvoidMiningDesignations(value);

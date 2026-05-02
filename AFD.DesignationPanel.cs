@@ -195,7 +195,7 @@ namespace AutoForestryDesignations
                 .MinDigits(3).AlignSelfStretch().MarginTopBottom(2.px());
             panel.BodyAdd(BuildToggleRow(
                 new LocStrFormatted("Avoid mining designations"),
-                new LocStrFormatted("Skip tiles that already contain mining or leveling designations."),
+                new LocStrFormatted("Skip tiles that already contain any terrain designation, including mining, dumping, or leveling."),
                 avoidMiningDisplay,
                 (Action)delegate
                 {

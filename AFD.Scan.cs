@@ -69,7 +69,7 @@ namespace AutoForestryDesignations
                     if (!allFertile || anyTree) { scanCount++; continue; }
 
                     var tile = new Tile2i(x, y);
-                    if (avoidMiningDesignations && HasMiningDesignationAt(tile))
+                    if (avoidMiningDesignations && HasTerrainDesignationAt(tile))
                     {
                         scanCount++;
                         continue;
@@ -116,14 +116,10 @@ namespace AutoForestryDesignations
             }
         }
 
-        private static bool HasMiningDesignationAt(Tile2i origin)
+        private static bool HasTerrainDesignationAt(Tile2i origin)
         {
             if (s_desigManager == null) return false;
-            var designationAt = s_desigManager.GetDesignationAt(origin);
-            if (!designationAt.HasValue) return false;
-
-            string protoId = designationAt.Value.ProtoId.Value;
-            return protoId == "MiningDesignator" || protoId == "LevelDesignator";
+            return s_desigManager.GetDesignationAt(origin).HasValue;
         }
 
         internal static void CreateDesignationsForTower(IAreaManagingTower tower)

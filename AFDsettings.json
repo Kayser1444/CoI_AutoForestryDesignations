@@ -10,7 +10,7 @@
   "_comment_avoidTilesWithTrees": "Default for new tower panels. When true, Create Designations skips tiles that already contain a tree. Default: false.",
   "avoidTilesWithTrees": false,
 
-  "_comment_avoidMiningDesignations": "Default for new tower panels. When true, Create Designations skips tiles that already contain mining or level designations. Default: true.",
+  "_comment_avoidMiningDesignations": "Default for new tower panels. When true, Create Designations skips tiles that already contain any terrain designation, including mining, dumping, or leveling. Default: true.",
   "avoidMiningDesignations": true,
 
   "_comment_maxTiles": "Default maximum number of forestry designation tiles to place per run. 0 = no limit. Default: 0.",

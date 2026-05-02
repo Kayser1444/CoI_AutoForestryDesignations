@@ -63,7 +63,7 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
     public static bool AvoidTilesWithTrees { get; private set; } = false;
     public static void SetAvoidTilesWithTrees(bool value) => AvoidTilesWithTrees = value;
 
-    /// <summary>Skip tiles that already have mining or level designations. Default: true.</summary>
+    /// <summary>Skip tiles that already have terrain designations. Default: true.</summary>
     public static bool AvoidMiningDesignations { get; private set; } = true;
     public static void SetAvoidMiningDesignations(bool value) => AvoidMiningDesignations = value;
 

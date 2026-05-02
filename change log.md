@@ -3,5 +3,5 @@
 ## 0.1.0
 - Initial AutoForestryDesignations project scaffolded from AutoTerrainDesignations
 - Added Forestry Tower Create/Clear controls for automatic forestry designation placement
-- Added `AFDsettings.json` defaults for fertile tile filtering, existing tree filtering, mining designation filtering, max tiles, and grown-tree harvest marking
+- Added `AFDsettings.json` defaults for fertile tile filtering, existing tree filtering, terrain designation filtering, max tiles, and grown-tree harvest marking
 - Fixed: Clear only removes forestry designations in the selected tower area
