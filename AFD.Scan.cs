@@ -133,6 +133,8 @@ namespace AutoForestryDesignations
 
             if (markHarvestReady)
                 MarkHarvestReadyTreesForHarvest(tower, treesManager, area, bbMin, bbMax);
+
+            QueueForestryInfoRefresh(tower);
         }
 
         private static Tile2i GetTowerPosition(IAreaManagingTower tower, Tile2i bbMin, Tile2i bbMax)
@@ -171,6 +173,12 @@ namespace AutoForestryDesignations
         internal static void CreateDesignationsForTower(IAreaManagingTower tower)
         {
             s_coroutineHost?.StartCoroutine(CreateDesignationsCoroutine(tower));
+        }
+
+        private static void QueueForestryInfoRefresh(IAreaManagingTower tower)
+        {
+            if (tower is ForestryTower forestryTower)
+                AutoForestryDesignationsTicker.QueueForestryInfoRefresh(forestryTower);
         }
 
 

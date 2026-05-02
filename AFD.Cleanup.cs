@@ -44,6 +44,7 @@ namespace AutoForestryDesignations
         internal static void ClearDesignationsForTower(IAreaManagingTower tower)
         {
             ClearDesignationsInArea(tower);
+            QueueForestryInfoRefresh(tower);
         }
 
     }
