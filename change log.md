@@ -13,3 +13,4 @@
 - Fixed **Forestry Composition** tree capacity to scan actual plantable designation tiles instead of using the vanilla approximate capacity helper
 - Refresh **Forestry Composition** automatically after creating or clearing forestry designations
 - Tightened **Forestry Composition** card alignment and spacing
+- Added a custom product-style mature tree icon for **Forestry Composition**

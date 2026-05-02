@@ -24,6 +24,7 @@ namespace AutoForestryDesignations
         private const int GROWTH_STAGE_BUCKET_COUNT = BUCKET_COUNT - 1;
         private const int PANEL_GAP_PT = 2;
         private const int CARD_PADDING_PT = 6;
+        private const string MATURE_TREE_ICON = "Assets/AutoForestryDesignations/Icons/MatureTree.svg";
 
         private static readonly ColorRgba[] s_belowHarvestColors =
         {
@@ -409,7 +410,7 @@ namespace AutoForestryDesignations
             row.Add(BuildKpi(
                 "Trees",
                 string.Format("{0}/{1}", stats.TreeCount, stats.TreeCapacity),
-                "Assets/Unity/Generated/Icons/LayoutEntity/SpruceTree.png",
+                MATURE_TREE_ICON,
                 "Managed trees currently inside this tower's forestry designations. First number is current managed trees. Second number is estimated capacity based on currently valid planting positions."));
             row.Add(BuildKpi(
                 "Average Maturity",
@@ -516,7 +517,7 @@ namespace AutoForestryDesignations
             barWithLegend.Add(new Icon("Assets/Base/Products/Icons/TreeSapling.svg").NoTint().Size(16.px())
                 .Tooltip(new LocStrFormatted("Newly planted / lowest maturity")));
             barWithLegend.Add(bar.FlexGrow(1f));
-            barWithLegend.Add(new Icon("Assets/Unity/Generated/Icons/LayoutEntity/SpruceTree.png").NoTint().Size(16.px())
+            barWithLegend.Add(new Icon(MATURE_TREE_ICON).NoTint().Size(16.px())
                 .Tooltip(new LocStrFormatted("Fully grown / highest maturity")));
 
             section.Add(barWithLegend);
