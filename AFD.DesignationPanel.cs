@@ -215,7 +215,7 @@ namespace AutoForestryDesignations
                 ? AutoForestryDesignation.GetTowerMaxTiles(initialTower)
                 : AutoForestryDesignationsMod.MaxTiles;
             var maxTilesDisplay = new Mafi.Unity.Ui.Library.Display(new LocStrFormatted(MaxTilesText(initMaxTiles)))
-                .MinDigits(3).AlignSelfStretch().MarginTopBottom(2.px());
+                .MinDigits(4).AlignSelfStretch().MarginTopBottom(2.px());
             panel.BodyAdd(BuildStepRow(
                 new LocStrFormatted("Max tiles"),
                 new LocStrFormatted("Maximum number of designation tiles to place per run. 0 = no limit (\u221e)."),
@@ -305,8 +305,8 @@ namespace AutoForestryDesignations
 
         private static int ModifierStepSize()
         {
-            if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) return 10;
-            if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) return 5;
+            if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) return 100;
+            if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) return 10;
             return 1;
         }
 
