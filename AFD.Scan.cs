@@ -28,7 +28,7 @@ namespace AutoForestryDesignations
             bool avoidWithTrees = towerSettings.AvoidTilesWithTrees;
             bool avoidMiningDesignations = towerSettings.AvoidMiningDesignations;
             int maxTiles = towerSettings.MaxTiles;
-            bool markFullyGrown = towerSettings.MarkFullyGrownForHarvest;
+            bool markHarvestReady = towerSettings.MarkHarvestReadyForHarvest;
 
             var bbMin = TerrainDesignation.GetOrigin(area.BoundingBoxMin);
             var bbMax = TerrainDesignation.GetOrigin(area.BoundingBoxMax);
@@ -96,7 +96,7 @@ namespace AutoForestryDesignations
 
             LogDebug(string.Format("Created {0} forestry designations", designCount));
 
-            if (markFullyGrown)
+            if (markHarvestReady)
                 MarkHarvestReadyTreesForHarvest(tower, treesManager, area, bbMin, bbMax);
         }
 

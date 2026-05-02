@@ -72,8 +72,8 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
     public static void SetMaxTiles(int value) => MaxTiles = Math.Max(0, value);
 
     /// <summary>After placing designations, mark harvest-ready trees in the area for harvest.</summary>
-    public static bool MarkFullyGrownForHarvest { get; private set; } = false;
-    public static void SetMarkFullyGrownForHarvest(bool value) => MarkFullyGrownForHarvest = value;
+    public static bool MarkHarvestReadyForHarvest { get; private set; } = false;
+    public static void SetMarkHarvestReadyForHarvest(bool value) => MarkHarvestReadyForHarvest = value;
 
     public void Initialize(DependencyResolver resolver, bool gameWasLoaded)
     {

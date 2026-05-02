@@ -16,6 +16,6 @@
   "_comment_maxTiles": "Default maximum number of forestry designation tiles to place per run. 0 = no limit. Default: 0.",
   "maxTiles": 0,
 
-  "_comment_markFullyGrownForHarvest": "Default for new tower panels. When true, trees that match the tower's Harvesting Options are marked for harvest after creating designations. Default: false.",
-  "markFullyGrownForHarvest": false
+  "_comment_markHarvestReadyForHarvest": "Default for new tower panels. When true, trees that match the tower's Harvesting Options are marked for harvest after creating designations. Default: false.",
+  "markHarvestReadyForHarvest": false
 }

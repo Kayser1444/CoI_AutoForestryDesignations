@@ -23,7 +23,7 @@ public sealed class AfdConsoleCommands
         sb.AppendLine($"  AvoidTilesWithTrees      = {AutoForestryDesignationsMod.AvoidTilesWithTrees}");
         sb.AppendLine($"  AvoidMiningDesignations  = {AutoForestryDesignationsMod.AvoidMiningDesignations}");
         sb.AppendLine($"  MaxTiles                 = {AutoForestryDesignationsMod.MaxTiles} (0 = no limit)");
-        sb.Append(    $"  MarkFullyGrownForHarvest = {AutoForestryDesignationsMod.MarkFullyGrownForHarvest}");
+        sb.Append(    $"  MarkHarvestReadyForHarvest = {AutoForestryDesignationsMod.MarkHarvestReadyForHarvest}");
         return sb.ToString();
     }
 
@@ -56,9 +56,9 @@ public sealed class AfdConsoleCommands
     }
 
     [ConsoleCommand(false, false, "Sets whether harvest-ready trees in the area are marked for harvest after scanning (true/false).", null)]
-    private string afdSetMarkGrownForHarvest(bool value)
+    private string afdSetMarkReadyForHarvest(bool value)
     {
-        AutoForestryDesignationsMod.SetMarkFullyGrownForHarvest(value);
-        return $"[AFD] MarkFullyGrownForHarvest set to {AutoForestryDesignationsMod.MarkFullyGrownForHarvest}.";
+        AutoForestryDesignationsMod.SetMarkHarvestReadyForHarvest(value);
+        return $"[AFD] MarkHarvestReadyForHarvest set to {AutoForestryDesignationsMod.MarkHarvestReadyForHarvest}.";
     }
 }

@@ -164,9 +164,9 @@ namespace AutoForestryDesignations
                 if (maxTiles.HasValue)
                     AutoForestryDesignationsMod.SetMaxTiles(maxTiles.Value);
 
-                bool? markFullyGrownForHarvest = ParseBool(json, "markFullyGrownForHarvest");
-                if (markFullyGrownForHarvest.HasValue)
-                    AutoForestryDesignationsMod.SetMarkFullyGrownForHarvest(markFullyGrownForHarvest.Value);
+                bool? markHarvestReadyForHarvest = ParseBool(json, "markHarvestReadyForHarvest");
+                if (markHarvestReadyForHarvest.HasValue)
+                    AutoForestryDesignationsMod.SetMarkHarvestReadyForHarvest(markHarvestReadyForHarvest.Value);
             }
             catch (Exception ex)
             {

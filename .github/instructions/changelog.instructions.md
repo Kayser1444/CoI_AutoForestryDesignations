@@ -37,5 +37,5 @@ applyTo: "change log.md"
 ```markdown
 ## 0.1.13
 * **Forestry Designations** panel can now be embedded in external mod inspectors via `AutoForestryDesignationsApi.BuildDesignationPanel`
-* Added **AFDsettings.json** defaults for **Avoid infertile tiles**, **Avoid tiles with trees**, **Avoid mining designations**, **Max tiles**, and **Mark grown for harvest**
+* Added **AFDsettings.json** defaults for **Avoid infertile tiles**, **Avoid tiles with trees**, **Avoid mining designations**, **Max tiles**, and **Mark ready for harvest**
 ```

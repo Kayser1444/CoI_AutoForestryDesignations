@@ -34,7 +34,7 @@ namespace AutoForestryDesignations
             public Mafi.Unity.Ui.Library.Display AvoidWithTreesDisplay { get; }
             public Mafi.Unity.Ui.Library.Display AvoidMiningDisplay { get; }
             public Mafi.Unity.Ui.Library.Display MaxTilesDisplay { get; }
-            public Mafi.Unity.Ui.Library.Display MarkGrownDisplay { get; }
+            public Mafi.Unity.Ui.Library.Display MarkHarvestReadyDisplay { get; }
 
             public Bindings(
                 Func<IAreaManagingTower?> getTower,
@@ -42,14 +42,14 @@ namespace AutoForestryDesignations
                 Mafi.Unity.Ui.Library.Display avoidWithTreesDisplay,
                 Mafi.Unity.Ui.Library.Display avoidMiningDisplay,
                 Mafi.Unity.Ui.Library.Display maxTilesDisplay,
-                Mafi.Unity.Ui.Library.Display markGrownDisplay)
+                Mafi.Unity.Ui.Library.Display markHarvestReadyDisplay)
             {
                 GetTower = getTower;
                 AvoidInfertileDisplay = avoidInfertileDisplay;
                 AvoidWithTreesDisplay = avoidWithTreesDisplay;
                 AvoidMiningDisplay = avoidMiningDisplay;
                 MaxTilesDisplay = maxTilesDisplay;
-                MarkGrownDisplay = markGrownDisplay;
+                MarkHarvestReadyDisplay = markHarvestReadyDisplay;
             }
         }
 
@@ -74,7 +74,7 @@ namespace AutoForestryDesignations
             b.AvoidWithTreesDisplay.SetValue(new LocStrFormatted(BoolText(AutoForestryDesignation.GetTowerAvoidTilesWithTrees(tower))));
             b.AvoidMiningDisplay.SetValue(new LocStrFormatted(BoolText(AutoForestryDesignation.GetTowerAvoidMiningDesignations(tower))));
             b.MaxTilesDisplay.SetValue(new LocStrFormatted(MaxTilesText(AutoForestryDesignation.GetTowerMaxTiles(tower))));
-            b.MarkGrownDisplay.SetValue(new LocStrFormatted(BoolText(AutoForestryDesignation.GetTowerMarkFullyGrownForHarvest(tower))));
+            b.MarkHarvestReadyDisplay.SetValue(new LocStrFormatted(BoolText(AutoForestryDesignation.GetTowerMarkHarvestReadyForHarvest(tower))));
         }
 
         /// <summary>
@@ -237,29 +237,29 @@ namespace AutoForestryDesignations
                 }));
 
             // --- Mark harvest-ready trees for harvest ---
-            bool initMarkGrown = initialTower != null
-                ? AutoForestryDesignation.GetTowerMarkFullyGrownForHarvest(initialTower)
-                : AutoForestryDesignationsMod.MarkFullyGrownForHarvest;
-            var markGrownDisplay = new Mafi.Unity.Ui.Library.Display(new LocStrFormatted(BoolText(initMarkGrown)))
+            bool initMarkHarvestReady = initialTower != null
+                ? AutoForestryDesignation.GetTowerMarkHarvestReadyForHarvest(initialTower)
+                : AutoForestryDesignationsMod.MarkHarvestReadyForHarvest;
+            var markHarvestReadyDisplay = new Mafi.Unity.Ui.Library.Display(new LocStrFormatted(BoolText(initMarkHarvestReady)))
                 .MinDigits(3).AlignSelfStretch().MarginTopBottom(2.px());
             panel.BodyAdd(BuildToggleRow(
                 new LocStrFormatted("Mark ready for harvest"),
                 new LocStrFormatted("When enabled, trees that match the tower's Harvesting Options are marked for harvest each time Create Designations is run."),
-                markGrownDisplay,
+                markHarvestReadyDisplay,
                 (Action)delegate
                 {
                     var tower = getTower(); if (tower == null) return;
-                    AutoForestryDesignation.SetTowerMarkFullyGrownForHarvest(tower, true);
-                    markGrownDisplay.SetValue(new LocStrFormatted(BoolText(true)));
+                    AutoForestryDesignation.SetTowerMarkHarvestReadyForHarvest(tower, true);
+                    markHarvestReadyDisplay.SetValue(new LocStrFormatted(BoolText(true)));
                 },
                 (Action)delegate
                 {
                     var tower = getTower(); if (tower == null) return;
-                    AutoForestryDesignation.SetTowerMarkFullyGrownForHarvest(tower, false);
-                    markGrownDisplay.SetValue(new LocStrFormatted(BoolText(false)));
+                    AutoForestryDesignation.SetTowerMarkHarvestReadyForHarvest(tower, false);
+                    markHarvestReadyDisplay.SetValue(new LocStrFormatted(BoolText(false)));
                 }));
 
-            s_bindings[key] = new Bindings(getTower, avoidInfertileDisplay, avoidWithTreesDisplay, avoidMiningDisplay, maxTilesDisplay, markGrownDisplay);
+            s_bindings[key] = new Bindings(getTower, avoidInfertileDisplay, avoidWithTreesDisplay, avoidMiningDisplay, maxTilesDisplay, markHarvestReadyDisplay);
             return panel;
         }
 

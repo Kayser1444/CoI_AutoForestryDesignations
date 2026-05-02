@@ -41,7 +41,7 @@ namespace AutoForestryDesignations
             public bool AvoidTilesWithTrees { get; private set; }
             public bool AvoidMiningDesignations { get; private set; }
             public int MaxTiles { get; private set; }
-            public bool MarkFullyGrownForHarvest { get; private set; }
+            public bool MarkHarvestReadyForHarvest { get; private set; }
 
             public AFDTowerSettings()
             {
@@ -49,7 +49,7 @@ namespace AutoForestryDesignations
                 AvoidTilesWithTrees = AutoForestryDesignationsMod.AvoidTilesWithTrees;
                 AvoidMiningDesignations = AutoForestryDesignationsMod.AvoidMiningDesignations;
                 MaxTiles = AutoForestryDesignationsMod.MaxTiles;
-                MarkFullyGrownForHarvest = AutoForestryDesignationsMod.MarkFullyGrownForHarvest;
+                MarkHarvestReadyForHarvest = AutoForestryDesignationsMod.MarkHarvestReadyForHarvest;
             }
 
             public static AFDTowerSettings FromGlobalDefaults() => new AFDTowerSettings();
@@ -58,7 +58,7 @@ namespace AutoForestryDesignations
             public void SetAvoidTilesWithTrees(bool value) => AvoidTilesWithTrees = value;
             public void SetAvoidMiningDesignations(bool value) => AvoidMiningDesignations = value;
             public void SetMaxTiles(int value) => MaxTiles = Math.Max(0, value);
-            public void SetMarkFullyGrownForHarvest(bool value) => MarkFullyGrownForHarvest = value;
+            public void SetMarkHarvestReadyForHarvest(bool value) => MarkHarvestReadyForHarvest = value;
         }
 
         private static readonly Dictionary<EntityId, AFDTowerSettings> s_towerSettingsByEntityId =
@@ -110,8 +110,8 @@ namespace AutoForestryDesignations
         internal static int GetTowerMaxTiles(IAreaManagingTower tower) => GetOrCreateTowerSettings(tower).MaxTiles;
         internal static void SetTowerMaxTiles(IAreaManagingTower tower, int value) => GetOrCreateTowerSettings(tower).SetMaxTiles(value);
 
-        internal static bool GetTowerMarkFullyGrownForHarvest(IAreaManagingTower tower) => GetOrCreateTowerSettings(tower).MarkFullyGrownForHarvest;
-        internal static void SetTowerMarkFullyGrownForHarvest(IAreaManagingTower tower, bool value) => GetOrCreateTowerSettings(tower).SetMarkFullyGrownForHarvest(value);
+        internal static bool GetTowerMarkHarvestReadyForHarvest(IAreaManagingTower tower) => GetOrCreateTowerSettings(tower).MarkHarvestReadyForHarvest;
+        internal static void SetTowerMarkHarvestReadyForHarvest(IAreaManagingTower tower, bool value) => GetOrCreateTowerSettings(tower).SetMarkHarvestReadyForHarvest(value);
 
         public static void Initialize(
             ITerrainDesignationsManager desigManager,
