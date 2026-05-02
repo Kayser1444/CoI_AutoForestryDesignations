@@ -6,6 +6,7 @@ using System.Linq;
 using Mafi;
 using Mafi.Core.Buildings.Forestry;
 using Mafi.Core.Buildings.Towers;
+using Mafi.Core.Terrain.Designation;
 using Mafi.Core.Terrain.Trees;
 using Mafi.Localization;
 using Mafi.Unity.UiToolkit;
@@ -141,6 +142,9 @@ namespace AutoForestryDesignations
 
             foreach (TreeId treeId in tower.Trees)
             {
+                if (!IsTreeInManagedDesignation(tower, treeId))
+                    continue;
+
                 if (!treesManager.Trees.TryGetValue(treeId, out TreeData treeData))
                     continue;
 
@@ -180,7 +184,7 @@ namespace AutoForestryDesignations
         private static float EstimateCapacityPerYear(ForestryTower tower, TreesManager treesManager)
         {
             int approxMax = tower.GetApproxMaxTreesAllowed();
-            int liveCount = tower.Trees.Count;
+            int liveCount = tower.Trees.Count(treeId => IsTreeInManagedDesignation(tower, treeId));
             int effectiveTreeCapacity = Math.Max(approxMax, liveCount);
             if (effectiveTreeCapacity <= 0)
             {
@@ -269,6 +273,9 @@ namespace AutoForestryDesignations
             int count = 0;
             foreach (TreeId treeId in tower.Trees)
             {
+                if (!IsTreeInManagedDesignation(tower, treeId))
+                    continue;
+
                 if (!treesManager.Trees.TryGetValue(treeId, out TreeData treeData))
                     continue;
 
@@ -413,6 +420,16 @@ namespace AutoForestryDesignations
             section.Add(barWithLegend);
 
             return section;
+        }
+
+        private static bool IsTreeInManagedDesignation(ForestryTower tower, TreeId treeId)
+        {
+            foreach (TerrainDesignation designation in tower.ManagedDesignations)
+            {
+                if (designation.Area.ContainsTile(treeId.Position))
+                    return true;
+            }
+            return false;
         }
 
         private static int GetGrowthBucketIndex(float growth01)
