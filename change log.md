@@ -6,3 +6,4 @@
 - Added `AFDsettings.json` defaults for fertile-only placement, existing tree filtering, terrain designation filtering, max tiles, and harvest-ready tree marking
 - Fixed: Clear only removes forestry designations in the selected tower area
 - Fixed: Harvest marking respects the tower's vanilla Harvesting Options
+- Fixed: **Max tiles** now chooses eligible tiles closest to the selected tower first
