@@ -14,3 +14,5 @@
 - Refresh **Forestry Composition** automatically after creating or clearing forestry designations
 - Tightened **Forestry Composition** card alignment and spacing
 - Added a custom product-style mature tree icon for **Forestry Composition**
+- Updated **Forestry Composition** age labels and tooltips to use dynamic tree maturity age from game difficulty settings
+- Added a harvest-threshold divider between below-threshold and harvest-ready growth buckets
