@@ -148,9 +148,9 @@ namespace AutoForestryDesignations
             {
                 s_batchSize = ClampBatchSize(ParseInt(json, "batchSize") ?? s_batchSize);
 
-                bool? avoidInfertileTiles = ParseBool(json, "avoidInfertileTiles");
-                if (avoidInfertileTiles.HasValue)
-                    AutoForestryDesignationsMod.SetAvoidInfertileTiles(avoidInfertileTiles.Value);
+                bool? onlyFertileTiles = ParseBool(json, "onlyFertileTiles");
+                if (onlyFertileTiles.HasValue)
+                    AutoForestryDesignationsMod.SetOnlyFertileTiles(onlyFertileTiles.Value);
 
                 bool? avoidTilesWithTrees = ParseBool(json, "avoidTilesWithTrees");
                 if (avoidTilesWithTrees.HasValue)

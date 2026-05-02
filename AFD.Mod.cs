@@ -56,8 +56,8 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
     {
     }
 
-    public static bool AvoidInfertileTiles { get; private set; } = true;
-    public static void SetAvoidInfertileTiles(bool value) => AvoidInfertileTiles = value;
+    public static bool OnlyFertileTiles { get; private set; } = true;
+    public static void SetOnlyFertileTiles(bool value) => OnlyFertileTiles = value;
 
     /// <summary>Skip tiles that already have a tree. Default: false.</summary>
     public static bool AvoidTilesWithTrees { get; private set; } = false;

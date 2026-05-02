@@ -30,7 +30,7 @@ namespace AutoForestryDesignations
         private sealed class Bindings
         {
             public Func<IAreaManagingTower?> GetTower { get; }
-            public Mafi.Unity.Ui.Library.Display AvoidInfertileDisplay { get; }
+            public Mafi.Unity.Ui.Library.Display OnlyFertileDisplay { get; }
             public Mafi.Unity.Ui.Library.Display AvoidWithTreesDisplay { get; }
             public Mafi.Unity.Ui.Library.Display AvoidMiningDisplay { get; }
             public Mafi.Unity.Ui.Library.Display MaxTilesDisplay { get; }
@@ -38,14 +38,14 @@ namespace AutoForestryDesignations
 
             public Bindings(
                 Func<IAreaManagingTower?> getTower,
-                Mafi.Unity.Ui.Library.Display avoidInfertileDisplay,
+                Mafi.Unity.Ui.Library.Display onlyFertileDisplay,
                 Mafi.Unity.Ui.Library.Display avoidWithTreesDisplay,
                 Mafi.Unity.Ui.Library.Display avoidMiningDisplay,
                 Mafi.Unity.Ui.Library.Display maxTilesDisplay,
                 Mafi.Unity.Ui.Library.Display markHarvestReadyDisplay)
             {
                 GetTower = getTower;
-                AvoidInfertileDisplay = avoidInfertileDisplay;
+                OnlyFertileDisplay = onlyFertileDisplay;
                 AvoidWithTreesDisplay = avoidWithTreesDisplay;
                 AvoidMiningDisplay = avoidMiningDisplay;
                 MaxTilesDisplay = maxTilesDisplay;
@@ -70,7 +70,7 @@ namespace AutoForestryDesignations
             if (!s_bindings.TryGetValue(key, out var b)) return;
             var tower = b.GetTower();
             if (tower == null) return;
-            b.AvoidInfertileDisplay.SetValue(new LocStrFormatted(BoolText(AutoForestryDesignation.GetTowerAvoidInfertileTiles(tower))));
+            b.OnlyFertileDisplay.SetValue(new LocStrFormatted(BoolText(AutoForestryDesignation.GetTowerOnlyFertileTiles(tower))));
             b.AvoidWithTreesDisplay.SetValue(new LocStrFormatted(BoolText(AutoForestryDesignation.GetTowerAvoidTilesWithTrees(tower))));
             b.AvoidMiningDisplay.SetValue(new LocStrFormatted(BoolText(AutoForestryDesignation.GetTowerAvoidMiningDesignations(tower))));
             b.MaxTilesDisplay.SetValue(new LocStrFormatted(MaxTilesText(AutoForestryDesignation.GetTowerMaxTiles(tower))));
@@ -141,27 +141,27 @@ namespace AutoForestryDesignations
 
             var initialTower = getTower();
 
-            // --- Avoid infertile tiles ---
-            bool initAvoidInfertile = initialTower != null
-                ? AutoForestryDesignation.GetTowerAvoidInfertileTiles(initialTower)
-                : AutoForestryDesignationsMod.AvoidInfertileTiles;
-            var avoidInfertileDisplay = new Mafi.Unity.Ui.Library.Display(new LocStrFormatted(BoolText(initAvoidInfertile)))
+            // --- Only fertile tiles ---
+            bool initOnlyFertile = initialTower != null
+                ? AutoForestryDesignation.GetTowerOnlyFertileTiles(initialTower)
+                : AutoForestryDesignationsMod.OnlyFertileTiles;
+            var onlyFertileDisplay = new Mafi.Unity.Ui.Library.Display(new LocStrFormatted(BoolText(initOnlyFertile)))
                 .MinDigits(3).AlignSelfStretch().MarginTopBottom(2.px());
             panel.BodyAdd(BuildToggleRow(
-                new LocStrFormatted("Avoid infertile tiles"),
-                new LocStrFormatted("Skip tiles where the ground is not fertile for tree growth (e.g. rock, sand, ocean). Infertile tiles show as yellow designations."),
-                avoidInfertileDisplay,
+                new LocStrFormatted("Only fertile tiles"),
+                new LocStrFormatted("Place designations only where the ground is fertile for tree growth (e.g. not rock, sand, or ocean)."),
+                onlyFertileDisplay,
                 (Action)delegate
                 {
                     var tower = getTower(); if (tower == null) return;
-                    AutoForestryDesignation.SetTowerAvoidInfertileTiles(tower, true);
-                    avoidInfertileDisplay.SetValue(new LocStrFormatted(BoolText(true)));
+                    AutoForestryDesignation.SetTowerOnlyFertileTiles(tower, true);
+                    onlyFertileDisplay.SetValue(new LocStrFormatted(BoolText(true)));
                 },
                 (Action)delegate
                 {
                     var tower = getTower(); if (tower == null) return;
-                    AutoForestryDesignation.SetTowerAvoidInfertileTiles(tower, false);
-                    avoidInfertileDisplay.SetValue(new LocStrFormatted(BoolText(false)));
+                    AutoForestryDesignation.SetTowerOnlyFertileTiles(tower, false);
+                    onlyFertileDisplay.SetValue(new LocStrFormatted(BoolText(false)));
                 }));
 
             // --- Avoid tiles with trees ---
@@ -259,7 +259,7 @@ namespace AutoForestryDesignations
                     markHarvestReadyDisplay.SetValue(new LocStrFormatted(BoolText(false)));
                 }));
 
-            s_bindings[key] = new Bindings(getTower, avoidInfertileDisplay, avoidWithTreesDisplay, avoidMiningDisplay, maxTilesDisplay, markHarvestReadyDisplay);
+            s_bindings[key] = new Bindings(getTower, onlyFertileDisplay, avoidWithTreesDisplay, avoidMiningDisplay, maxTilesDisplay, markHarvestReadyDisplay);
             return panel;
         }
 

@@ -22,7 +22,7 @@ applyTo: "change log.md"
 - API additions visible to external modders are documented (e.g. new `AutoForestryDesignationsApi` methods).
 - Settings file additions are documented with the key name(s) and what they control.
 - Start each bullet with a capital letter; no trailing period.
-- Use **bold** for setting names and UI control names (e.g. **Avoid infertile tiles**, **Max tiles**).
+- Use **bold** for setting names and UI control names (e.g. **Only fertile tiles**, **Max tiles**).
 - Fixes start with `Fixed:` followed by a short description.
 - Sub-bullets are used when a single feature has multiple related details worth calling out.
 
@@ -37,5 +37,5 @@ applyTo: "change log.md"
 ```markdown
 ## 0.1.13
 * **Forestry Designations** panel can now be embedded in external mod inspectors via `AutoForestryDesignationsApi.BuildDesignationPanel`
-* Added **AFDsettings.json** defaults for **Avoid infertile tiles**, **Avoid tiles with trees**, **Avoid mining designations**, **Max tiles**, and **Mark ready for harvest**
+* Added **AFDsettings.json** defaults for **Only fertile tiles**, **Avoid tiles with trees**, **Avoid mining designations**, **Max tiles**, and **Mark ready for harvest**
 ```

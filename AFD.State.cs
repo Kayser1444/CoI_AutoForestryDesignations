@@ -37,7 +37,7 @@ namespace AutoForestryDesignations
 
         private sealed class AFDTowerSettings
         {
-            public bool AvoidInfertileTiles { get; private set; }
+            public bool OnlyFertileTiles { get; private set; }
             public bool AvoidTilesWithTrees { get; private set; }
             public bool AvoidMiningDesignations { get; private set; }
             public int MaxTiles { get; private set; }
@@ -45,7 +45,7 @@ namespace AutoForestryDesignations
 
             public AFDTowerSettings()
             {
-                AvoidInfertileTiles = AutoForestryDesignationsMod.AvoidInfertileTiles;
+                OnlyFertileTiles = AutoForestryDesignationsMod.OnlyFertileTiles;
                 AvoidTilesWithTrees = AutoForestryDesignationsMod.AvoidTilesWithTrees;
                 AvoidMiningDesignations = AutoForestryDesignationsMod.AvoidMiningDesignations;
                 MaxTiles = AutoForestryDesignationsMod.MaxTiles;
@@ -54,7 +54,7 @@ namespace AutoForestryDesignations
 
             public static AFDTowerSettings FromGlobalDefaults() => new AFDTowerSettings();
 
-            public void SetAvoidInfertileTiles(bool value) => AvoidInfertileTiles = value;
+            public void SetOnlyFertileTiles(bool value) => OnlyFertileTiles = value;
             public void SetAvoidTilesWithTrees(bool value) => AvoidTilesWithTrees = value;
             public void SetAvoidMiningDesignations(bool value) => AvoidMiningDesignations = value;
             public void SetMaxTiles(int value) => MaxTiles = Math.Max(0, value);
@@ -98,8 +98,8 @@ namespace AutoForestryDesignations
         }
 
         // --- Forestry per-tower settings accessors ---
-        internal static bool GetTowerAvoidInfertileTiles(IAreaManagingTower tower) => GetOrCreateTowerSettings(tower).AvoidInfertileTiles;
-        internal static void SetTowerAvoidInfertileTiles(IAreaManagingTower tower, bool value) => GetOrCreateTowerSettings(tower).SetAvoidInfertileTiles(value);
+        internal static bool GetTowerOnlyFertileTiles(IAreaManagingTower tower) => GetOrCreateTowerSettings(tower).OnlyFertileTiles;
+        internal static void SetTowerOnlyFertileTiles(IAreaManagingTower tower, bool value) => GetOrCreateTowerSettings(tower).SetOnlyFertileTiles(value);
 
         internal static bool GetTowerAvoidTilesWithTrees(IAreaManagingTower tower) => GetOrCreateTowerSettings(tower).AvoidTilesWithTrees;
         internal static void SetTowerAvoidTilesWithTrees(IAreaManagingTower tower, bool value) => GetOrCreateTowerSettings(tower).SetAvoidTilesWithTrees(value);

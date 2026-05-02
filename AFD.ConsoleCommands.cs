@@ -19,7 +19,7 @@ public sealed class AfdConsoleCommands
     {
         var sb = new StringBuilder();
         sb.AppendLine("[AFD] Current settings:");
-        sb.AppendLine($"  AvoidInfertileTiles      = {AutoForestryDesignationsMod.AvoidInfertileTiles}");
+        sb.AppendLine($"  OnlyFertileTiles         = {AutoForestryDesignationsMod.OnlyFertileTiles}");
         sb.AppendLine($"  AvoidTilesWithTrees      = {AutoForestryDesignationsMod.AvoidTilesWithTrees}");
         sb.AppendLine($"  AvoidMiningDesignations  = {AutoForestryDesignationsMod.AvoidMiningDesignations}");
         sb.AppendLine($"  MaxTiles                 = {AutoForestryDesignationsMod.MaxTiles} (0 = no limit)");
@@ -28,10 +28,10 @@ public sealed class AfdConsoleCommands
     }
 
     [ConsoleCommand(false, false, "Sets whether fertile-only tiles are targeted (true/false).", null)]
-    private string afdSetAvoidInfertile(bool value)
+    private string afdSetOnlyFertileTiles(bool value)
     {
-        AutoForestryDesignationsMod.SetAvoidInfertileTiles(value);
-        return $"[AFD] AvoidInfertileTiles set to {AutoForestryDesignationsMod.AvoidInfertileTiles}.";
+        AutoForestryDesignationsMod.SetOnlyFertileTiles(value);
+        return $"[AFD] OnlyFertileTiles set to {AutoForestryDesignationsMod.OnlyFertileTiles}.";
     }
 
     [ConsoleCommand(false, false, "Sets whether tiles that already have a tree are skipped (true/false).", null)]

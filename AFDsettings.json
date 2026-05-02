@@ -4,8 +4,8 @@
   "_comment_batchSize": "How many designations are placed per coroutine frame before yielding to the game. Lower values keep the game more responsive during large scans; higher values complete scans faster. While paused, the effective batch size is boosted by x4 and clamped. Absolute max: 200. Default: 30.",
   "batchSize": 30,
 
-  "_comment_avoidInfertileTiles": "Default for new tower panels. When true, Create Designations skips tiles where the ground is not fertile for tree growth. Default: true.",
-  "avoidInfertileTiles": true,
+  "_comment_onlyFertileTiles": "Default for new tower panels. When true, Create Designations places designations only where the ground is fertile for tree growth. Default: true.",
+  "onlyFertileTiles": true,
 
   "_comment_avoidTilesWithTrees": "Default for new tower panels. When true, Create Designations skips tiles that already contain a tree. Default: false.",
   "avoidTilesWithTrees": false,

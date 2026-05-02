@@ -7,7 +7,7 @@ Auto Forestry Designations adds Create/Clear controls to Forestry Towers, genera
 ## Features
 - Create forestry designations inside a Forestry Tower area
 - Clear forestry designations in the selected tower area without removing other designation types
-- Skip infertile tiles or tiles that already contain trees
+- Require fertile tiles or skip tiles that already contain trees
 - Skip existing mining and leveling designations by default
 - Limit the number of tiles created per run
 - Optionally mark harvest-ready trees in the area after creating designations, respecting the tower's Harvesting Options

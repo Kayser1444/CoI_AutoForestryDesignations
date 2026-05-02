@@ -24,7 +24,7 @@ namespace AutoForestryDesignations
             var terrMgr = s_desigManager.TerrainManager;
             var treesManager = s_desigManager.TreesManager;
             var towerSettings = GetOrCreateTowerSettings(tower);
-            bool avoidInfertile = towerSettings.AvoidInfertileTiles;
+            bool onlyFertile = towerSettings.OnlyFertileTiles;
             bool avoidWithTrees = towerSettings.AvoidTilesWithTrees;
             bool avoidMiningDesignations = towerSettings.AvoidMiningDesignations;
             int maxTiles = towerSettings.MaxTiles;
@@ -61,7 +61,7 @@ namespace AutoForestryDesignations
                         for (int dx = 0; dx < 4; dx++)
                         {
                             var sub = new Tile2i(x + dx, y + dy);
-                            if (avoidInfertile && allFertile && !treesManager.IsGroundFertileAtPosition(sub))
+                            if (onlyFertile && allFertile && !treesManager.IsGroundFertileAtPosition(sub))
                                 allFertile = false;
                             if (avoidWithTrees && !anyTree && treesManager.HasTree(new TreeId(sub.AsSlim)))
                                 anyTree = true;
