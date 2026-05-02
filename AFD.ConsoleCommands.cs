@@ -55,7 +55,7 @@ public sealed class AfdConsoleCommands
         return $"[AFD] MaxTiles set to {AutoForestryDesignationsMod.MaxTiles}.";
     }
 
-    [ConsoleCommand(false, false, "Sets whether fully grown trees in the area are marked for harvest after scanning (true/false).", null)]
+    [ConsoleCommand(false, false, "Sets whether harvest-ready trees in the area are marked for harvest after scanning (true/false).", null)]
     private string afdSetMarkGrownForHarvest(bool value)
     {
         AutoForestryDesignationsMod.SetMarkFullyGrownForHarvest(value);

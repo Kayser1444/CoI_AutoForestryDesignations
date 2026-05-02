@@ -71,7 +71,7 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
     public static int MaxTiles { get; private set; } = 0;
     public static void SetMaxTiles(int value) => MaxTiles = Math.Max(0, value);
 
-    /// <summary>After placing designations, mark all fully grown trees in the area for harvest.</summary>
+    /// <summary>After placing designations, mark harvest-ready trees in the area for harvest.</summary>
     public static bool MarkFullyGrownForHarvest { get; private set; } = false;
     public static void SetMarkFullyGrownForHarvest(bool value) => MarkFullyGrownForHarvest = value;
 

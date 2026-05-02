@@ -3,6 +3,7 @@
 // Auto Forestry Designations - Designation Scanning
 using System.Collections;
 using Mafi;
+using Mafi.Core.Buildings.Forestry;
 using Mafi.Core.Buildings.Towers;
 using Mafi.Core.Terrain;
 using Mafi.Core.Terrain.Designation;
@@ -96,22 +97,25 @@ namespace AutoForestryDesignations
             LogDebug(string.Format("Created {0} forestry designations", designCount));
 
             if (markFullyGrown)
-                MarkFullyGrownTreesForHarvest(treesManager, area, bbMin, bbMax);
+                MarkHarvestReadyTreesForHarvest(tower, treesManager, area, bbMin, bbMax);
         }
 
-        private static void MarkFullyGrownTreesForHarvest(
+        private static void MarkHarvestReadyTreesForHarvest(
+            IAreaManagingTower tower,
             TreesManager treesManager,
             PolygonTerrainArea2i area,
             Tile2i bbMin,
             Tile2i bbMax)
         {
-            var currentStep = s_simLoopEvents?.CurrentStep ?? default;
+            if (!(tower is ForestryTower forestryTower))
+                return;
+
             foreach (var kvp in treesManager.Trees)
             {
                 Tile2i pos = kvp.Value.Position2i;
                 if (pos.X < bbMin.X || pos.X > bbMax.X || pos.Y < bbMin.Y || pos.Y > bbMax.Y) continue;
                 if (!area.ContainsTile(pos)) continue;
-                if (kvp.Value.IsFullyGrownAt(currentStep) && !treesManager.IsTreeSelected(kvp.Key))
+                if (!treesManager.IsTreeSelected(kvp.Key) && forestryTower.IsTreeReadyForHarvest(kvp.Key))
                     treesManager.AddToHarvest(kvp.Key);
             }
         }

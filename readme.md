@@ -10,7 +10,7 @@ Auto Forestry Designations adds Create/Clear controls to Forestry Towers, genera
 - Skip infertile tiles or tiles that already contain trees
 - Skip existing mining and leveling designations by default
 - Limit the number of tiles created per run
-- Optionally mark fully grown trees in the area for harvest after creating designations
+- Optionally mark harvest-ready trees in the area after creating designations, respecting the tower's Harvesting Options
 - Configure defaults in `AFDsettings.json`
 
 ## Build from source

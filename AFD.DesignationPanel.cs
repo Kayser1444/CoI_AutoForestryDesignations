@@ -236,15 +236,15 @@ namespace AutoForestryDesignations
                     maxTilesDisplay.SetValue(new LocStrFormatted(MaxTilesText(AutoForestryDesignation.GetTowerMaxTiles(tower))));
                 }));
 
-            // --- Mark fully grown for harvest ---
+            // --- Mark harvest-ready trees for harvest ---
             bool initMarkGrown = initialTower != null
                 ? AutoForestryDesignation.GetTowerMarkFullyGrownForHarvest(initialTower)
                 : AutoForestryDesignationsMod.MarkFullyGrownForHarvest;
             var markGrownDisplay = new Mafi.Unity.Ui.Library.Display(new LocStrFormatted(BoolText(initMarkGrown)))
                 .MinDigits(3).AlignSelfStretch().MarginTopBottom(2.px());
             panel.BodyAdd(BuildToggleRow(
-                new LocStrFormatted("Mark grown for harvest"),
-                new LocStrFormatted("When enabled, all fully grown trees in the tower area are marked for harvesting each time Create Designations is run."),
+                new LocStrFormatted("Mark ready for harvest"),
+                new LocStrFormatted("When enabled, trees that match the tower's Harvesting Options are marked for harvest each time Create Designations is run."),
                 markGrownDisplay,
                 (Action)delegate
                 {
