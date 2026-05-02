@@ -3,10 +3,12 @@
 // Auto Forestry Designations - Designation Scanning
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using Mafi;
 using Mafi.Core.Buildings.Forestry;
 using Mafi.Core.Buildings.Towers;
 using Mafi.Core.Entities;
+using Mafi.Core.PathFinding;
 using Mafi.Core.Terrain;
 using Mafi.Core.Terrain.Designation;
 using Mafi.Core.Terrain.Trees;
@@ -21,14 +23,27 @@ namespace AutoForestryDesignations
             public Tile2i Origin { get; }
             public DesignationData Data { get; }
             public long DistanceSqrToTower { get; }
+            public int? DrivingDistanceToTower { get; }
 
-            public DesignationCandidate(Tile2i origin, DesignationData data, long distanceSqrToTower)
+            public DesignationCandidate(Tile2i origin, DesignationData data, long distanceSqrToTower, int? drivingDistanceToTower = null)
             {
                 Origin = origin;
                 Data = data;
                 DistanceSqrToTower = distanceSqrToTower;
+                DrivingDistanceToTower = drivingDistanceToTower;
             }
         }
+
+        private const int PATHABILITY_SEARCH_MARGIN_TILES = 96;
+        private const int PATHABILITY_TARGET_RADIUS_TILES = 2;
+        private const int MAX_PATHABILITY_SEARCH_TILES = 250000;
+        private static readonly RelTile2i[] s_pathabilitySearchDirections =
+        {
+            new RelTile2i(1, 0),
+            new RelTile2i(-1, 0),
+            new RelTile2i(0, 1),
+            new RelTile2i(0, -1)
+        };
 
         private static IEnumerator CreateDesignationsCoroutine(IAreaManagingTower tower)
         {
@@ -117,7 +132,8 @@ namespace AutoForestryDesignations
 
             if (candidates != null)
             {
-                candidates.Sort((a, b) => a.DistanceSqrToTower.CompareTo(b.DistanceSqrToTower));
+                AssignDrivingDistances(candidates, towerPosition, bbMin, bbMax);
+                candidates.Sort(CompareCandidatesByDistance);
                 foreach (DesignationCandidate candidate in candidates)
                 {
                     if (designCount >= maxTiles)
@@ -142,6 +158,169 @@ namespace AutoForestryDesignations
             if (tower is IEntityWithPosition positioned)
                 return positioned.Position2f.Tile2i;
             return new Tile2i((bbMin.X + bbMax.X) / 2, (bbMin.Y + bbMax.Y) / 2);
+        }
+
+        private static int CompareCandidatesByDistance(DesignationCandidate a, DesignationCandidate b)
+        {
+            int aDriving = a.DrivingDistanceToTower ?? int.MaxValue;
+            int bDriving = b.DrivingDistanceToTower ?? int.MaxValue;
+            int drivingComparison = aDriving.CompareTo(bDriving);
+            if (drivingComparison != 0)
+                return drivingComparison;
+            return a.DistanceSqrToTower.CompareTo(b.DistanceSqrToTower);
+        }
+
+        private static void AssignDrivingDistances(
+            List<DesignationCandidate> candidates,
+            Tile2i towerPosition,
+            Tile2i bbMin,
+            Tile2i bbMax)
+        {
+            if (candidates.Count == 0 || s_vehiclePathFindingManager == null || s_standardVehiclePathFindingParams == null)
+                return;
+
+            IPathabilityProvider pathabilityProvider = s_vehiclePathFindingManager.PathabilityProvider;
+            VehiclePathFindingParams pfParams = s_standardVehiclePathFindingParams;
+
+            try
+            {
+                pathabilityProvider.UpdateChangedTiles();
+            }
+            catch
+            {
+            }
+
+            if (!TryFindNearestPathableTile(pathabilityProvider, pfParams, towerPosition, out Tile2i start))
+                return;
+
+            var candidateIndexesByTargetTile = BuildCandidateTargetMap(candidates);
+            var candidateDistances = new int?[candidates.Count];
+            int foundCount = 0;
+
+            int minX = Math.Min(bbMin.X, towerPosition.X) - PATHABILITY_SEARCH_MARGIN_TILES;
+            int minY = Math.Min(bbMin.Y, towerPosition.Y) - PATHABILITY_SEARCH_MARGIN_TILES;
+            int maxX = Math.Max(bbMax.X, towerPosition.X) + PATHABILITY_SEARCH_MARGIN_TILES;
+            int maxY = Math.Max(bbMax.Y, towerPosition.Y) + PATHABILITY_SEARCH_MARGIN_TILES;
+
+            var distances = new Dictionary<Tile2i, int>();
+            var queue = new Queue<Tile2i>();
+            distances[start] = 0;
+            queue.Enqueue(start);
+
+            while (queue.Count > 0 && distances.Count < MAX_PATHABILITY_SEARCH_TILES && foundCount < candidates.Count)
+            {
+                Tile2i current = queue.Dequeue();
+                int distance = distances[current];
+
+                if (candidateIndexesByTargetTile.TryGetValue(current, out List<int> targetCandidates))
+                {
+                    foreach (int candidateIndex in targetCandidates)
+                    {
+                        if (!candidateDistances[candidateIndex].HasValue)
+                        {
+                            candidateDistances[candidateIndex] = distance;
+                            foundCount++;
+                        }
+                    }
+                }
+
+                foreach (RelTile2i direction in s_pathabilitySearchDirections)
+                {
+                    Tile2i next = current + direction;
+                    if (next.X < minX || next.X > maxX || next.Y < minY || next.Y > maxY)
+                        continue;
+                    if (distances.ContainsKey(next))
+                        continue;
+                    if (!pathabilityProvider.IsPathable(next, pfParams.PathabilityQueryMask))
+                        continue;
+
+                    distances[next] = distance + 1;
+                    queue.Enqueue(next);
+                }
+            }
+
+            for (int i = 0; i < candidates.Count; i++)
+            {
+                if (candidateDistances[i].HasValue)
+                {
+                    DesignationCandidate candidate = candidates[i];
+                    candidates[i] = new DesignationCandidate(
+                        candidate.Origin,
+                        candidate.Data,
+                        candidate.DistanceSqrToTower,
+                        candidateDistances[i]);
+                }
+            }
+        }
+
+        private static Dictionary<Tile2i, List<int>> BuildCandidateTargetMap(List<DesignationCandidate> candidates)
+        {
+            var result = new Dictionary<Tile2i, List<int>>();
+            for (int i = 0; i < candidates.Count; i++)
+            {
+                Tile2i center = candidates[i].Origin.AddXy(2);
+                for (int y = -PATHABILITY_TARGET_RADIUS_TILES; y <= PATHABILITY_TARGET_RADIUS_TILES; y++)
+                {
+                    for (int x = -PATHABILITY_TARGET_RADIUS_TILES; x <= PATHABILITY_TARGET_RADIUS_TILES; x++)
+                    {
+                        Tile2i target = center + new RelTile2i(x, y);
+                        if (!result.TryGetValue(target, out List<int> indexes))
+                        {
+                            indexes = new List<int>();
+                            result[target] = indexes;
+                        }
+                        indexes.Add(i);
+                    }
+                }
+            }
+            return result;
+        }
+
+        private static bool TryFindNearestPathableTile(
+            IPathabilityProvider pathabilityProvider,
+            VehiclePathFindingParams pfParams,
+            Tile2i origin,
+            out Tile2i pathableTile)
+        {
+            if (pathabilityProvider.IsPathable(origin, pfParams.PathabilityQueryMask))
+            {
+                pathableTile = origin;
+                return true;
+            }
+
+            for (int radius = 1; radius <= 24; radius++)
+            {
+                for (int y = -radius; y <= radius; y++)
+                {
+                    if (TryUsePathableTile(pathabilityProvider, pfParams, origin + new RelTile2i(-radius, y), out pathableTile)
+                        || TryUsePathableTile(pathabilityProvider, pfParams, origin + new RelTile2i(radius, y), out pathableTile))
+                        return true;
+                }
+                for (int x = -radius + 1; x < radius; x++)
+                {
+                    if (TryUsePathableTile(pathabilityProvider, pfParams, origin + new RelTile2i(x, -radius), out pathableTile)
+                        || TryUsePathableTile(pathabilityProvider, pfParams, origin + new RelTile2i(x, radius), out pathableTile))
+                        return true;
+                }
+            }
+
+            pathableTile = origin;
+            return false;
+        }
+
+        private static bool TryUsePathableTile(
+            IPathabilityProvider pathabilityProvider,
+            VehiclePathFindingParams pfParams,
+            Tile2i tile,
+            out Tile2i pathableTile)
+        {
+            if (pathabilityProvider.IsPathable(tile, pfParams.PathabilityQueryMask))
+            {
+                pathableTile = tile;
+                return true;
+            }
+            pathableTile = tile;
+            return false;
         }
 
         private static void MarkHarvestReadyTreesForHarvest(

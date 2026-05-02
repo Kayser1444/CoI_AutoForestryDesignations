@@ -11,6 +11,7 @@ using Mafi.Core.Mods;
 using Mafi.Core.Simulation;
 using Mafi.Core.Prototypes;
 using Mafi.Core.Console;
+using Mafi.Core.PathFinding;
 using Mafi.Core.Terrain.Designation;
 using Mafi.Core.World;
 using UnityEngine;
@@ -98,6 +99,7 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
 #endif
 
             ITerrainDesignationsManager desigManager = resolver.Resolve<ITerrainDesignationsManager>();
+            IVehiclePathFindingManager vehiclePathFindingManager = resolver.Resolve<IVehiclePathFindingManager>();
             ProtosDb protosDb = resolver.Resolve<ProtosDb>();
             IWorldMapManager worldMapManager = resolver.Resolve<IWorldMapManager>();
             IEntitiesManager entitiesManager = resolver.Resolve<IEntitiesManager>();
@@ -105,7 +107,7 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
             UnityEngine.Object.DontDestroyOnLoad(ticker.gameObject);
             ISimLoopEvents simLoopEvents = resolver.Resolve<ISimLoopEvents>();
             AutoForestryDesignation.SetModRootDirectoryPath(Manifest.RootDirectoryPath);
-            AutoForestryDesignation.Initialize(desigManager, protosDb, worldMapManager, ticker, entitiesManager, simLoopEvents);
+            AutoForestryDesignation.Initialize(desigManager, protosDb, worldMapManager, ticker, entitiesManager, simLoopEvents, vehiclePathFindingManager);
         }
         catch (Exception ex)
         {

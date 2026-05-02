@@ -8,12 +8,15 @@ using Mafi.Collections;
 using Mafi.Core;
 using Mafi.Core.Buildings.Towers;
 using Mafi.Core.Entities;
+using Mafi.Core.PathFinding;
 using Mafi.Core.Products;
 using Mafi.Core.Prototypes;
 using Mafi.Core.Simulation;
 using Mafi.Core.Terrain;
 using Mafi.Core.Terrain.Designation;
 using Mafi.Core.Terrain.Trees;
+using Mafi.Core.Vehicles.TreeHarvesters;
+using Mafi.Core.Vehicles.TreePlanters;
 using Mafi.Core.World;
 using UnityEngine;
 
@@ -28,6 +31,8 @@ namespace AutoForestryDesignations
         private static WorldMapManager? s_worldMapManager;
         private static IEntitiesManager? s_entitiesManager;
         private static ISimLoopEvents? s_simLoopEvents;
+        private static IVehiclePathFindingManager? s_vehiclePathFindingManager;
+        private static VehiclePathFindingParams? s_standardVehiclePathFindingParams;
         private static string? s_modRootDirectoryPath;
 
         private const int BATCH_SIZE = 30;
@@ -119,7 +124,8 @@ namespace AutoForestryDesignations
             IWorldMapManager worldMapManager,
             MonoBehaviour coroutineHost,
             IEntitiesManager entitiesManager,
-            ISimLoopEvents? simLoopEvents = null)
+            ISimLoopEvents? simLoopEvents = null,
+            IVehiclePathFindingManager? vehiclePathFindingManager = null)
         {
             // Load defaults after logging is initialized so diagnostics are visible.
             LoadSettingsFromJson();
@@ -130,6 +136,8 @@ namespace AutoForestryDesignations
             s_worldMapManager = worldMapManager as WorldMapManager;
             s_entitiesManager = entitiesManager;
             s_simLoopEvents = simLoopEvents;
+            s_vehiclePathFindingManager = vehiclePathFindingManager;
+            s_standardVehiclePathFindingParams = FindStandardVehiclePathFindingParams(protosDb);
 
             if (protosDb.TryGetProto(new Proto.ID("ForestryDesignator"), out TerrainDesignationProto proto))
                 s_forestryProto = proto;
@@ -150,6 +158,15 @@ namespace AutoForestryDesignations
         internal static TreesManager? GetTreesManager() => s_desigManager?.TreesManager;
 
         internal static SimStep? GetCurrentSimStep() => s_simLoopEvents?.CurrentStep;
+
+        private static VehiclePathFindingParams FindStandardVehiclePathFindingParams(ProtosDb protosDb)
+        {
+            foreach (TreePlanterProto proto in protosDb.All<TreePlanterProto>())
+                return proto.PathFindingParams;
+            foreach (TreeHarvesterProto proto in protosDb.All<TreeHarvesterProto>())
+                return proto.PathFindingParams;
+            return VehiclePathFindingParams.DEFAULT;
+        }
 
     }
 }

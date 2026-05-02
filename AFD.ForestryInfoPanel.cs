@@ -486,7 +486,7 @@ namespace AutoForestryDesignations
                     FormatYears(stats.AverageMaxAgeYears))));
 
             var header = new Row().AlignItemsCenter();
-            header.Add(new Label(new LocStrFormatted("Designation Composition")).FontBold());
+            header.Add(new Label(new LocStrFormatted("Composition")).FontBold());
             header.Tooltip(new LocStrFormatted(harvestDisabled
                 ? string.Format("Distribution by maturity relative to each tree's current full-growth age. Harvest option: no cutting. Average full maturity: {0}.",
                     FormatYears(stats.AverageMaxAgeYears))

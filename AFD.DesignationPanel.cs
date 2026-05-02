@@ -170,22 +170,6 @@ namespace AutoForestryDesignations
                 : AutoForestryDesignationsMod.AvoidTilesWithTrees;
             var avoidWithTreesDisplay = new Mafi.Unity.Ui.Library.Display(new LocStrFormatted(BoolText(initAvoidTrees)))
                 .MinDigits(3).AlignSelfStretch().MarginTopBottom(2.px());
-            panel.BodyAdd(BuildToggleRow(
-                new LocStrFormatted("Avoid tiles with trees"),
-                new LocStrFormatted("Skip tiles that already contain a tree. When off, designations are placed on all fertile tiles including occupied ones (they show yellow until the tree is harvested)."),
-                avoidWithTreesDisplay,
-                (Action)delegate
-                {
-                    var tower = getTower(); if (tower == null) return;
-                    AutoForestryDesignation.SetTowerAvoidTilesWithTrees(tower, true);
-                    avoidWithTreesDisplay.SetValue(new LocStrFormatted(BoolText(true)));
-                },
-                (Action)delegate
-                {
-                    var tower = getTower(); if (tower == null) return;
-                    AutoForestryDesignation.SetTowerAvoidTilesWithTrees(tower, false);
-                    avoidWithTreesDisplay.SetValue(new LocStrFormatted(BoolText(false)));
-                }));
 
             // --- Avoid mining designations ---
             bool initAvoidMining = initialTower != null
@@ -242,22 +226,6 @@ namespace AutoForestryDesignations
                 : AutoForestryDesignationsMod.MarkHarvestReadyForHarvest;
             var markHarvestReadyDisplay = new Mafi.Unity.Ui.Library.Display(new LocStrFormatted(BoolText(initMarkHarvestReady)))
                 .MinDigits(3).AlignSelfStretch().MarginTopBottom(2.px());
-            panel.BodyAdd(BuildToggleRow(
-                new LocStrFormatted("Mark ready for harvest"),
-                new LocStrFormatted("When enabled, trees that match the tower's Harvesting Options are marked for harvest each time Create Designations is run."),
-                markHarvestReadyDisplay,
-                (Action)delegate
-                {
-                    var tower = getTower(); if (tower == null) return;
-                    AutoForestryDesignation.SetTowerMarkHarvestReadyForHarvest(tower, true);
-                    markHarvestReadyDisplay.SetValue(new LocStrFormatted(BoolText(true)));
-                },
-                (Action)delegate
-                {
-                    var tower = getTower(); if (tower == null) return;
-                    AutoForestryDesignation.SetTowerMarkHarvestReadyForHarvest(tower, false);
-                    markHarvestReadyDisplay.SetValue(new LocStrFormatted(BoolText(false)));
-                }));
 
             s_bindings[key] = new Bindings(getTower, onlyFertileDisplay, avoidWithTreesDisplay, avoidMiningDisplay, maxTilesDisplay, markHarvestReadyDisplay);
             return panel;
