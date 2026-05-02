@@ -45,6 +45,7 @@ namespace AutoForestryDesignations
             public bool OnlyFertileTiles { get; private set; }
             public bool AvoidTilesWithTrees { get; private set; }
             public bool AvoidMiningDesignations { get; private set; }
+            public bool OnlyReachableTiles { get; private set; }
             public int MaxTiles { get; private set; }
             public bool MarkHarvestReadyForHarvest { get; private set; }
 
@@ -53,6 +54,7 @@ namespace AutoForestryDesignations
                 OnlyFertileTiles = AutoForestryDesignationsMod.OnlyFertileTiles;
                 AvoidTilesWithTrees = AutoForestryDesignationsMod.AvoidTilesWithTrees;
                 AvoidMiningDesignations = AutoForestryDesignationsMod.AvoidMiningDesignations;
+                OnlyReachableTiles = AutoForestryDesignationsMod.OnlyReachableTiles;
                 MaxTiles = AutoForestryDesignationsMod.MaxTiles;
                 MarkHarvestReadyForHarvest = AutoForestryDesignationsMod.MarkHarvestReadyForHarvest;
             }
@@ -62,6 +64,7 @@ namespace AutoForestryDesignations
             public void SetOnlyFertileTiles(bool value) => OnlyFertileTiles = value;
             public void SetAvoidTilesWithTrees(bool value) => AvoidTilesWithTrees = value;
             public void SetAvoidMiningDesignations(bool value) => AvoidMiningDesignations = value;
+            public void SetOnlyReachableTiles(bool value) => OnlyReachableTiles = value;
             public void SetMaxTiles(int value) => MaxTiles = Math.Max(0, value);
             public void SetMarkHarvestReadyForHarvest(bool value) => MarkHarvestReadyForHarvest = value;
         }
@@ -111,6 +114,9 @@ namespace AutoForestryDesignations
 
         internal static bool GetTowerAvoidMiningDesignations(IAreaManagingTower tower) => GetOrCreateTowerSettings(tower).AvoidMiningDesignations;
         internal static void SetTowerAvoidMiningDesignations(IAreaManagingTower tower, bool value) => GetOrCreateTowerSettings(tower).SetAvoidMiningDesignations(value);
+
+        internal static bool GetTowerOnlyReachableTiles(IAreaManagingTower tower) => GetOrCreateTowerSettings(tower).OnlyReachableTiles;
+        internal static void SetTowerOnlyReachableTiles(IAreaManagingTower tower, bool value) => GetOrCreateTowerSettings(tower).SetOnlyReachableTiles(value);
 
         internal static int GetTowerMaxTiles(IAreaManagingTower tower) => GetOrCreateTowerSettings(tower).MaxTiles;
         internal static void SetTowerMaxTiles(IAreaManagingTower tower, int value) => GetOrCreateTowerSettings(tower).SetMaxTiles(value);

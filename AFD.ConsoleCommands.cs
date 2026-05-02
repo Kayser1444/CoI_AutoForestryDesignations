@@ -22,6 +22,8 @@ public sealed class AfdConsoleCommands
         sb.AppendLine($"  OnlyFertileTiles         = {AutoForestryDesignationsMod.OnlyFertileTiles}");
         sb.AppendLine($"  AvoidTilesWithTrees      = {AutoForestryDesignationsMod.AvoidTilesWithTrees}");
         sb.AppendLine($"  AvoidMiningDesignations  = {AutoForestryDesignationsMod.AvoidMiningDesignations}");
+        sb.AppendLine($"  OnlyReachableTiles       = {AutoForestryDesignationsMod.OnlyReachableTiles}");
+        sb.AppendLine($"  PathabilityTargetSize    = {AutoForestryDesignationsMod.PathabilityTargetSize} (n*n, clamped 1..9)");
         sb.AppendLine($"  MaxTiles                 = {AutoForestryDesignationsMod.MaxTiles} (0 = no limit)");
         sb.Append(    $"  MarkHarvestReadyForHarvest = {AutoForestryDesignationsMod.MarkHarvestReadyForHarvest}");
         return sb.ToString();
@@ -53,6 +55,13 @@ public sealed class AfdConsoleCommands
     {
         AutoForestryDesignationsMod.SetMaxTiles(value);
         return $"[AFD] MaxTiles set to {AutoForestryDesignationsMod.MaxTiles}.";
+    }
+
+    [ConsoleCommand(false, false, "Sets hidden reachability target square size n (n*n, clamped 1..9).", null)]
+    private string afdSetPathabilityTargetSize(int value)
+    {
+        AutoForestryDesignationsMod.SetPathabilityTargetSize(value);
+        return $"[AFD] PathabilityTargetSize set to {AutoForestryDesignationsMod.PathabilityTargetSize} (n*n).";
     }
 
     [ConsoleCommand(false, false, "Sets whether harvest-ready trees in the area are marked for harvest after scanning (true/false).", null)]

@@ -160,6 +160,14 @@ namespace AutoForestryDesignations
                 if (avoidMiningDesignations.HasValue)
                     AutoForestryDesignationsMod.SetAvoidMiningDesignations(avoidMiningDesignations.Value);
 
+                bool? onlyReachableTiles = ParseBool(json, "onlyReachableTiles");
+                if (onlyReachableTiles.HasValue)
+                    AutoForestryDesignationsMod.SetOnlyReachableTiles(onlyReachableTiles.Value);
+
+                int? pathabilityTargetSize = ParseInt(json, "pathabilityTargetSize");
+                if (pathabilityTargetSize.HasValue)
+                    AutoForestryDesignationsMod.SetPathabilityTargetSize(pathabilityTargetSize.Value);
+
                 int? maxTiles = ParseInt(json, "maxTiles");
                 if (maxTiles.HasValue)
                     AutoForestryDesignationsMod.SetMaxTiles(maxTiles.Value);

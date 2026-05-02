@@ -68,6 +68,17 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
     public static bool AvoidMiningDesignations { get; private set; } = true;
     public static void SetAvoidMiningDesignations(bool value) => AvoidMiningDesignations = value;
 
+    /// <summary>When enabled, create designations only on candidates reachable by vehicle pathability.</summary>
+    public static bool OnlyReachableTiles { get; private set; } = true;
+    public static void SetOnlyReachableTiles(bool value) => OnlyReachableTiles = value;
+
+    /// <summary>
+    /// Reachability target square size (n*n) used when matching candidate designation tiles
+    /// to visited pathable tiles. Hidden tuning parameter; configurable via settings/console.
+    /// </summary>
+    public static int PathabilityTargetSize { get; private set; } = 4;
+    public static void SetPathabilityTargetSize(int value) => PathabilityTargetSize = Math.Max(1, Math.Min(9, value));
+
     /// <summary>Maximum number of forestry designation tiles to place per run. 0 = no limit.</summary>
     public static int MaxTiles { get; private set; } = 0;
     public static void SetMaxTiles(int value) => MaxTiles = Math.Max(0, value);

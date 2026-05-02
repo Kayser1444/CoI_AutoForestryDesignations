@@ -13,6 +13,12 @@
   "_comment_avoidMiningDesignations": "Default for new tower panels. When true, Create Designations skips tiles that already contain any terrain designation, including mining, dumping, or leveling. Default: true.",
   "avoidMiningDesignations": true,
 
+  "_comment_onlyReachableTiles": "Default for new tower panels. When true, Create Designations skips candidate tiles that are not reachable by vehicle pathability from the tower area. Default: true.",
+  "onlyReachableTiles": true,
+
+  "_comment_pathabilityTargetSize": "Hidden tuning parameter for reachability matching. Interpreted as n*n area around each candidate center (for example 4 = 4x4). Larger values are more permissive and reduce holes; smaller values are stricter. Clamped to 1..9. Default: 4.",
+  "pathabilityTargetSize": 4,
+
   "_comment_maxTiles": "Default maximum number of forestry designation tiles to place per run. 0 = no limit. Default: 0.",
   "maxTiles": 0,
 

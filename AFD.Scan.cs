@@ -35,7 +35,6 @@ namespace AutoForestryDesignations
         }
 
         private const int PATHABILITY_SEARCH_MARGIN_TILES = 96;
-        private const int PATHABILITY_TARGET_RADIUS_TILES = 2;
         private const int MAX_PATHABILITY_SEARCH_TILES = 250000;
         private static readonly RelTile2i[] s_pathabilitySearchDirections =
         {
@@ -58,6 +57,7 @@ namespace AutoForestryDesignations
             bool onlyFertile = towerSettings.OnlyFertileTiles;
             bool avoidWithTrees = towerSettings.AvoidTilesWithTrees;
             bool avoidMiningDesignations = towerSettings.AvoidMiningDesignations;
+            bool onlyReachableTiles = towerSettings.OnlyReachableTiles;
             int maxTiles = towerSettings.MaxTiles;
             bool markHarvestReady = towerSettings.MarkHarvestReadyForHarvest;
 
@@ -69,7 +69,8 @@ namespace AutoForestryDesignations
             int designCount = 0;
             int scanCount = 0;
             Tile2i towerPosition = GetTowerPosition(tower, bbMin, bbMax);
-            List<DesignationCandidate>? candidates = maxTiles > 0 ? new List<DesignationCandidate>() : null;
+            bool useCandidatePipeline = maxTiles > 0 || onlyReachableTiles;
+            List<DesignationCandidate>? candidates = useCandidatePipeline ? new List<DesignationCandidate>() : null;
 
             for (int y = bbMin.Y; y <= bbMax.Y; y += 4)
             {
@@ -134,15 +135,32 @@ namespace AutoForestryDesignations
             {
                 AssignDrivingDistances(candidates, towerPosition, bbMin, bbMax);
                 candidates.Sort(CompareCandidatesByDistance);
+                bool canEvaluateReachability = s_vehiclePathFindingManager != null && s_standardVehiclePathFindingParams != null;
+                bool filterUnreachableCandidates = onlyReachableTiles && canEvaluateReachability;
+                int filteredOutCount = 0;
+
+                if (onlyReachableTiles && !canEvaluateReachability)
+                    Log.Warning("[AFD] Only reachable tiles is enabled, but pathfinding is unavailable; skipping reachability filter for this run.");
+
                 foreach (DesignationCandidate candidate in candidates)
                 {
-                    if (designCount >= maxTiles)
+                    if (maxTiles > 0 && designCount >= maxTiles)
                         break;
+
+                    if (filterUnreachableCandidates && !candidate.DrivingDistanceToTower.HasValue)
+                    {
+                        filteredOutCount++;
+                        continue;
+                    }
+
                     if (s_desigManager.AddOrReplaceDesignation(s_forestryProto, candidate.Data))
                         designCount++;
                     if (designCount % GetEffectiveBatchSize() == 0)
                         yield return null;
                 }
+
+                if (filterUnreachableCandidates && filteredOutCount > 0)
+                    LogDebug(string.Format("Skipped {0} unreachable designation candidates", filteredOutCount));
             }
 
             LogDebug(string.Format("Created {0} forestry designations", designCount));
@@ -193,7 +211,7 @@ namespace AutoForestryDesignations
             if (!TryFindNearestPathableTile(pathabilityProvider, pfParams, towerPosition, out Tile2i start))
                 return;
 
-            var candidateIndexesByTargetTile = BuildCandidateTargetMap(candidates);
+            var candidateIndexesByTargetTile = BuildCandidateTargetMap(candidates, AutoForestryDesignationsMod.PathabilityTargetSize);
             var candidateDistances = new int?[candidates.Count];
             int foundCount = 0;
 
@@ -253,15 +271,20 @@ namespace AutoForestryDesignations
             }
         }
 
-        private static Dictionary<Tile2i, List<int>> BuildCandidateTargetMap(List<DesignationCandidate> candidates)
+        private static Dictionary<Tile2i, List<int>> BuildCandidateTargetMap(List<DesignationCandidate> candidates, int targetSize)
         {
+            int size = Math.Max(1, targetSize);
+            int lowOffset = (size - 1) / 2;
+            int highOffset = size / 2;
+
             var result = new Dictionary<Tile2i, List<int>>();
             for (int i = 0; i < candidates.Count; i++)
             {
+                // Use a configurable n*n area around the designation center to tune strictness.
                 Tile2i center = candidates[i].Origin.AddXy(2);
-                for (int y = -PATHABILITY_TARGET_RADIUS_TILES; y <= PATHABILITY_TARGET_RADIUS_TILES; y++)
+                for (int y = -lowOffset; y <= highOffset; y++)
                 {
-                    for (int x = -PATHABILITY_TARGET_RADIUS_TILES; x <= PATHABILITY_TARGET_RADIUS_TILES; x++)
+                    for (int x = -lowOffset; x <= highOffset; x++)
                     {
                         Tile2i target = center + new RelTile2i(x, y);
                         if (!result.TryGetValue(target, out List<int> indexes))
