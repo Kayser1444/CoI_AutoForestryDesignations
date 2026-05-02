@@ -13,6 +13,7 @@ using Mafi.Unity.UiToolkit;
 using Mafi.Unity.UiToolkit.Component;
 using Mafi.Unity.UiToolkit.Library;
 using Mafi.Unity.Ui.Library;
+using UnityEngine;
 using Row = Mafi.Unity.UiToolkit.Library.Row;
 using ClickEvent = UnityEngine.UIElements.ClickEvent;
 
@@ -24,7 +25,7 @@ namespace AutoForestryDesignations
         private const int GROWTH_STAGE_BUCKET_COUNT = BUCKET_COUNT - 1;
         private const int PANEL_GAP_PT = 2;
         private const int CARD_PADDING_PT = 6;
-        private const string MATURE_TREE_ICON = "Assets/AutoForestryDesignations/Icons/MatureTree.svg";
+        private static Texture2D? s_matureTreeTexture;
 
         private static readonly ColorRgba[] s_belowHarvestColors =
         {
@@ -410,7 +411,7 @@ namespace AutoForestryDesignations
             row.Add(BuildKpi(
                 "Trees",
                 string.Format("{0}/{1}", stats.TreeCount, stats.TreeCapacity),
-                MATURE_TREE_ICON,
+                () => BuildMatureTreeIcon(40),
                 "Managed trees currently inside this tower's forestry designations. First number is current managed trees. Second number is estimated capacity based on currently valid planting positions."));
             row.Add(BuildKpi(
                 "Average Maturity",
@@ -427,6 +428,11 @@ namespace AutoForestryDesignations
 
         private static Column BuildKpi(string label, string value, string iconPath, string tooltip)
         {
+            return BuildKpi(label, value, () => new Icon(iconPath).NoTint().Size(40.px()), tooltip);
+        }
+
+        private static Column BuildKpi(string label, string value, Func<UiComponent> buildIcon, string tooltip)
+        {
             var col = new Column()
                 .FlexGrow(1f)
                 .Background(Theme.BackgroundDark)
@@ -439,7 +445,7 @@ namespace AutoForestryDesignations
             col.Tooltip(new LocStrFormatted(tooltip));
 
             var topRow = new Row().AlignItemsCenter().Gap(4.pt());
-            topRow.Add(new Icon(iconPath).NoTint().Size(40.px()));
+            topRow.Add(buildIcon());
             var textCol = new Column(1.pt());
             textCol.Add(new Label(new LocStrFormatted(label)).FontSize(13).FontBold().NoTextWrap());
             textCol.Add(new Label(new LocStrFormatted(value)).FontSize(12).NoTextWrap());
@@ -517,7 +523,7 @@ namespace AutoForestryDesignations
             barWithLegend.Add(new Icon("Assets/Base/Products/Icons/TreeSapling.svg").NoTint().Size(16.px())
                 .Tooltip(new LocStrFormatted("Newly planted / lowest maturity")));
             barWithLegend.Add(bar.FlexGrow(1f));
-            barWithLegend.Add(new Icon(MATURE_TREE_ICON).NoTint().Size(16.px())
+            barWithLegend.Add(BuildMatureTreeIcon(16)
                 .Tooltip(new LocStrFormatted("Fully grown / highest maturity")));
 
             section.Add(barWithLegend);
@@ -592,6 +598,100 @@ namespace AutoForestryDesignations
         {
             value = Math.Max(0f, Math.Min(100f, value));
             return value >= 10f ? value.ToString("F0") + "%" : value.ToString("F1") + "%";
+        }
+
+        private static StretchedImg BuildMatureTreeIcon(int sizePx)
+        {
+            return new StretchedImg(GetMatureTreeTexture())
+                .ImageFit()
+                .Size(sizePx.px());
+        }
+
+        private static Texture2D GetMatureTreeTexture()
+        {
+            if (s_matureTreeTexture != null)
+                return s_matureTreeTexture;
+
+            const int size = 64;
+            var texture = new Texture2D(size, size, TextureFormat.RGBA32, mipChain: false);
+            texture.name = "AFD_MatureTreeIcon";
+            texture.filterMode = FilterMode.Bilinear;
+            var pixels = new UnityEngine.Color[size * size];
+            for (int i = 0; i < pixels.Length; i++)
+                pixels[i] = UnityEngine.Color.clear;
+
+            var trunk = HexColor(0x8f5a2c);
+            var trunkDark = HexColor(0x6e4122);
+            var leaf = HexColor(0x4fa65d);
+            var leafDark = HexColor(0x2f7b44);
+            var leafOutline = HexColor(0x1f5a31);
+            var leafHighlight = HexColor(0x86c77c);
+
+            FillEllipse(pixels, size, 20, 14, 24, 26, leafOutline);
+            FillEllipse(pixels, size, 6, 25, 24, 24, leafOutline);
+            FillEllipse(pixels, size, 30, 24, 26, 25, leafOutline);
+            FillEllipse(pixels, size, 17, 6, 30, 28, leafOutline);
+
+            FillEllipse(pixels, size, 22, 16, 21, 23, leaf);
+            FillEllipse(pixels, size, 9, 27, 21, 21, leaf);
+            FillEllipse(pixels, size, 31, 26, 22, 21, leafDark);
+            FillEllipse(pixels, size, 19, 9, 26, 25, leaf);
+
+            FillRect(pixels, size, 27, 36, 10, 21, trunk);
+            FillRect(pixels, size, 32, 36, 6, 21, trunkDark);
+            FillCircle(pixels, size, 21, 24, 3, leafHighlight);
+            FillCircle(pixels, size, 16, 35, 3, leafHighlight);
+
+            texture.SetPixels(pixels);
+            texture.Apply(updateMipmaps: false, makeNoLongerReadable: true);
+            s_matureTreeTexture = texture;
+            return texture;
+        }
+
+        private static UnityEngine.Color HexColor(int rgb)
+        {
+            return new UnityEngine.Color(
+                ((rgb >> 16) & 0xff) / 255f,
+                ((rgb >> 8) & 0xff) / 255f,
+                (rgb & 0xff) / 255f,
+                1f);
+        }
+
+        private static void FillRect(UnityEngine.Color[] pixels, int size, int x, int y, int width, int height, UnityEngine.Color color)
+        {
+            for (int yy = y; yy < y + height; yy++)
+                for (int xx = x; xx < x + width; xx++)
+                    SetPixel(pixels, size, xx, yy, color);
+        }
+
+        private static void FillCircle(UnityEngine.Color[] pixels, int size, int cx, int cy, int radius, UnityEngine.Color color)
+        {
+            FillEllipse(pixels, size, cx - radius, cy - radius, radius * 2 + 1, radius * 2 + 1, color);
+        }
+
+        private static void FillEllipse(UnityEngine.Color[] pixels, int size, int x, int y, int width, int height, UnityEngine.Color color)
+        {
+            float rx = width / 2f;
+            float ry = height / 2f;
+            float cx = x + rx;
+            float cy = y + ry;
+            for (int yy = y; yy < y + height; yy++)
+            {
+                for (int xx = x; xx < x + width; xx++)
+                {
+                    float nx = (xx + 0.5f - cx) / rx;
+                    float ny = (yy + 0.5f - cy) / ry;
+                    if (nx * nx + ny * ny <= 1f)
+                        SetPixel(pixels, size, xx, yy, color);
+                }
+            }
+        }
+
+        private static void SetPixel(UnityEngine.Color[] pixels, int size, int x, int y, UnityEngine.Color color)
+        {
+            if (x < 0 || x >= size || y < 0 || y >= size)
+                return;
+            pixels[y * size + x] = color;
         }
 
         private readonly struct PlantingCandidate
