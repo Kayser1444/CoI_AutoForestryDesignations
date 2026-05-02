@@ -18,19 +18,35 @@ namespace AutoForestryDesignations
 {
     internal static class ForestryInfoPanel
     {
-        private const int BUCKET_COUNT = 5;
+        private const int BUCKET_COUNT = 6;
+        private const int GROWTH_STAGE_BUCKET_COUNT = BUCKET_COUNT - 1;
 
-        private static readonly ColorRgba[] s_growthColors =
+        private static readonly ColorRgba[] s_belowHarvestColors =
         {
-            new ColorRgba(0x586f58),
-            new ColorRgba(0x76a85f),
-            new ColorRgba(0x9abd73),
-            new ColorRgba(0xc7ad54),
-            new ColorRgba(0xd7d08a),
+            new ColorRgba(0xc6e7b2),
+            new ColorRgba(0x95cc7a),
+            new ColorRgba(0x5fa85a),
+            new ColorRgba(0x2f7b44),
+            new ColorRgba(0x1f5a31),
+            new ColorRgba(0x184628),
         };
+
+        private static readonly ColorRgba[] s_aboveHarvestColors =
+        {
+            new ColorRgba(0xc9a36a),
+            new ColorRgba(0xb78654),
+            new ColorRgba(0xa16d3f),
+            new ColorRgba(0x8b5a2b),
+            new ColorRgba(0x6f431f),
+            new ColorRgba(0x553015),
+        };
+
+        private static readonly ColorRgba s_unusedCapacityColor = new ColorRgba(0x1a1a1a);
 
         private static readonly Dictionary<object, Action> s_refreshCallbacks =
             new Dictionary<object, Action>();
+        private static readonly Dictionary<object, Func<IAreaManagingTower?>> s_towerResolvers =
+            new Dictionary<object, Func<IAreaManagingTower?>>();
 
         internal static PanelWithHeader Build(Func<IAreaManagingTower?> getTower, object key)
         {
@@ -43,6 +59,7 @@ namespace AutoForestryDesignations
             {
                 PopulateContent(contentCol, getTower());
             };
+            s_towerResolvers[key] = getTower;
 
             var panel = new PanelWithHeader()
                 .Title(new LocStrFormatted("Forestry Composition"),
@@ -67,6 +84,25 @@ namespace AutoForestryDesignations
         {
             if (s_refreshCallbacks.TryGetValue(key, out var cb))
                 try { cb?.Invoke(); } catch { }
+        }
+
+        internal static void RefreshAll()
+        {
+            foreach (var cb in s_refreshCallbacks.Values)
+                try { cb?.Invoke(); } catch { }
+        }
+
+        internal static void RefreshForTower(ForestryTower tower)
+        {
+            foreach (var kvp in s_towerResolvers)
+            {
+                try
+                {
+                    if (ReferenceEquals(kvp.Value(), tower))
+                        RefreshContent(kvp.Key);
+                }
+                catch { }
+            }
         }
 
         private static void PopulateContent(Column col, IAreaManagingTower? tower)
@@ -97,10 +133,11 @@ namespace AutoForestryDesignations
         private static ForestryStats CollectStats(ForestryTower tower, TreesManager treesManager, SimStep currentStep)
         {
             int treeCount = 0;
-            float ageYearsSum = 0f;
+            float growthSum01 = 0f;
             int woodReserve = 0;
             int[] growthBuckets = new int[BUCKET_COUNT];
             float maxAgeYears = 0f;
+            int approxTreeCapacity = Math.Max(0, tower.GetApproxMaxTreesAllowed());
 
             foreach (TreeId treeId in tower.Trees)
             {
@@ -108,41 +145,86 @@ namespace AutoForestryDesignations
                     continue;
 
                 treeCount++;
-                Duration age = currentStep - treeData.PlantedAtTick;
-                float ageYears = Math.Max(0f, age.Years.ToFloat());
                 float treeMaxAgeYears = Math.Max(0.01f, treeData.Proto.GetTreeMaxAge().Years.ToFloat());
-                float growth01 = Math.Min(1f, ageYears / treeMaxAgeYears);
-                int bucket = Math.Min(BUCKET_COUNT - 1, Math.Max(0, (int)(growth01 * BUCKET_COUNT)));
+                // Use the game's own growth ratio (clamps at 1.0, handles GENERATED_TREE_PLANTED_AT_TICK = -720000 ticks correctly)
+                float growth01 = treeData.GetGrowthPercentAt(currentStep).ToFloat();
+                float ageYears = treeMaxAgeYears * growth01;
+                int bucket = GetGrowthBucketIndex(growth01);
+                int woodThisTree = treeData.GetHarvestedQuantityAt(currentStep).Value;
 
-                ageYearsSum += ageYears;
-                woodReserve += treeData.GetHarvestedQuantityAt(currentStep).Value;
+                growthSum01 += growth01;
+                woodReserve += woodThisTree;
                 growthBuckets[bucket]++;
                 maxAgeYears = Math.Max(maxAgeYears, treeMaxAgeYears);
+
+#if DEBUG
+                Log.Info(string.Format("[AFD] tree {0}: proto={1} plantedAt={2} maxAge={3:F1}y growth={4:P0} ageYears={5:F1}y wood={6}",
+                    treeId, treeData.Proto.Id, treeData.PlantedAtTick, treeMaxAgeYears, growth01, ageYears, woodThisTree));
+#endif
             }
 
-            float averageAgeYears = treeCount > 0 ? ageYearsSum / treeCount : 0f;
+            float averageMaturityPercent = treeCount > 0 ? (growthSum01 / treeCount) * 100f : 0f;
+            bool hasPossiblePlantingPos = tower.HasPossiblePlantingPos();
+            int treeCapacity = hasPossiblePlantingPos
+                ? Math.Max(treeCount, approxTreeCapacity)
+                : treeCount;
             float capacityPerYear = EstimateCapacityPerYear(tower, treesManager);
-            return new ForestryStats(treeCount, averageAgeYears, woodReserve, capacityPerYear, maxAgeYears, growthBuckets);
+#if DEBUG
+            Log.Info(string.Format("[AFD] CollectStats: trees={0}/{1} woodReserve={2} maturity={3:F1}% maxAge={4:F1}y buckets=[{5}] hasPlantingPos={6} approxCap={7} capacity/60={8:F1}",
+                treeCount, treeCapacity, woodReserve, averageMaturityPercent, maxAgeYears,
+                string.Join(",", growthBuckets), hasPossiblePlantingPos, approxTreeCapacity, capacityPerYear / 12f));
+#endif
+            return new ForestryStats(treeCount, treeCapacity, averageMaturityPercent, woodReserve, capacityPerYear, maxAgeYears, growthBuckets);
         }
 
         private static float EstimateCapacityPerYear(ForestryTower tower, TreesManager treesManager)
         {
-            int effectiveTreeCapacity = Math.Max(tower.GetApproxMaxTreesAllowed(), tower.Trees.Count);
+            int approxMax = tower.GetApproxMaxTreesAllowed();
+            int liveCount = tower.Trees.Count;
+            int effectiveTreeCapacity = Math.Max(approxMax, liveCount);
             if (effectiveTreeCapacity <= 0)
+            {
+#if DEBUG
+                Log.Info("[AFD] EstimateCapacityPerYear: effectiveTreeCapacity=0, returning 0");
+#endif
                 return 0f;
+            }
 
-            float weightedYieldPerTreePerYear = EstimateConfiguredYieldPerTreePerYear(tower);
-            if (weightedYieldPerTreePerYear <= 0f)
-                weightedYieldPerTreePerYear = EstimateCurrentYieldPerTreePerYear(tower, treesManager);
+            // Clamp to [0,1]: NO_CUT_AT = 200% sentinel means no cutting → treat as 100%
+            bool harvestDisabled = tower.TargetHarvestPercent >= ForestryTower.NO_CUT_AT;
+            float harvestGrowth01 = harvestDisabled
+                ? 1f
+                : Math.Min(1f, tower.TargetHarvestPercent.ToFloat());
 
-            return effectiveTreeCapacity * weightedYieldPerTreePerYear;
+            float weightedYieldPerTreePerYear = EstimateConfiguredYieldPerTreePerYear(tower, harvestGrowth01);
+            bool usedFallback = weightedYieldPerTreePerYear <= 0f;
+            if (usedFallback)
+                weightedYieldPerTreePerYear = EstimateCurrentYieldPerTreePerYear(tower, treesManager, harvestGrowth01);
+
+            float capacity = effectiveTreeCapacity * weightedYieldPerTreePerYear;
+#if DEBUG
+            Log.Info(string.Format(
+                "[AFD] EstimateCapacityPerYear: approxMax={0} liveCount={1} effectiveCap={2} harvestDisabled={3} harvestGrowth={4:P0} yieldPerTree/y={5:F2} (fallback={6}) => capacity/y={7:F1}",
+                approxMax, liveCount, effectiveTreeCapacity,
+                harvestDisabled, harvestGrowth01,
+                weightedYieldPerTreePerYear, usedFallback, capacity));
+            Log.Info(string.Format("[AFD] NOTE: capacity/60={0:F1} (capacity/y={1:F1})", capacity / 12f, capacity));
+#endif
+            return capacity;
         }
 
-        private static float EstimateConfiguredYieldPerTreePerYear(ForestryTower tower)
+        private static float EstimateConfiguredYieldPerTreePerYear(ForestryTower tower, float harvestGrowth01)
         {
             var treeTypes = tower.TreeTypes;
             if (treeTypes.Count == 0)
+            {
+#if DEBUG
+                Log.Info("[AFD] EstimateConfiguredYieldPerTreePerYear: no configured tree types");
+#endif
                 return 0f;
+            }
+
+            var harvestPercent = Percent.FromFloat(harvestGrowth01);
 
             float weightedSum = 0f;
             int totalWeight = 0;
@@ -155,8 +237,16 @@ namespace AutoForestryDesignations
                 float groupYieldPerTreePerYear = 0f;
                 foreach (TreeProto treeProto in entry.Key.Trees)
                 {
-                    float years = Math.Max(0.01f, treeProto.GetTreeMaxAge().Years.ToFloat());
-                    groupYieldPerTreePerYear += treeProto.ProductWhenHarvested.Quantity.Value / years;
+                    float maxAgeY = treeProto.GetTreeMaxAge().Years.ToFloat();
+                    float harvestAgeYears = Math.Max(0.01f, maxAgeY * harvestGrowth01);
+                    int yieldAtHarvest = treeProto.GetHarvestedQuantity(harvestPercent).Value;
+                    float yieldPerYear = yieldAtHarvest / harvestAgeYears;
+                    groupYieldPerTreePerYear += yieldPerYear;
+#if DEBUG
+                    Log.Info(string.Format(
+                        "[AFD]   configured group '{0}' proto '{1}': maxAge={2:F1}y harvestAge={3:F1}y yieldAtHarvest={4} yieldPerYear={5:F2}",
+                        entry.Key.Id, treeProto.Id, maxAgeY, harvestAgeYears, yieldAtHarvest, yieldPerYear));
+#endif
                 }
                 groupYieldPerTreePerYear /= entry.Key.Trees.Length;
 
@@ -164,11 +254,17 @@ namespace AutoForestryDesignations
                 totalWeight += entry.Value;
             }
 
-            return totalWeight > 0 ? weightedSum / totalWeight : 0f;
+            float result = totalWeight > 0 ? weightedSum / totalWeight : 0f;
+#if DEBUG
+            Log.Info(string.Format("[AFD] EstimateConfiguredYieldPerTreePerYear: weightedSum={0:F2} totalWeight={1} => {2:F2}/tree/y",
+                weightedSum, totalWeight, result));
+#endif
+            return result;
         }
 
-        private static float EstimateCurrentYieldPerTreePerYear(ForestryTower tower, TreesManager treesManager)
+        private static float EstimateCurrentYieldPerTreePerYear(ForestryTower tower, TreesManager treesManager, float harvestGrowth01)
         {
+            var harvestPercent = Percent.FromFloat(harvestGrowth01);
             float sum = 0f;
             int count = 0;
             foreach (TreeId treeId in tower.Trees)
@@ -176,34 +272,68 @@ namespace AutoForestryDesignations
                 if (!treesManager.Trees.TryGetValue(treeId, out TreeData treeData))
                     continue;
 
-                float years = Math.Max(0.01f, treeData.Proto.GetTreeMaxAge().Years.ToFloat());
-                sum += treeData.Proto.ProductWhenHarvested.Quantity.Value / years;
+                float maxAgeY = treeData.Proto.GetTreeMaxAge().Years.ToFloat();
+                float harvestAgeYears = Math.Max(0.01f, maxAgeY * harvestGrowth01);
+                int yieldAtHarvest = treeData.Proto.GetHarvestedQuantity(harvestPercent).Value;
+                float yieldPerYear = yieldAtHarvest / harvestAgeYears;
+                sum += yieldPerYear;
                 count++;
+#if DEBUG
+                Log.Info(string.Format(
+                    "[AFD]   current tree proto '{0}': maxAge={1:F1}y harvestAge={2:F1}y yieldAtHarvest={3} yieldPerYear={4:F2}",
+                    treeData.Proto.Id, maxAgeY, harvestAgeYears, yieldAtHarvest, yieldPerYear));
+#endif
             }
 
-            return count > 0 ? sum / count : 0f;
+            float result = count > 0 ? sum / count : 0f;
+#if DEBUG
+            Log.Info(string.Format("[AFD] EstimateCurrentYieldPerTreePerYear: sum={0:F2} count={1} => {2:F2}/tree/y",
+                sum, count, result));
+#endif
+            return result;
         }
 
         private static Row BuildKpiRow(ForestryStats stats)
         {
-            var row = new Row().Gap(2.pt()).AlignItemsStretch();
-            row.Add(BuildKpi("Trees", stats.TreeCount.ToString()));
-            row.Add(BuildKpi("Avg age", FormatYears(stats.AverageAgeYears)));
-            row.Add(BuildKpi("Wood reserve", FormatAmount(stats.WoodReserve)));
-            row.Add(BuildKpi("Capacity", FormatAmount(stats.CapacityPerYear) + "/y"));
+            var row = new Row().Gap(1.pt()).AlignItemsStretch().AlignSelfStretch().MarginLeft(1.pt()).MarginRight(1.pt());
+            row.Add(BuildKpi(
+                "Trees",
+                string.Format("{0}/{1}", stats.TreeCount, stats.TreeCapacity),
+                "Assets/Unity/Generated/Icons/LayoutEntity/SpruceTree.png",
+                "Managed trees currently inside this tower's forestry designations. First number is current managed trees. Second number is estimated capacity; when the tower reports no remaining planting positions, this is clamped to current trees."));
+            row.Add(BuildKpi(
+                "Average Maturity",
+                FormatPercent(stats.MaturityPercent),
+                "Assets/Base/Products/Icons/TreeSapling.svg",
+                "Average growth maturity across all managed trees, relative to full growth term (max age, e.g. 12y), not the tower harvest age setting."));
+            row.Add(BuildKpi(
+                "Production Capacity",
+                FormatAmount(stats.CapacityPerYear / 12f),
+                "Assets/Base/Products/Icons/Wood.svg",
+                "Projected sustainable wood output per in-game month (60 real-time seconds at 1x speed), based on species mix and harvest threshold."));
             return row;
         }
 
-        private static Column BuildKpi(string label, string value)
+        private static Column BuildKpi(string label, string value, string iconPath, string tooltip)
         {
             var col = new Column()
                 .FlexGrow(1f)
                 .Background(Theme.BackgroundDark)
-                .Padding(4.pt())
-                .Gap(1.pt());
+                .OverflowHidden()
+                .Padding(6.pt())
+                .Gap(2.pt());
 
-            col.Add(new Label(new LocStrFormatted(value)).FontSize(15).FontBold().NoTextWrap());
-            col.Add(new Label(new LocStrFormatted(label)).FontSize(11).Color(Theme.InactiveColor).NoTextWrap());
+            col.BorderRadius(8);
+            col.Border(1.px(), Theme.BorderColor, 8);
+            col.Tooltip(new LocStrFormatted(tooltip));
+
+            var topRow = new Row().AlignItemsCenter().Gap(4.pt());
+            topRow.Add(new Icon(iconPath).NoTint().Size(40.px()));
+            var textCol = new Column(1.pt());
+            textCol.Add(new Label(new LocStrFormatted(label)).FontSize(13).FontBold().NoTextWrap());
+            textCol.Add(new Label(new LocStrFormatted(value)).FontSize(12).NoTextWrap());
+            topRow.Add(textCol);
+            col.Add(topRow);
             return col;
         }
 
@@ -211,75 +341,107 @@ namespace AutoForestryDesignations
         {
             float maxAgeYears = Math.Max(1f, stats.MaxAgeYears);
             bool harvestDisabled = tower.TargetHarvestPercent >= ForestryTower.NO_CUT_AT;
-            float thresholdPercent = harvestDisabled
-                ? 0f
-                : Math.Min(100f, tower.TargetHarvestPercent.ToFix32().ToFloat());
+            float threshold01 = harvestDisabled
+                ? 1f
+                : Math.Min(1f, tower.TargetHarvestPercent.ToFloat());
+            float thresholdPercent = threshold01 * 100f;
+            int totalCapacity = Math.Max(1, stats.TreeCapacity);
+            int unusedCapacity = Math.Max(0, totalCapacity - stats.TreeCount);
 
-            var section = new Column(2.pt()).MarginTop(2.pt());
+            var section = new Column(2.pt())
+                .AlignSelfStretch()
+                .MarginTop(2.pt())
+                .Background(Theme.BackgroundDark)
+                .Padding(4.pt())
+                .Gap(2.pt());
+            section.BorderRadius(8);
+            section.Border(1.px(), Theme.BorderColor, 8);
+            section.Tooltip(new LocStrFormatted(
+                "Vanilla forestry yield curve by maturity: 40% age = 30% yield, 60% = 60%, 80% = 88%, 100% = full."));
+
             var header = new Row().AlignItemsCenter();
-            header.Add(new Label(new LocStrFormatted("Growth distribution")).FontBold());
-            header.Add(new UiComponent().FlexGrow(1f));
-            header.Add(new Label(new LocStrFormatted(harvestDisabled
-                    ? "Harvest option: no cutting"
-                    : "Harvest option: " + FormatYears(maxAgeYears * thresholdPercent / 100f)))
-                .FontSize(12)
-                .Color(Theme.InactiveColor));
+            header.Add(new Label(new LocStrFormatted("Growth Distribution")).FontBold());
+            header.Tooltip(new LocStrFormatted(harvestDisabled
+                ? "Distribution by maturity relative to full growth term. Harvest option: no cutting."
+                : "Distribution by maturity relative to full growth term. Harvest option: " +
+                  FormatYears(maxAgeYears * thresholdPercent / 100f) +
+                  " (" + thresholdPercent.ToString("F0") + "%)."));
             section.Add(header);
 
-            var ticks = new Row().AlignItemsCenter();
-            ticks.Add(BuildTickLabel("0y", TextAlignment.LeftMiddle));
-            ticks.Add(BuildTickLabel(FormatYears(maxAgeYears * 0.25f), TextAlignment.CenterMiddle));
-            ticks.Add(BuildTickLabel(FormatYears(maxAgeYears * 0.5f), TextAlignment.CenterMiddle));
-            ticks.Add(BuildTickLabel(FormatYears(maxAgeYears * 0.75f), TextAlignment.CenterMiddle));
-            ticks.Add(BuildTickLabel(FormatYears(maxAgeYears), TextAlignment.RightMiddle));
-            section.Add(ticks);
-
-            if (!harvestDisabled)
-                section.Add(BuildThresholdMarker(thresholdPercent));
-
-            var bar = new Row().AlignSelfStretch().Height(18.px()).AlignItemsStretch().Background(Theme.BackgroundPanelLike);
-            int total = Math.Max(1, stats.TreeCount);
+            var bar = new Row().AlignSelfStretch().Height(20.px()).AlignItemsStretch().Background(Theme.BackgroundPanelLike);
+            int plantedTotal = Math.Max(1, stats.TreeCount);
             for (int i = 0; i < BUCKET_COUNT; i++)
             {
-                float grow = stats.GrowthBuckets[i] > 0 ? stats.GrowthBuckets[i] : 0.15f;
+                int bucketCount = stats.GrowthBuckets[i];
+                if (bucketCount <= 0)
+                    continue;
+
+                float bucketMidpoint01 = GetBucketMidpoint01(i);
+                bool isAboveHarvest = !harvestDisabled && bucketMidpoint01 >= threshold01;
+                var bucketColor = isAboveHarvest ? s_aboveHarvestColors[i] : s_belowHarvestColors[i];
+                string bucketLabel = GetBucketLabel(i, maxAgeYears);
+
                 var segment = new UiComponent()
-                    .FlexGrow(grow)
-                    .Background(stats.GrowthBuckets[i] > 0 ? s_growthColors[i] : Theme.BackgroundDark)
-                    .Tooltip(new LocStrFormatted(string.Format("{0}-{1}: {2} trees",
-                        FormatYears(maxAgeYears * i / BUCKET_COUNT),
-                        FormatYears(maxAgeYears * (i + 1) / BUCKET_COUNT),
-                        stats.GrowthBuckets[i])));
+                    .FlexGrow(bucketCount)
+                    .Background(bucketColor)
+                    .Tooltip(new LocStrFormatted(string.Format("{0}: {1} trees ({2:P0} of planted, {3:P0} of capacity) [{4}]",
+                        bucketLabel,
+                        bucketCount,
+                        (float)bucketCount / plantedTotal,
+                        (float)bucketCount / totalCapacity,
+                        isAboveHarvest ? "at or above harvest threshold" : "below harvest threshold")));
                 bar.Add(segment);
             }
-            section.Add(bar);
 
-            var footer = new Label(new LocStrFormatted(
-                    "Wood reserve uses vanilla per-tree age yield: 40% age = 30% yield, 60% = 60%, 80% = 88%, 100% = full."))
-                .FontSize(11)
-                .Color(Theme.InactiveColor);
-            section.Add(footer);
+            if (unusedCapacity > 0)
+            {
+                bar.Add(new UiComponent()
+                    .FlexGrow(unusedCapacity)
+                    .Background(s_unusedCapacityColor)
+                    .Tooltip(new LocStrFormatted(string.Format("Unused capacity: {0} tiles ({1:P0} of capacity)",
+                        unusedCapacity,
+                        (float)unusedCapacity / totalCapacity))));
+            }
+
+            var barWithLegend = new Row(3.pt()).AlignSelfStretch().AlignItemsCenter();
+            barWithLegend.Add(new Icon("Assets/Base/Products/Icons/TreeSapling.svg").NoTint().Size(16.px())
+                .Tooltip(new LocStrFormatted("Newly planted / lowest maturity")));
+            barWithLegend.Add(bar.FlexGrow(1f));
+            barWithLegend.Add(new Icon("Assets/Unity/Generated/Icons/LayoutEntity/SpruceTree.png").NoTint().Size(16.px())
+                .Tooltip(new LocStrFormatted("Fully grown / highest maturity")));
+
+            section.Add(barWithLegend);
 
             return section;
         }
 
-        private static Row BuildThresholdMarker(float thresholdPercent)
+        private static int GetGrowthBucketIndex(float growth01)
         {
-            float left = Math.Max(0f, Math.Min(100f, thresholdPercent));
-            float right = Math.Max(0f, 100f - left);
-            var row = new Row().AlignSelfStretch().Height(4.px()).AlignItemsStretch();
-            row.Add(new UiComponent().FlexGrow(Math.Max(0.1f, left)));
-            row.Add(new UiComponent().Width(2.px()).Background(ColorRgba.White));
-            row.Add(new UiComponent().FlexGrow(Math.Max(0.1f, right)));
-            return row;
+            if (growth01 >= 1f)
+                return BUCKET_COUNT - 1;
+
+            int bucket = (int)(Math.Max(0f, growth01) * GROWTH_STAGE_BUCKET_COUNT);
+            return Math.Min(GROWTH_STAGE_BUCKET_COUNT - 1, Math.Max(0, bucket));
         }
 
-        private static Label BuildTickLabel(string text, TextAlignment alignment)
+        private static float GetBucketMidpoint01(int bucketIndex)
         {
-            return new Label(new LocStrFormatted(text))
-                .FlexGrow(1f)
-                .FontSize(10)
-                .Color(Theme.InactiveColor)
-                .TextAlign(alignment);
+            if (bucketIndex >= BUCKET_COUNT - 1)
+                return 1f;
+
+            return (bucketIndex + 0.5f) / GROWTH_STAGE_BUCKET_COUNT;
+        }
+
+        private static string GetBucketLabel(int bucketIndex, float maxAgeYears)
+        {
+            if (bucketIndex >= BUCKET_COUNT - 1)
+                return "Fully mature (100%)";
+
+            float start01 = (float)bucketIndex / GROWTH_STAGE_BUCKET_COUNT;
+            float end01 = (float)(bucketIndex + 1) / GROWTH_STAGE_BUCKET_COUNT;
+            return string.Format("{0}-{1}",
+                FormatYears(maxAgeYears * start01),
+                FormatYears(maxAgeYears * end01));
         }
 
         private static string FormatYears(float years)
@@ -306,10 +468,17 @@ namespace AutoForestryDesignations
             return value >= 100f ? value.ToString("F0") : value.ToString("F1");
         }
 
+        private static string FormatPercent(float value)
+        {
+            value = Math.Max(0f, Math.Min(100f, value));
+            return value >= 10f ? value.ToString("F0") + "%" : value.ToString("F1") + "%";
+        }
+
         private readonly struct ForestryStats
         {
             public int TreeCount { get; }
-            public float AverageAgeYears { get; }
+            public int TreeCapacity { get; }
+            public float MaturityPercent { get; }
             public int WoodReserve { get; }
             public float CapacityPerYear { get; }
             public float MaxAgeYears { get; }
@@ -317,14 +486,16 @@ namespace AutoForestryDesignations
 
             public ForestryStats(
                 int treeCount,
-                float averageAgeYears,
+                int treeCapacity,
+                float maturityPercent,
                 int woodReserve,
                 float capacityPerYear,
                 float maxAgeYears,
                 int[] growthBuckets)
             {
                 TreeCount = treeCount;
-                AverageAgeYears = averageAgeYears;
+                TreeCapacity = treeCapacity;
+                MaturityPercent = maturityPercent;
                 WoodReserve = woodReserve;
                 CapacityPerYear = capacityPerYear;
                 MaxAgeYears = maxAgeYears;

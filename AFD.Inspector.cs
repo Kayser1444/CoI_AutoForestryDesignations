@@ -5,6 +5,7 @@ using System;
 using System.Reflection;
 using HarmonyLib;
 using Mafi;
+using Mafi.Core.Buildings.Forestry;
 using Mafi.Core.Buildings.Towers;
 using Mafi.Unity.UiToolkit.Component;
 using Mafi.Unity.UiToolkit.Library;
@@ -57,6 +58,19 @@ namespace AutoForestryDesignations
                     Log.Warning($"[AFD] EXCEPTION patching OnActivated: {ex2}");
                 }
 
+                try
+                {
+                    var setCutAtPercentageMethod = typeof(ForestryTower).GetMethod(nameof(ForestryTower.SetCutAtPercentage),
+                        BindingFlags.Instance | BindingFlags.Public);
+                    if (setCutAtPercentageMethod != null)
+                        harmony.Patch(setCutAtPercentageMethod,
+                            postfix: new HarmonyMethod(typeof(AutoForestryDesignation), nameof(ForestryTowerSetCutAtPercentagePostfix)));
+                }
+                catch (Exception ex3)
+                {
+                    Log.Warning($"[AFD] EXCEPTION patching SetCutAtPercentage: {ex3}");
+                }
+
             }
             catch (Exception ex)
             { 
@@ -68,6 +82,11 @@ namespace AutoForestryDesignations
         {
             DesignationPanel.RefreshDisplays(__instance);
             ForestryInfoPanel.RefreshContent(__instance);
+        }
+
+        public static void ForestryTowerSetCutAtPercentagePostfix(ForestryTower __instance)
+        {
+            AutoForestryDesignationsTicker.QueueForestryInfoRefresh(__instance);
         }
 
         public static void InspectorCtorPostfix(object __instance)
