@@ -10,3 +10,4 @@
 - Changed **Max tiles** controls so Shift steps by 10 and Ctrl steps by 100
 - Added first-pass **Forestry Composition** panel with trees, average age, wood reserve, capacity, and growth distribution
 - Made **Forestry Composition** collapsible and fixed its manual refresh button so it does not also toggle the panel
+- Fixed **Forestry Composition** tree capacity to scan actual plantable designation tiles instead of using the vanilla approximate capacity helper

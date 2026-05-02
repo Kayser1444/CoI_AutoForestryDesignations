@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: MIT
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Mafi;
 using Mafi.Core.Buildings.Forestry;
 using Mafi.Core.Buildings.Towers;
+using Mafi.Core.Terrain;
 using Mafi.Core.Terrain.Designation;
 using Mafi.Core.Terrain.Trees;
 using Mafi.Localization;
@@ -142,7 +142,6 @@ namespace AutoForestryDesignations
             int woodReserve = 0;
             int[] growthBuckets = new int[BUCKET_COUNT];
             float maxAgeYears = 0f;
-            int approxTreeCapacity = Math.Max(0, tower.GetApproxMaxTreesAllowed());
 
             foreach (TreeId treeId in tower.Trees)
             {
@@ -172,24 +171,122 @@ namespace AutoForestryDesignations
             }
 
             float averageMaturityPercent = treeCount > 0 ? (growthSum01 / treeCount) * 100f : 0f;
-            bool hasPossiblePlantingPos = tower.HasPossiblePlantingPos();
-            int treeCapacity = hasPossiblePlantingPos
-                ? Math.Max(treeCount, approxTreeCapacity)
-                : treeCount;
-            float capacityPerYear = EstimateCapacityPerYear(tower, treesManager);
+            int treeCapacity = EstimateTreeCapacity(tower, treesManager, treeCount);
+            float capacityPerYear = EstimateCapacityPerYear(tower, treesManager, treeCapacity);
 #if DEBUG
-            Log.Info(string.Format("[AFD] CollectStats: trees={0}/{1} woodReserve={2} maturity={3:F1}% maxAge={4:F1}y buckets=[{5}] hasPlantingPos={6} approxCap={7} capacity/60={8:F1}",
+            Log.Info(string.Format("[AFD] CollectStats: trees={0}/{1} woodReserve={2} maturity={3:F1}% maxAge={4:F1}y buckets=[{5}] capacity/month={6:F1}",
                 treeCount, treeCapacity, woodReserve, averageMaturityPercent, maxAgeYears,
-                string.Join(",", growthBuckets), hasPossiblePlantingPos, approxTreeCapacity, capacityPerYear / 12f));
+                string.Join(",", growthBuckets), capacityPerYear / 12f));
 #endif
             return new ForestryStats(treeCount, treeCapacity, averageMaturityPercent, woodReserve, capacityPerYear, maxAgeYears, growthBuckets);
         }
 
-        private static float EstimateCapacityPerYear(ForestryTower tower, TreesManager treesManager)
+        private static int EstimateTreeCapacity(ForestryTower tower, TreesManager treesManager, int liveManagedTreeCount)
         {
-            int approxMax = tower.GetApproxMaxTreesAllowed();
-            int liveCount = tower.Trees.Count(treeId => IsTreeInManagedDesignation(tower, treeId));
-            int effectiveTreeCapacity = Math.Max(approxMax, liveCount);
+            if (tower.TreeTypes.Count == 0)
+                return liveManagedTreeCount;
+
+            int spacing = GetEstimatedPlantingSpacing(tower, treesManager);
+            if (spacing <= 0)
+                return liveManagedTreeCount;
+
+            var candidates = new List<PlantingCandidate>();
+            var seenTiles = new HashSet<Tile2i>();
+            Tile2i towerTile = tower.Position2f.Tile2i;
+
+            foreach (TerrainDesignation designation in tower.ManagedDesignations)
+            {
+                if (!designation.IsForestry || !designation.IsFulfilled)
+                    continue;
+
+                Tile2i origin = designation.OriginTileCoord;
+                for (int y = 0; y < TerrainDesignation.SIZE_TILES; y++)
+                {
+                    for (int x = 0; x < TerrainDesignation.SIZE_TILES; x++)
+                    {
+                        var tile = origin + new RelTile2i(x, y);
+                        if (!seenTiles.Add(tile))
+                            continue;
+
+                        if (tower.Area.ContainsTile(tile) && treesManager.IsValidTileForPlanting(tile, spacing))
+                            candidates.Add(new PlantingCandidate(tile, tile.DistanceSqrTo(towerTile)));
+                    }
+                }
+            }
+
+            candidates.Sort((a, b) => a.DistanceSqrToTower.CompareTo(b.DistanceSqrToTower));
+
+            var futureTrees = new List<Tile2i>();
+            long requiredFutureSpacing = spacing * 2L;
+            long requiredFutureSpacingSqr = requiredFutureSpacing * requiredFutureSpacing;
+            foreach (PlantingCandidate candidate in candidates)
+            {
+                bool hasEnoughFutureSpacing = true;
+                foreach (Tile2i futureTree in futureTrees)
+                {
+                    if (candidate.Tile.DistanceSqrTo(futureTree) < requiredFutureSpacingSqr)
+                    {
+                        hasEnoughFutureSpacing = false;
+                        break;
+                    }
+                }
+
+                if (hasEnoughFutureSpacing)
+                    futureTrees.Add(candidate.Tile);
+            }
+
+#if DEBUG
+            Log.Info(string.Format(
+                "[AFD] EstimateTreeCapacity: live={0} spacing={1} validNow={2} future={3} => capacity={4}",
+                liveManagedTreeCount, spacing, candidates.Count, futureTrees.Count,
+                liveManagedTreeCount + futureTrees.Count));
+#endif
+            return liveManagedTreeCount + futureTrees.Count;
+        }
+
+        private static int GetEstimatedPlantingSpacing(ForestryTower tower, TreesManager treesManager)
+        {
+            int weightedSpacingSum = 0;
+            int totalWeight = 0;
+            var treeTypes = tower.TreeTypes;
+            for (int i = 0; i < treeTypes.Count; i++)
+            {
+                var entry = treeTypes[i];
+                if (entry.Value <= 0 || entry.Key.Trees.Length == 0)
+                    continue;
+
+                foreach (TreeProto treeProto in entry.Key.Trees)
+                {
+                    weightedSpacingSum += treeProto.SpacingToOtherTree * entry.Value;
+                    totalWeight += entry.Value;
+                }
+            }
+
+            if (totalWeight > 0)
+                return Math.Max(1, (int)Math.Round((double)weightedSpacingSum / totalWeight));
+
+            int currentSpacingSum = 0;
+            int currentTreeCount = 0;
+            foreach (TreeId treeId in tower.Trees)
+            {
+                if (!IsTreeInManagedDesignation(tower, treeId))
+                    continue;
+
+                if (!treesManager.Trees.TryGetValue(treeId, out TreeData treeData))
+                    continue;
+
+                currentSpacingSum += treeData.Proto.SpacingToOtherTree;
+                currentTreeCount++;
+            }
+
+            if (currentTreeCount > 0)
+                return Math.Max(1, (int)Math.Round((double)currentSpacingSum / currentTreeCount));
+
+            return TreeProto.MAX_TREE_SPACING;
+        }
+
+        private static float EstimateCapacityPerYear(ForestryTower tower, TreesManager treesManager, int effectiveTreeCapacity)
+        {
             if (effectiveTreeCapacity <= 0)
             {
 #if DEBUG
@@ -212,11 +309,11 @@ namespace AutoForestryDesignations
             float capacity = effectiveTreeCapacity * weightedYieldPerTreePerYear;
 #if DEBUG
             Log.Info(string.Format(
-                "[AFD] EstimateCapacityPerYear: approxMax={0} liveCount={1} effectiveCap={2} harvestDisabled={3} harvestGrowth={4:P0} yieldPerTree/y={5:F2} (fallback={6}) => capacity/y={7:F1}",
-                approxMax, liveCount, effectiveTreeCapacity,
+                "[AFD] EstimateCapacityPerYear: effectiveCap={0} harvestDisabled={1} harvestGrowth={2:P0} yieldPerTree/y={3:F2} (fallback={4}) => capacity/y={5:F1}",
+                effectiveTreeCapacity,
                 harvestDisabled, harvestGrowth01,
                 weightedYieldPerTreePerYear, usedFallback, capacity));
-            Log.Info(string.Format("[AFD] NOTE: capacity/60={0:F1} (capacity/y={1:F1})", capacity / 12f, capacity));
+            Log.Info(string.Format("[AFD] NOTE: capacity/month={0:F1} (capacity/y={1:F1})", capacity / 12f, capacity));
 #endif
             return capacity;
         }
@@ -311,7 +408,7 @@ namespace AutoForestryDesignations
                 "Trees",
                 string.Format("{0}/{1}", stats.TreeCount, stats.TreeCapacity),
                 "Assets/Unity/Generated/Icons/LayoutEntity/SpruceTree.png",
-                "Managed trees currently inside this tower's forestry designations. First number is current managed trees. Second number is estimated capacity; when the tower reports no remaining planting positions, this is clamped to current trees."));
+                "Managed trees currently inside this tower's forestry designations. First number is current managed trees. Second number is estimated capacity based on currently valid planting positions."));
             row.Add(BuildKpi(
                 "Average Maturity",
                 FormatPercent(stats.MaturityPercent),
@@ -493,6 +590,18 @@ namespace AutoForestryDesignations
         {
             value = Math.Max(0f, Math.Min(100f, value));
             return value >= 10f ? value.ToString("F0") + "%" : value.ToString("F1") + "%";
+        }
+
+        private readonly struct PlantingCandidate
+        {
+            public Tile2i Tile { get; }
+            public long DistanceSqrToTower { get; }
+
+            public PlantingCandidate(Tile2i tile, long distanceSqrToTower)
+            {
+                Tile = tile;
+                DistanceSqrToTower = distanceSqrToTower;
+            }
         }
 
         private readonly struct ForestryStats
