@@ -93,21 +93,7 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
         {
             // Enable console logging for easier debugging
             ConsoleLogger.Enable();
-
-#if DEBUG
-            // Auto-enable Mafi console mirroring in Debug builds so logs show up in-game
-            // without requiring a manual `also_log_to_console` command each launch.
-            var gameLoopEvents = resolver.Resolve<IGameLoopEvents>();
-            var consoleCommands = resolver.Resolve<GameConsoleCommandsExecutor>();
-            gameLoopEvents.RegisterRendererInitState(this, () =>
-            {
-                bool enabled = consoleCommands.ExecuteOrSchedule("also_log_to_console true");
-                if (enabled)
-                    Debug.Log("[AFD] Debug build: auto-executed also_log_to_console.");
-                else
-                    Debug.LogWarning("[AFD] Debug build: failed to auto-execute also_log_to_console.");
-            });
-#endif
+            RegisterDebugConsoleMirroring(resolver);
 
             ITerrainDesignationsManager desigManager = resolver.Resolve<ITerrainDesignationsManager>();
             IVehiclePathFindingManager vehiclePathFindingManager = resolver.Resolve<IVehiclePathFindingManager>();
@@ -129,6 +115,21 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
     public void MigrateJsonConfig(VersionSlim savedVersion, Dict<string, object> savedValues)
     {
         savedValues.Clear();
+    }
+
+    [System.Diagnostics.Conditional("DEBUG")]
+    private void RegisterDebugConsoleMirroring(DependencyResolver resolver)
+    {
+        var gameLoopEvents = resolver.Resolve<IGameLoopEvents>();
+        var consoleCommands = resolver.Resolve<GameConsoleCommandsExecutor>();
+        gameLoopEvents.RegisterRendererInitState(this, () =>
+        {
+            bool enabled = consoleCommands.ExecuteOrSchedule("also_log_to_console true");
+            if (enabled)
+                Debug.Log("[AFD] Debug build: auto-executed also_log_to_console.");
+            else
+                Debug.LogWarning("[AFD] Debug build: failed to auto-execute also_log_to_console.");
+        });
     }
 
     public void Dispose()

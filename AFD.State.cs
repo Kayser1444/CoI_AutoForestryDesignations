@@ -72,7 +72,7 @@ namespace AutoForestryDesignations
         private static readonly Dictionary<EntityId, AFDTowerSettings> s_towerSettingsByEntityId =
             new Dictionary<EntityId, AFDTowerSettings>();
         [System.Diagnostics.Conditional("DEBUG")]
-        private static void LogDebug(string message)
+        internal static void LogDebug(string message)
         {
             Log.Info(message);
         }

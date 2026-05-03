@@ -180,10 +180,8 @@ namespace AutoForestryDesignations
                 growthBuckets[bucket]++;
                 maxAgeYears = Math.Max(maxAgeYears, treeMaxAgeYears);
 
-#if DEBUG
-                Log.Info(string.Format("[AFD] tree {0}: proto={1} plantedAt={2} maxAge={3:F1}y growth={4:P0} ageYears={5:F1}y wood={6}",
+                AutoForestryDesignation.LogDebug(string.Format("[AFD] tree {0}: proto={1} plantedAt={2} maxAge={3:F1}y growth={4:P0} ageYears={5:F1}y wood={6}",
                     treeId, treeData.Proto.Id, treeData.PlantedAtTick, treeMaxAgeYears, growth01, ageYears, woodThisTree));
-#endif
             }
 
             float averageMaturityPercent = treeCount > 0 ? (growthSum01 / treeCount) * 100f : 0f;
@@ -191,11 +189,9 @@ namespace AutoForestryDesignations
             float averageMaxAgeYears = treeCount > 0 ? maxAgeYearsSum / treeCount : 0f;
             int treeCapacity = EstimateTreeCapacity(tower, treesManager, treeCount);
             float capacityPerYear = EstimateCapacityPerYear(tower, treesManager, treeCapacity);
-#if DEBUG
-            Log.Info(string.Format("[AFD] CollectStats: trees={0}/{1} woodReserve={2} maturity={3:F1}% avgAge={4:F1}y avgMaxAge={5:F1}y maxAge={6:F1}y buckets=[{7}] capacity/month={8:F1}",
+            AutoForestryDesignation.LogDebug(string.Format("[AFD] CollectStats: trees={0}/{1} woodReserve={2} maturity={3:F1}% avgAge={4:F1}y avgMaxAge={5:F1}y maxAge={6:F1}y buckets=[{7}] capacity/month={8:F1}",
                 treeCount, treeCapacity, woodReserve, averageMaturityPercent, averageAgeYears, averageMaxAgeYears, maxAgeYears,
                 string.Join(",", growthBuckets), capacityPerYear / 12f));
-#endif
             return new ForestryStats(treeCount, treeCapacity, averageMaturityPercent, averageAgeYears, averageMaxAgeYears, woodReserve, capacityPerYear, maxAgeYears, growthBuckets);
         }
 
@@ -253,12 +249,10 @@ namespace AutoForestryDesignations
                     futureTrees.Add(candidate.Tile);
             }
 
-#if DEBUG
-            Log.Info(string.Format(
+            AutoForestryDesignation.LogDebug(string.Format(
                 "[AFD] EstimateTreeCapacity: live={0} spacing={1} validNow={2} future={3} => capacity={4}",
                 liveManagedTreeCount, spacing, candidates.Count, futureTrees.Count,
                 liveManagedTreeCount + futureTrees.Count));
-#endif
             return liveManagedTreeCount + futureTrees.Count;
         }
 
@@ -307,9 +301,7 @@ namespace AutoForestryDesignations
         {
             if (effectiveTreeCapacity <= 0)
             {
-#if DEBUG
-                Log.Info("[AFD] EstimateCapacityPerYear: effectiveTreeCapacity=0, returning 0");
-#endif
+                AutoForestryDesignation.LogDebug("[AFD] EstimateCapacityPerYear: effectiveTreeCapacity=0, returning 0");
                 return 0f;
             }
 
@@ -325,14 +317,12 @@ namespace AutoForestryDesignations
                 weightedYieldPerTreePerYear = EstimateCurrentYieldPerTreePerYear(tower, treesManager, harvestGrowth01);
 
             float capacity = effectiveTreeCapacity * weightedYieldPerTreePerYear;
-#if DEBUG
-            Log.Info(string.Format(
+            AutoForestryDesignation.LogDebug(string.Format(
                 "[AFD] EstimateCapacityPerYear: effectiveCap={0} harvestDisabled={1} harvestGrowth={2:P0} yieldPerTree/y={3:F2} (fallback={4}) => capacity/y={5:F1}",
                 effectiveTreeCapacity,
                 harvestDisabled, harvestGrowth01,
                 weightedYieldPerTreePerYear, usedFallback, capacity));
-            Log.Info(string.Format("[AFD] NOTE: capacity/month={0:F1} (capacity/y={1:F1})", capacity / 12f, capacity));
-#endif
+            AutoForestryDesignation.LogDebug(string.Format("[AFD] NOTE: capacity/month={0:F1} (capacity/y={1:F1})", capacity / 12f, capacity));
             return capacity;
         }
 
@@ -341,9 +331,7 @@ namespace AutoForestryDesignations
             var treeTypes = tower.TreeTypes;
             if (treeTypes.Count == 0)
             {
-#if DEBUG
-                Log.Info("[AFD] EstimateConfiguredYieldPerTreePerYear: no configured tree types");
-#endif
+                AutoForestryDesignation.LogDebug("[AFD] EstimateConfiguredYieldPerTreePerYear: no configured tree types");
                 return 0f;
             }
 
@@ -365,11 +353,9 @@ namespace AutoForestryDesignations
                     int yieldAtHarvest = treeProto.GetHarvestedQuantity(harvestPercent).Value;
                     float yieldPerYear = yieldAtHarvest / harvestAgeYears;
                     groupYieldPerTreePerYear += yieldPerYear;
-#if DEBUG
-                    Log.Info(string.Format(
+                    AutoForestryDesignation.LogDebug(string.Format(
                         "[AFD]   configured group '{0}' proto '{1}': maxAge={2:F1}y harvestAge={3:F1}y yieldAtHarvest={4} yieldPerYear={5:F2}",
                         entry.Key.Id, treeProto.Id, maxAgeY, harvestAgeYears, yieldAtHarvest, yieldPerYear));
-#endif
                 }
                 groupYieldPerTreePerYear /= entry.Key.Trees.Length;
 
@@ -378,10 +364,8 @@ namespace AutoForestryDesignations
             }
 
             float result = totalWeight > 0 ? weightedSum / totalWeight : 0f;
-#if DEBUG
-            Log.Info(string.Format("[AFD] EstimateConfiguredYieldPerTreePerYear: weightedSum={0:F2} totalWeight={1} => {2:F2}/tree/y",
+            AutoForestryDesignation.LogDebug(string.Format("[AFD] EstimateConfiguredYieldPerTreePerYear: weightedSum={0:F2} totalWeight={1} => {2:F2}/tree/y",
                 weightedSum, totalWeight, result));
-#endif
             return result;
         }
 
@@ -404,18 +388,14 @@ namespace AutoForestryDesignations
                 float yieldPerYear = yieldAtHarvest / harvestAgeYears;
                 sum += yieldPerYear;
                 count++;
-#if DEBUG
-                Log.Info(string.Format(
+                AutoForestryDesignation.LogDebug(string.Format(
                     "[AFD]   current tree proto '{0}': maxAge={1:F1}y harvestAge={2:F1}y yieldAtHarvest={3} yieldPerYear={4:F2}",
                     treeData.Proto.Id, maxAgeY, harvestAgeYears, yieldAtHarvest, yieldPerYear));
-#endif
             }
 
             float result = count > 0 ? sum / count : 0f;
-#if DEBUG
-            Log.Info(string.Format("[AFD] EstimateCurrentYieldPerTreePerYear: sum={0:F2} count={1} => {2:F2}/tree/y",
+            AutoForestryDesignation.LogDebug(string.Format("[AFD] EstimateCurrentYieldPerTreePerYear: sum={0:F2} count={1} => {2:F2}/tree/y",
                 sum, count, result));
-#endif
             return result;
         }
 
