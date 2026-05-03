@@ -3,9 +3,11 @@ Announcing:
 
 Version **0.1.0** is the first public release.
 
+The long-awaited sister mod to **Automatic Terrain Designations** is here.
+
 Stop painting forestry designations by hand. This mod adds **Create Designations** and **Clear Designations** buttons to every Forestry Tower. Pick a tower, click Create, and the mod scans the tower area for valid forestry designation tiles.
 
-Highlights:
+## Highlights
 :seedling: **Create Designations** - scans the selected tower area and places valid forestry designation tiles automatically.
 :wastebasket: **Clear Designations** - removes only forestry designations in that tower area, leaving mining, dumping, and leveling designations alone.
 :gear: **Placement toggles** - choose fertile-only tiles, reachable-only tiles, whether to avoid existing terrain designations, and whether to mark harvest-ready trees.

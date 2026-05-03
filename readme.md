@@ -1,6 +1,6 @@
 # :evergreen_tree: Automatic Forestry Designations
 
-Kayser's Automatic Forestry Designations is a Captain of Industry mod that adds one-click forestry designation tools to Forestry Towers.
+Kayser's Automatic Forestry Designations is the long-awaited sister mod to **Automatic Terrain Designations**, bringing the same one-click quality-of-life spirit to Forestry Towers.
 
 Instead of painting forestry designations by hand, select a Forestry Tower and use **Create Designations** to scan its area and fill eligible ground automatically. Use **Clear Designations** to remove only forestry designations in that tower's area without touching mining, dumping, or leveling designations.
 
