@@ -16,3 +16,4 @@
 - Added a custom product-style mature tree icon for **Forestry Composition**
 - Updated **Forestry Composition** age labels and tooltips to use dynamic tree maturity age from game difficulty settings
 - Added a harvest-threshold divider between below-threshold and harvest-ready growth buckets
+- Simplified **Forestry Composition** UI wording to be more player-friendly (Trees, Tree Maturity, Growth Breakdown)
