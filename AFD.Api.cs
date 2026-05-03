@@ -65,5 +65,17 @@ namespace AutoForestryDesignations
         /// </summary>
         public static void RefreshDesignationPanel(object key)
             => DesignationPanel.RefreshDisplays(key);
+
+        /// <summary>
+        /// Builds the "Forestry Information" panel and returns it.
+        /// </summary>
+        public static PanelWithHeader BuildForestryInfoPanel(Func<IAreaManagingTower?> getTower, object key)
+            => ForestryInfoPanel.Build(getTower, key);
+
+        /// <summary>
+        /// Refreshes the display values of a previously built Forestry Information panel.
+        /// </summary>
+        public static void RefreshForestryInfoPanel(object key)
+            => ForestryInfoPanel.RefreshContent(key);
     }
 }

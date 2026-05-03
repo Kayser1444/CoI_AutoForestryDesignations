@@ -7,7 +7,7 @@ using UnityEngine;
 namespace AutoForestryDesignations;
 
 /// <summary>
-/// Forwards Mafi log messages to Unity's Debug console instead of file logging.
+/// Forwards matching Mafi log messages to Unity's Debug console.
 /// Only active in Debug builds.
 /// </summary>
 public static class ConsoleLogger

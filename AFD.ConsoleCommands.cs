@@ -50,6 +50,13 @@ public sealed class AfdConsoleCommands
         return $"[AFD] AvoidMiningDesignations set to {AutoForestryDesignationsMod.AvoidMiningDesignations}.";
     }
 
+    [ConsoleCommand(false, false, "Sets whether unreachable tiles are skipped by vehicle pathability (true/false).", null)]
+    private string afdSetOnlyReachableTiles(bool value)
+    {
+        AutoForestryDesignationsMod.SetOnlyReachableTiles(value);
+        return $"[AFD] OnlyReachableTiles set to {AutoForestryDesignationsMod.OnlyReachableTiles}.";
+    }
+
     [ConsoleCommand(false, false, "Sets the global default max designation tiles per run (0 = no limit).", null)]
     private string afdSetMaxTiles(int value)
     {
