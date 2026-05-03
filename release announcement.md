@@ -21,3 +21,6 @@ There is also a settings file, console commands, and a small API for the connois
 Safe to add to or remove from existing saves.
 
 Requires Captain of Industry 0.8.2 or newer.
+
+Download:
+https://github.com/Kayser1444/CoI_AutoForestryDesignations/releases/latest
