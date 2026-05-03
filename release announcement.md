@@ -1,12 +1,11 @@
-Announcing:
 # :evergreen_tree: Kayser's Automatic Forestry Designations
-
-Download:
-https://github.com/Kayser1444/CoI_AutoForestryDesignations/releases/latest
 
 The long-awaited sister mod to **Automatic Terrain Designations** is here.
 
 Stop painting forestry designations by hand. This mod adds **Create Designations** and **Clear Designations** buttons to every Forestry Tower. Pick a tower, click Create, and the mod scans the tower area for valid forestry designation tiles.
+
+Download:
+https://github.com/Kayser1444/CoI_AutoForestryDesignations/releases/latest
 
 ## Highlights
 :seedling: **Create Designations** - scans the selected tower area and places valid forestry designation tiles automatically.

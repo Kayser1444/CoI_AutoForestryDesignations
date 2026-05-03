@@ -24,6 +24,12 @@ The mod also adds a live **Forestry Information** panel to the tower inspector, 
 - Can be added to or removed from existing saves.
 - Requires Captain of Industry `0.8.2` or newer.
 
+## :floppy_disk: Installation
+- Download the latest version of the mod from GitHub Releases
+- Extract the mod folder into your Captain of Industry mods directory (`%AppData%\Captain of Industry\Mods`)
+- Enable the mod when loading or starting a new game
+- Can be safely added and removed from saves
+
 ## :hammer_and_wrench: Build from source
 - Install the .NET SDK with .NET Framework 4.8 targeting support
 - Make sure Captain of Industry is installed, or set `CAPTAIN_INDUSTRY_MANAGED_PATH` to the game's `Captain of Industry_Data\Managed` directory
