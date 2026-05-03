@@ -175,29 +175,6 @@ namespace AutoForestryDesignations
             var avoidWithTreesDisplay = new Mafi.Unity.Ui.Library.Display(new LocStrFormatted(BoolText(initAvoidTrees)))
                 .MinDigits(3).AlignSelfStretch().MarginTopBottom(2.px());
 
-            // --- Avoid mining designations ---
-            bool initAvoidMining = initialTower != null
-                ? AutoForestryDesignation.GetTowerAvoidMiningDesignations(initialTower)
-                : AutoForestryDesignationsMod.AvoidMiningDesignations;
-            var avoidMiningDisplay = new Mafi.Unity.Ui.Library.Display(new LocStrFormatted(BoolText(initAvoidMining)))
-                .MinDigits(3).AlignSelfStretch().MarginTopBottom(2.px());
-            panel.BodyAdd(BuildToggleRow(
-                new LocStrFormatted("Avoid terrain designations"),
-                new LocStrFormatted("Skip tiles that already contain any terrain designation, including mining, dumping, or leveling."),
-                avoidMiningDisplay,
-                (Action)delegate
-                {
-                    var tower = getTower(); if (tower == null) return;
-                    AutoForestryDesignation.SetTowerAvoidMiningDesignations(tower, true);
-                    avoidMiningDisplay.SetValue(new LocStrFormatted(BoolText(true)));
-                },
-                (Action)delegate
-                {
-                    var tower = getTower(); if (tower == null) return;
-                    AutoForestryDesignation.SetTowerAvoidMiningDesignations(tower, false);
-                    avoidMiningDisplay.SetValue(new LocStrFormatted(BoolText(false)));
-                }));
-
             // --- Only reachable tiles ---
             bool initOnlyReachable = initialTower != null
                 ? AutoForestryDesignation.GetTowerOnlyReachableTiles(initialTower)
@@ -219,6 +196,29 @@ namespace AutoForestryDesignations
                     var tower = getTower(); if (tower == null) return;
                     AutoForestryDesignation.SetTowerOnlyReachableTiles(tower, false);
                     onlyReachableDisplay.SetValue(new LocStrFormatted(BoolText(false)));
+                }));
+
+            // --- Avoid mining designations ---
+            bool initAvoidMining = initialTower != null
+                ? AutoForestryDesignation.GetTowerAvoidMiningDesignations(initialTower)
+                : AutoForestryDesignationsMod.AvoidMiningDesignations;
+            var avoidMiningDisplay = new Mafi.Unity.Ui.Library.Display(new LocStrFormatted(BoolText(initAvoidMining)))
+                .MinDigits(3).AlignSelfStretch().MarginTopBottom(2.px());
+            panel.BodyAdd(BuildToggleRow(
+                new LocStrFormatted("Avoid terrain designations"),
+                new LocStrFormatted("Skip tiles that already contain any terrain designation, including mining, dumping, or leveling."),
+                avoidMiningDisplay,
+                (Action)delegate
+                {
+                    var tower = getTower(); if (tower == null) return;
+                    AutoForestryDesignation.SetTowerAvoidMiningDesignations(tower, true);
+                    avoidMiningDisplay.SetValue(new LocStrFormatted(BoolText(true)));
+                },
+                (Action)delegate
+                {
+                    var tower = getTower(); if (tower == null) return;
+                    AutoForestryDesignation.SetTowerAvoidMiningDesignations(tower, false);
+                    avoidMiningDisplay.SetValue(new LocStrFormatted(BoolText(false)));
                 }));
 
             // --- Max tiles ---
