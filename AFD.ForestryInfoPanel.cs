@@ -13,8 +13,6 @@ using Mafi.Unity.UiToolkit;
 using Mafi.Unity.UiToolkit.Component;
 using Mafi.Unity.UiToolkit.Library;
 using Mafi.Unity.Ui.Library;
-using UnityEngine;
-using UiImage = UnityEngine.UIElements.Image;
 using Row = Mafi.Unity.UiToolkit.Library.Row;
 using ClickEvent = UnityEngine.UIElements.ClickEvent;
 
@@ -26,7 +24,6 @@ namespace AutoForestryDesignations
         private const int GROWTH_STAGE_BUCKET_COUNT = BUCKET_COUNT - 1;
         private const int PANEL_GAP_PT = 2;
         private const int CARD_PADDING_PT = 6;
-        private static Texture2D? s_matureTreeTexture;
 
         private static readonly ColorRgba[] s_belowHarvestColors =
         {
@@ -434,13 +431,13 @@ namespace AutoForestryDesignations
                 "Tree Maturity",
                 string.Format("{0} ({1})", FormatPercent(stats.MaturityPercent), FormatYears(stats.AverageAgeYears)),
                 "Assets/Base/Products/Icons/TreeSapling.svg",
-                string.Format("Average maturity and current age across managed trees. Full maturity is currently about {0} for this tower's tree mix, including difficulty settings.",
+                string.Format("Average maturity and current age across managed trees. Full maturity is currently <b>{0}</b>, including difficulty settings.",
                     FormatYears(stats.AverageMaxAgeYears))));
             row.Add(BuildKpi(
-                "Output Capacity",
+                "Sustainable Yield",
                 FormatAmount(stats.CapacityPerYear / 12f) + " /mo",
                 "Assets/Base/Products/Icons/Wood.svg",
-                string.Format("Projected sustainable wood output per in-game month (60 real-time seconds at 1x speed), based on species mix, harvest threshold, and current tree growth speed ({0} average full maturity).",
+                string.Format("Maximum long-term wood production that can be maintained for this tower per in-game month, accounting for designated area, harvest threshold, and tree growth speed as per the difficulty settings (currently <b>{0}</b> average full maturity).",
                     FormatYears(stats.AverageMaxAgeYears))));
             return row;
         }
@@ -635,104 +632,7 @@ namespace AutoForestryDesignations
 
         private static UiComponent BuildMatureTreeIcon(int sizePx)
         {
-            return new RuntimeTextureIcon(GetMatureTreeTexture(), sizePx);
-        }
-
-        private static Texture2D GetMatureTreeTexture()
-        {
-            if (s_matureTreeTexture != null)
-                return s_matureTreeTexture;
-
-            const int size = 64;
-            var texture = new Texture2D(size, size, TextureFormat.RGBA32, mipChain: false);
-            texture.name = "AFD_MatureTreeIcon";
-            texture.filterMode = FilterMode.Bilinear;
-            var pixels = new UnityEngine.Color[size * size];
-            for (int i = 0; i < pixels.Length; i++)
-                pixels[i] = UnityEngine.Color.clear;
-
-            var trunk = HexColor(0x8f5a2c);
-            var trunkDark = HexColor(0x6e4122);
-            var leaf = HexColor(0x4fa65d);
-            var leafDark = HexColor(0x2f7b44);
-            var leafOutline = HexColor(0x1f5a31);
-            var leafHighlight = HexColor(0x86c77c);
-
-            FillEllipse(pixels, size, 20, 14, 24, 26, leafOutline);
-            FillEllipse(pixels, size, 6, 25, 24, 24, leafOutline);
-            FillEllipse(pixels, size, 30, 24, 26, 25, leafOutline);
-            FillEllipse(pixels, size, 17, 6, 30, 28, leafOutline);
-
-            FillEllipse(pixels, size, 22, 16, 21, 23, leaf);
-            FillEllipse(pixels, size, 9, 27, 21, 21, leaf);
-            FillEllipse(pixels, size, 31, 26, 22, 21, leafDark);
-            FillEllipse(pixels, size, 19, 9, 26, 25, leaf);
-
-            FillRect(pixels, size, 27, 36, 10, 21, trunk);
-            FillRect(pixels, size, 32, 36, 6, 21, trunkDark);
-            FillCircle(pixels, size, 21, 24, 3, leafHighlight);
-            FillCircle(pixels, size, 16, 35, 3, leafHighlight);
-
-            texture.SetPixels(pixels);
-            texture.Apply(updateMipmaps: false, makeNoLongerReadable: true);
-            s_matureTreeTexture = texture;
-            return texture;
-        }
-
-        private static UnityEngine.Color HexColor(int rgb)
-        {
-            return new UnityEngine.Color(
-                ((rgb >> 16) & 0xff) / 255f,
-                ((rgb >> 8) & 0xff) / 255f,
-                (rgb & 0xff) / 255f,
-                1f);
-        }
-
-        private static void FillRect(UnityEngine.Color[] pixels, int size, int x, int y, int width, int height, UnityEngine.Color color)
-        {
-            for (int yy = y; yy < y + height; yy++)
-                for (int xx = x; xx < x + width; xx++)
-                    SetPixel(pixels, size, xx, yy, color);
-        }
-
-        private static void FillCircle(UnityEngine.Color[] pixels, int size, int cx, int cy, int radius, UnityEngine.Color color)
-        {
-            FillEllipse(pixels, size, cx - radius, cy - radius, radius * 2 + 1, radius * 2 + 1, color);
-        }
-
-        private static void FillEllipse(UnityEngine.Color[] pixels, int size, int x, int y, int width, int height, UnityEngine.Color color)
-        {
-            float rx = width / 2f;
-            float ry = height / 2f;
-            float cx = x + rx;
-            float cy = y + ry;
-            for (int yy = y; yy < y + height; yy++)
-            {
-                for (int xx = x; xx < x + width; xx++)
-                {
-                    float nx = (xx + 0.5f - cx) / rx;
-                    float ny = (yy + 0.5f - cy) / ry;
-                    if (nx * nx + ny * ny <= 1f)
-                        SetPixel(pixels, size, xx, yy, color);
-                }
-            }
-        }
-
-        private static void SetPixel(UnityEngine.Color[] pixels, int size, int x, int y, UnityEngine.Color color)
-        {
-            if (x < 0 || x >= size || y < 0 || y >= size)
-                return;
-            pixels[(size - 1 - y) * size + x] = color;
-        }
-
-        private sealed class RuntimeTextureIcon : UiComponent<UiImage>
-        {
-            public RuntimeTextureIcon(Texture2D texture, int sizePx)
-                : base(new UiImage())
-            {
-                Element.image = texture;
-                this.Size(sizePx.px());
-            }
+            return TreeIcon.BuildMature(sizePx);
         }
 
         private readonly struct PlantingCandidate
