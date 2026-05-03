@@ -416,15 +416,15 @@ namespace AutoForestryDesignations
         {
             var row = new Row().Gap(PANEL_GAP_PT.pt()).AlignItemsStretch().AlignSelfStretch();
             row.Add(BuildKpi(
-                "Trees Present",
+                "Trees",
                 string.Format("{0}/{1}", stats.TreeCount, stats.TreeCapacity),
                 () => BuildMatureTreeIcon(44),
-                "Managed trees currently inside this tower's forestry designations. First number is current managed trees. Second number is estimated capacity based on currently valid planting positions."));
+                "Managed trees currently inside this tower's forestry area. First number is current trees; second number is estimated max trees based on currently valid planting positions."));
             row.Add(BuildKpi(
-                "Average Maturity",
+                "Tree Maturity",
                 string.Format("{0} ({1})", FormatPercent(stats.MaturityPercent), FormatYears(stats.AverageAgeYears)),
                 "Assets/Base/Products/Icons/TreeSapling.svg",
-                string.Format("Average tree maturity and current age across all managed trees. Full maturity is currently about {0} for this tower's tree mix, including difficulty settings.",
+                string.Format("Average maturity and current age across managed trees. Full maturity is currently about {0} for this tower's tree mix, including difficulty settings.",
                     FormatYears(stats.AverageMaxAgeYears))));
             row.Add(BuildKpi(
                 "Output Capacity",
@@ -482,11 +482,11 @@ namespace AutoForestryDesignations
             section.BorderRadius(8);
             section.Border(1.px(), Theme.BorderColor, 8);
             section.Tooltip(new LocStrFormatted(
-                string.Format("Distribution by maturity across managed trees. Full maturity age comes from the game difficulty settings and tree type; current average full maturity is {0}. Vanilla forestry yield curve: 40% age = 30% yield, 60% = 60%, 80% = 88%, 100% = full.",
+                string.Format("Tree maturity breakdown across managed trees. Full maturity age depends on tree type and difficulty; current average full maturity is {0}. Vanilla forestry yield curve: 40% age = 30% yield, 60% = 60%, 80% = 88%, 100% = full.",
                     FormatYears(stats.AverageMaxAgeYears))));
 
             var header = new Row().AlignItemsCenter();
-            header.Add(new Label(new LocStrFormatted("Composition")).FontBold());
+            header.Add(new Label(new LocStrFormatted("Growth Breakdown")).FontBold());
             header.Tooltip(new LocStrFormatted(harvestDisabled
                 ? string.Format("Distribution by maturity relative to each tree's current full-growth age. Harvest option: no cutting. Average full maturity: {0}.",
                     FormatYears(stats.AverageMaxAgeYears))
