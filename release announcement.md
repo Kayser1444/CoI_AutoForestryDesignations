@@ -1,12 +1,19 @@
 Announcing:
 # Kayser's Automatic Forestry Designations
 
-Stop painting forestry designations by hand. This mod adds **Create** and **Clear** buttons to every Forestry Tower — one click scans the tower area and fills it with valid designations automatically.
+Version **0.1.0** is the first public release.
 
-* **Auto-create designations** — scans the tower's polygon area and places forestry designations on all eligible tiles in one go.
-* **Reachability filtering** — only places designations on tiles your vehicles can actually drive to, using the same pathability rules as TreePlanters and TreeHarvesters.
-* **Closest tiles first** — sorts candidates by real driving distance from the tower, so harvesters and planters always fill the nearest ground first.
-* **Forestry Composition panel** — live KPI cards for tree count, average maturity, and production capacity, plus a color-coded maturity chart that shifts at the tower's own harvest threshold.
-* **Per-tower settings** — every option (fertile-only, avoid terrain designations, reachability, max tiles) is stored independently per tower.
+Stop painting forestry designations by hand. This mod adds **Create Designations** and **Clear Designations** buttons to every Forestry Tower. Pick a tower, click Create, and the mod scans the tower area for valid forestry designation tiles.
 
-Coming tomorrow!
+Highlights:
+* **Automatic placement** - fills eligible 4x4 forestry designation tiles inside the selected tower area.
+* **Safe clearing** - Clear removes only forestry designations in that tower area, leaving mining, dumping, and leveling designations alone.
+* **Reachability filtering** - can skip tiles your TreePlanters and TreeHarvesters cannot reach by vehicle pathability.
+* **Closest tiles first** - reachable candidates are sorted by driving distance from the tower, so nearby ground fills first.
+* **Per-tower options** - fertile-only tiles, reachable-only tiles, avoiding terrain designations, max tiles per run, and harvest-ready marking can be adjusted per tower.
+* **Forestry Information panel** - live tree count, estimated capacity, maturity, sustainable yield, and growth breakdown.
+* **Smart maturity display** - charts and tooltips follow the tower's harvest threshold and the current difficulty settings for tree growth.
+
+The mod includes `AFDsettings.json` for startup defaults and is safe to add to or remove from existing saves.
+
+Requires Captain of Industry 0.8.2 or newer.
