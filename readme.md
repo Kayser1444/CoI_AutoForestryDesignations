@@ -16,7 +16,6 @@ The mod also adds a live **Forestry Information** panel to the tower inspector, 
 - :leaves: **Only fertile tiles** - place designations only where the ground supports tree growth.
 - :round_pushpin: **Closest tiles first** - fill reachable candidates by driving distance from the selected tower.
 - :1234: **Max tiles** - cap the number of designations placed per run, with Shift/Ctrl step controls.
-- :axe: **Harvest-ready marking** - optionally mark trees for harvest after creating designations, respecting the tower's vanilla Harvesting Options.
 - :bar_chart: **Forestry Information panel** - inspect tree count, estimated capacity, maturity, sustainable yield, and growth buckets.
 - :wrench: **Configurable defaults** - edit `AFDsettings.json` for startup defaults; most options are also adjustable per tower in the inspector.
 
