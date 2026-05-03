@@ -66,7 +66,7 @@ $filesToInclude = @(
     'AutoForestryDesignations.dll',
     '0Harmony.dll',
     'Thumbnail.png',
-    'change log.md',
+    'changelog.txt',
     'readme.md',
     'LICENSE',
     'AFDsettings.json'
