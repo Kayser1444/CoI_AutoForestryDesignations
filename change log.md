@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.1.1
+- Added concise license and attribution notices to source files and README.
+
 ## 0.1.0
 - First public release of **Kayser's Automatic Forestry Designations**.
 - Adds **Create Designations** and **Clear Designations** controls directly to Forestry Towers.

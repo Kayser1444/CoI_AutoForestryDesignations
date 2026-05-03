@@ -38,3 +38,17 @@ The mod also adds a live **Forestry Information** panel to the tower inspector, 
 
 ## :scroll: License
 MIT. See [LICENSE](LICENSE).
+
+## Attribution and trademarks
+
+Auto Forestry Designations is an unofficial, community-made mod for Captain of Industry.
+
+Captain of Industry, MaFi Games, and related names, trademarks, game code, and
+assets are the property of MaFi Games. This mod is not affiliated with,
+endorsed by, or sponsored by MaFi Games.
+
+This repository is intended to contain only original mod code and configuration,
+licensed under the MIT License. It does not intentionally include Captain of
+Industry game code, game assets, or other MaFi Games intellectual property. If
+any such material is found to have been included by mistake, I intend to correct
+it promptly upon discovery or notice.

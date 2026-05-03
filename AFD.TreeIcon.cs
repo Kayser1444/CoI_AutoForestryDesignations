@@ -1,5 +1,11 @@
+// Auto Forestry Designations
 // Copyright (c) 2026 Kayser
-// SPDX-License-Identifier: MIT
+// Licensed under the MIT License.
+//
+// Unofficial mod for Captain of Industry. Captain of Industry, MaFi Games, and
+// related trademarks, code, and assets belong to MaFi Games. This repository is
+// intended to contain only original mod code/configuration; if MaFi Games material
+// is included by mistake, I intend to correct it promptly upon discovery or notice.
 using Mafi;
 using Mafi.Unity.UiToolkit;
 using Mafi.Unity.UiToolkit.Component;
