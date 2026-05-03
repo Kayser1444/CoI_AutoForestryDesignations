@@ -1,6 +1,6 @@
 {
   "id": "AutoForestryDesignations",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "display_name": "Kayser's Automatic Forestry Designations",
   "description_short": "Create forestry designations for Forestry Towers and inspect planting coverage.",
   "description_long": "<b>Auto Forestry Designations</b>\n\nAutomatically creates <b>forestry designations</b> for your Forestry Towers - no manual painting required.\n\n- <b>Create Designations</b>: Scan the tower area and place valid forestry designations.\n- <b>Clear Designations</b>: Remove forestry designations in the selected tower area without touching other designation types.\n- <b>Per-tower Settings</b>: Control fertile-only placement, existing trees, existing terrain designations, max tiles per run, and marking grown trees for harvest.\n\n<i>Compatible with vanilla saves - can be added to or removed from existing saves safely.</i>",
