@@ -17,7 +17,7 @@ Stop painting forestry designations by hand. This mod adds **Create Designations
 :bar_chart: **Forestry Information panel** - live tree count, estimated capacity, tree maturity, sustainable yield, and growth breakdown.
 :leaves: **Smart maturity display** - charts and tooltips follow the tower's harvest threshold and the current difficulty settings for tree growth.
 
-There is also a settings file, console commands, and a small API for the connoisseurs.
+There is also a settings file, console commands, and a mod API for the connoisseurs.
 
 Safe to add to or remove from existing saves.
 
