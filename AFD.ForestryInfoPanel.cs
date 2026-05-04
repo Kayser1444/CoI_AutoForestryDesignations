@@ -89,7 +89,7 @@ namespace AutoForestryDesignations
 
             panel.Header.Add(refreshButton);
             panel.BodyAdd(contentCol);
-            panel.Collapsed(false);
+            panel.Collapsed(AutoForestryDesignationsMod.ForestryInformationPanelCollapsed);
             return panel;
         }
 

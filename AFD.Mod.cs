@@ -97,6 +97,10 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
     public static bool ForestryDesignationsPanelCollapsed { get; private set; } = false;
     public static void SetForestryDesignationsPanelCollapsed(bool value) => ForestryDesignationsPanelCollapsed = value;
 
+    /// <summary>Default collapsed state for the Forestry Information inspector panel.</summary>
+    public static bool ForestryInformationPanelCollapsed { get; private set; } = false;
+    public static void SetForestryInformationPanelCollapsed(bool value) => ForestryInformationPanelCollapsed = value;
+
     public void Initialize(DependencyResolver resolver, bool gameWasLoaded)
     {
         try

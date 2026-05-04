@@ -232,6 +232,10 @@ namespace AutoForestryDesignations
                 if (forestryDesignationsPanelCollapsed.HasValue)
                     AutoForestryDesignationsMod.SetForestryDesignationsPanelCollapsed(forestryDesignationsPanelCollapsed.Value);
 
+                bool? forestryInformationPanelCollapsed = ParseBool(json, "forestryInformationPanelCollapsed");
+                if (forestryInformationPanelCollapsed.HasValue)
+                    AutoForestryDesignationsMod.SetForestryInformationPanelCollapsed(forestryInformationPanelCollapsed.Value);
+
                 parsedVersion = ParseString(json, "settingsVersion");
             }
             catch (Exception ex)
@@ -326,7 +330,10 @@ namespace AutoForestryDesignations
             sb.AppendLine($"  \"markHarvestReadyForHarvest\": {BoolToJsonStr(AutoForestryDesignationsMod.MarkHarvestReadyForHarvest)},");
             sb.AppendLine();
             sb.AppendLine("  \"_comment_forestryDesignationsPanelCollapsed\": \"Default collapsed state for the Forestry Designations panel when a Forestry Tower inspector is created. false = expanded by default, true = collapsed by default. Default: false.\",");
-            sb.AppendLine($"  \"forestryDesignationsPanelCollapsed\": {BoolToJsonStr(AutoForestryDesignationsMod.ForestryDesignationsPanelCollapsed)}");
+            sb.AppendLine($"  \"forestryDesignationsPanelCollapsed\": {BoolToJsonStr(AutoForestryDesignationsMod.ForestryDesignationsPanelCollapsed)},");
+            sb.AppendLine();
+            sb.AppendLine("  \"_comment_forestryInformationPanelCollapsed\": \"Default collapsed state for the Forestry Information panel when a Forestry Tower inspector is created. false = expanded by default, true = collapsed by default. Default: false.\",");
+            sb.AppendLine($"  \"forestryInformationPanelCollapsed\": {BoolToJsonStr(AutoForestryDesignationsMod.ForestryInformationPanelCollapsed)}");
             sb.Append("}");
             return sb.ToString();
         }
