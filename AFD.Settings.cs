@@ -18,7 +18,6 @@ namespace AutoForestryDesignations
     public static partial class AutoForestryDesignation
     {
         private const string SETTINGS_FILE_NAME = "AFDsettings.json";
-        private const string LEGACY_SETTINGS_FILE_NAME = "settings.json";
 
         private static bool s_settingsLoadAttempted;
         private static string? s_loadedSettingsPath;
@@ -29,7 +28,7 @@ namespace AutoForestryDesignations
 
             try
             {
-                string? settingsPath = ResolveSettingsPath(out bool isLegacySettingsPath);
+                string? settingsPath = ResolveSettingsPath();
                 if (string.IsNullOrWhiteSpace(settingsPath) || !File.Exists(settingsPath))
                 {
                     string? genPath = SavedSettingsPath;
@@ -57,17 +56,12 @@ namespace AutoForestryDesignations
 
                 string json = File.ReadAllText(settingsPath);
                 string? fileVersion = ParseSettingsJson(json);
-                s_loadedSettingsPath = isLegacySettingsPath
-                    ? Path.Combine(Path.GetDirectoryName(settingsPath) ?? string.Empty, SETTINGS_FILE_NAME)
-                    : settingsPath;
+                s_loadedSettingsPath = settingsPath;
 
-                if (isLegacySettingsPath || fileVersion != AutoForestryDesignationsMod.ModVersion)
+                if (fileVersion != AutoForestryDesignationsMod.ModVersion)
                 {
                     if (TrySaveSettings(out string migratedPath))
-                    {
-                        string source = isLegacySettingsPath ? "legacy settings.json" : SETTINGS_FILE_NAME;
-                        Log.Warning($"[AFD] {source} migrated to version {AutoForestryDesignationsMod.ModVersion}: {migratedPath}");
-                    }
+                        Log.Warning($"[AFD] {SETTINGS_FILE_NAME} migrated to version {AutoForestryDesignationsMod.ModVersion}: {migratedPath}");
                 }
             }
             catch (Exception ex)
@@ -77,9 +71,8 @@ namespace AutoForestryDesignations
             }
         }
 
-        private static string? ResolveSettingsPath(out bool isLegacySettingsPath)
+        private static string? ResolveSettingsPath()
         {
-            isLegacySettingsPath = false;
             var rootDirs = new List<string>();
 
             try { TryAddCandidateRoot(rootDirs, s_modRootDirectoryPath); } catch { }
@@ -117,12 +110,10 @@ namespace AutoForestryDesignations
                 for (int i = 0; i < 8 && dir != null; i++)
                 {
                     string candidateSettings;
-                    string candidateLegacySettings;
                     string candidateManifest;
                     try
                     {
                         candidateSettings = Path.Combine(dir.FullName, SETTINGS_FILE_NAME);
-                        candidateLegacySettings = Path.Combine(dir.FullName, LEGACY_SETTINGS_FILE_NAME);
                         candidateManifest = Path.Combine(dir.FullName, "manifest.json");
                     }
                     catch
@@ -139,18 +130,6 @@ namespace AutoForestryDesignations
                     if (i == 0 && File.Exists(candidateSettings))
                     {
                         return candidateSettings;
-                    }
-
-                    if (File.Exists(candidateLegacySettings) && File.Exists(candidateManifest))
-                    {
-                        isLegacySettingsPath = true;
-                        return candidateLegacySettings;
-                    }
-
-                    if (i == 0 && File.Exists(candidateLegacySettings))
-                    {
-                        isLegacySettingsPath = true;
-                        return candidateLegacySettings;
                     }
 
                     dir = dir.Parent;

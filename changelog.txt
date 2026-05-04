@@ -1,6 +1,4 @@
 v0.1.2 | 2026-05-04
-* Settings file renamed from **settings.json** to **AFDsettings.json** to avoid conflicts with other mods.
-* Existing **settings.json** files are still read as a legacy fallback and migrated into the generated **AFDsettings.json** format.
 * **AFDsettings.json** is no longer distributed inside the mod ZIP — it is generated automatically in the mod folder on first run, populated with the current defaults and inline documentation.
 * Settings file now contains a **settingsVersion** stamp; when the mod version advances the file is automatically migrated while preserving user values.
 * Added **afd_save_settings** console command to write current in-memory global defaults back to **AFDsettings.json** at any time.
