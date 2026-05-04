@@ -228,6 +228,10 @@ namespace AutoForestryDesignations
                 if (markHarvestReadyForHarvest.HasValue)
                     AutoForestryDesignationsMod.SetMarkHarvestReadyForHarvest(markHarvestReadyForHarvest.Value);
 
+                bool? forestryDesignationsPanelCollapsed = ParseBool(json, "forestryDesignationsPanelCollapsed");
+                if (forestryDesignationsPanelCollapsed.HasValue)
+                    AutoForestryDesignationsMod.SetForestryDesignationsPanelCollapsed(forestryDesignationsPanelCollapsed.Value);
+
                 parsedVersion = ParseString(json, "settingsVersion");
             }
             catch (Exception ex)
@@ -319,7 +323,10 @@ namespace AutoForestryDesignations
             sb.AppendLine($"  \"maxTiles\": {AutoForestryDesignationsMod.MaxTiles},");
             sb.AppendLine();
             sb.AppendLine("  \"_comment_markHarvestReadyForHarvest\": \"Default for new tower panels. When true, trees that match the tower's Harvesting Options are marked for harvest after creating designations. Default: false.\",");
-            sb.AppendLine($"  \"markHarvestReadyForHarvest\": {BoolToJsonStr(AutoForestryDesignationsMod.MarkHarvestReadyForHarvest)}");
+            sb.AppendLine($"  \"markHarvestReadyForHarvest\": {BoolToJsonStr(AutoForestryDesignationsMod.MarkHarvestReadyForHarvest)},");
+            sb.AppendLine();
+            sb.AppendLine("  \"_comment_forestryDesignationsPanelCollapsed\": \"Default collapsed state for the Forestry Designations panel when a Forestry Tower inspector is created. false = expanded by default, true = collapsed by default. Default: false.\",");
+            sb.AppendLine($"  \"forestryDesignationsPanelCollapsed\": {BoolToJsonStr(AutoForestryDesignationsMod.ForestryDesignationsPanelCollapsed)}");
             sb.Append("}");
             return sb.ToString();
         }

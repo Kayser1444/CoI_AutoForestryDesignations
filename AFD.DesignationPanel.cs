@@ -146,7 +146,7 @@ namespace AutoForestryDesignations
             var panel = new PanelWithHeader()
                 .Title(new LocStrFormatted("Forestry Designations"),
                        new LocStrFormatted($"Create automatic forestry designations. [Kayser's Automatic Forestry Designations v{AutoForestryDesignationsMod.ModVersion}]"));
-            panel.Collapsed(false);
+            panel.Collapsed(AutoForestryDesignationsMod.ForestryDesignationsPanelCollapsed);
             panel.BodyAdd(contentRow);
 
             var initialTower = getTower();

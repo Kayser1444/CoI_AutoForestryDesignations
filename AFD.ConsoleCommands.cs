@@ -31,7 +31,8 @@ public sealed class AfdConsoleCommands
         sb.AppendLine($"  OnlyReachableTiles       = {AutoForestryDesignationsMod.OnlyReachableTiles}");
         sb.AppendLine($"  PathabilityTargetSize    = {AutoForestryDesignationsMod.PathabilityTargetSize} (n*n, clamped 1..9)");
         sb.AppendLine($"  MaxTiles                 = {AutoForestryDesignationsMod.MaxTiles} (0 = no limit)");
-        sb.Append(    $"  MarkHarvestReadyForHarvest = {AutoForestryDesignationsMod.MarkHarvestReadyForHarvest}");
+        sb.AppendLine($"  MarkHarvestReadyForHarvest = {AutoForestryDesignationsMod.MarkHarvestReadyForHarvest}");
+        sb.Append(    $"  ForestryPanelCollapsed   = {AutoForestryDesignationsMod.ForestryDesignationsPanelCollapsed}");
         return sb.ToString();
     }
 
@@ -82,6 +83,13 @@ public sealed class AfdConsoleCommands
     {
         AutoForestryDesignationsMod.SetMarkHarvestReadyForHarvest(value);
         return $"[AFD] MarkHarvestReadyForHarvest set to {AutoForestryDesignationsMod.MarkHarvestReadyForHarvest}.";
+    }
+
+    [ConsoleCommand(false, false, "Sets whether the Forestry Designations panel starts collapsed by default (true/false).", null)]
+    private string afdSetForestryDesignationsPanelCollapsed(bool value)
+    {
+        AutoForestryDesignationsMod.SetForestryDesignationsPanelCollapsed(value);
+        return $"[AFD] ForestryDesignationsPanelCollapsed set to {AutoForestryDesignationsMod.ForestryDesignationsPanelCollapsed}.";
     }
 
     [ConsoleCommand(false, false, "Saves current AFD global settings to AFDsettings.json in the mod folder.", null)]

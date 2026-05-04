@@ -93,6 +93,10 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
     public static bool MarkHarvestReadyForHarvest { get; private set; } = false;
     public static void SetMarkHarvestReadyForHarvest(bool value) => MarkHarvestReadyForHarvest = value;
 
+    /// <summary>Default collapsed state for the Forestry Designations inspector panel.</summary>
+    public static bool ForestryDesignationsPanelCollapsed { get; private set; } = false;
+    public static void SetForestryDesignationsPanelCollapsed(bool value) => ForestryDesignationsPanelCollapsed = value;
+
     public void Initialize(DependencyResolver resolver, bool gameWasLoaded)
     {
         try
