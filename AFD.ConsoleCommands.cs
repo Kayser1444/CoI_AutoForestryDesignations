@@ -83,4 +83,12 @@ public sealed class AfdConsoleCommands
         AutoForestryDesignationsMod.SetMarkHarvestReadyForHarvest(value);
         return $"[AFD] MarkHarvestReadyForHarvest set to {AutoForestryDesignationsMod.MarkHarvestReadyForHarvest}.";
     }
+
+    [ConsoleCommand(false, false, "Saves current AFD global settings to AFDsettings.json in the mod folder.", null)]
+    private string afdSaveSettings()
+    {
+        if (AutoForestryDesignation.TrySaveSettings(out string path))
+            return $"[AFD] Settings saved to: {path}";
+        return "[AFD] Failed to save settings. Check the log for details.";
+    }
 }

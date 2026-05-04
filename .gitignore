@@ -10,6 +10,9 @@ artifacts/
 archive/
 *.zip
 
+# Generated settings file (produced at first run by the mod; not distributed)
+AFDsettings.json
+
 # Local/editor state
 .vs/
 .vscode/*

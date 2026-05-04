@@ -18,6 +18,7 @@ namespace AutoForestryDesignations
     public static partial class AutoForestryDesignation
     {
         private const string SETTINGS_FILE_NAME = "AFDsettings.json";
+        private const string LEGACY_SETTINGS_FILE_NAME = "settings.json";
 
         private static bool s_settingsLoadAttempted;
         private static string? s_loadedSettingsPath;
@@ -28,17 +29,46 @@ namespace AutoForestryDesignations
 
             try
             {
-                string? settingsPath = ResolveSettingsPath();
+                string? settingsPath = ResolveSettingsPath(out bool isLegacySettingsPath);
                 if (string.IsNullOrWhiteSpace(settingsPath) || !File.Exists(settingsPath))
                 {
-                    s_loadedSettingsPath = null;
-                    Log.Warning($"[AFD] {SETTINGS_FILE_NAME} not found next to mod assembly or parent mod folder; using built-in defaults.");
+                    string? genPath = SavedSettingsPath;
+                    if (!string.IsNullOrWhiteSpace(genPath))
+                    {
+                        try
+                        {
+                            File.WriteAllText(genPath, BuildSettingsJson());
+                            s_loadedSettingsPath = genPath;
+                            Log.Warning($"[AFD] {SETTINGS_FILE_NAME} not found - defaults written to: {genPath}");
+                        }
+                        catch (Exception writeEx)
+                        {
+                            s_loadedSettingsPath = null;
+                            Log.Warning($"[AFD] Could not write default {SETTINGS_FILE_NAME}: {writeEx.Message}");
+                        }
+                    }
+                    else
+                    {
+                        s_loadedSettingsPath = null;
+                        Log.Warning($"[AFD] {SETTINGS_FILE_NAME} not found and mod root path is unknown; using built-in defaults.");
+                    }
                     return;
                 }
 
                 string json = File.ReadAllText(settingsPath);
-                ParseSettingsJson(json);
-                s_loadedSettingsPath = settingsPath;
+                string? fileVersion = ParseSettingsJson(json);
+                s_loadedSettingsPath = isLegacySettingsPath
+                    ? Path.Combine(Path.GetDirectoryName(settingsPath) ?? string.Empty, SETTINGS_FILE_NAME)
+                    : settingsPath;
+
+                if (isLegacySettingsPath || fileVersion != AutoForestryDesignationsMod.ModVersion)
+                {
+                    if (TrySaveSettings(out string migratedPath))
+                    {
+                        string source = isLegacySettingsPath ? "legacy settings.json" : SETTINGS_FILE_NAME;
+                        Log.Warning($"[AFD] {source} migrated to version {AutoForestryDesignationsMod.ModVersion}: {migratedPath}");
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -47,8 +77,9 @@ namespace AutoForestryDesignations
             }
         }
 
-        private static string? ResolveSettingsPath()
+        private static string? ResolveSettingsPath(out bool isLegacySettingsPath)
         {
+            isLegacySettingsPath = false;
             var rootDirs = new List<string>();
 
             try { TryAddCandidateRoot(rootDirs, s_modRootDirectoryPath); } catch { }
@@ -86,10 +117,12 @@ namespace AutoForestryDesignations
                 for (int i = 0; i < 8 && dir != null; i++)
                 {
                     string candidateSettings;
+                    string candidateLegacySettings;
                     string candidateManifest;
                     try
                     {
                         candidateSettings = Path.Combine(dir.FullName, SETTINGS_FILE_NAME);
+                        candidateLegacySettings = Path.Combine(dir.FullName, LEGACY_SETTINGS_FILE_NAME);
                         candidateManifest = Path.Combine(dir.FullName, "manifest.json");
                     }
                     catch
@@ -106,6 +139,18 @@ namespace AutoForestryDesignations
                     if (i == 0 && File.Exists(candidateSettings))
                     {
                         return candidateSettings;
+                    }
+
+                    if (File.Exists(candidateLegacySettings) && File.Exists(candidateManifest))
+                    {
+                        isLegacySettingsPath = true;
+                        return candidateLegacySettings;
+                    }
+
+                    if (i == 0 && File.Exists(candidateLegacySettings))
+                    {
+                        isLegacySettingsPath = true;
+                        return candidateLegacySettings;
                     }
 
                     dir = dir.Parent;
@@ -148,8 +193,9 @@ namespace AutoForestryDesignations
             }
         }
 
-        private static void ParseSettingsJson(string json)
+        private static string? ParseSettingsJson(string json)
         {
+            string? parsedVersion = null;
             try
             {
                 s_batchSize = ClampBatchSize(ParseInt(json, "batchSize") ?? s_batchSize);
@@ -181,11 +227,14 @@ namespace AutoForestryDesignations
                 bool? markHarvestReadyForHarvest = ParseBool(json, "markHarvestReadyForHarvest");
                 if (markHarvestReadyForHarvest.HasValue)
                     AutoForestryDesignationsMod.SetMarkHarvestReadyForHarvest(markHarvestReadyForHarvest.Value);
+
+                parsedVersion = ParseString(json, "settingsVersion");
             }
             catch (Exception ex)
             {
                 Log.Warning($"[AFD] Error parsing {SETTINGS_FILE_NAME}: {ex.Message}");
             }
+            return parsedVersion;
         }
 
         private static bool? ParseBool(string json, string key)
@@ -220,6 +269,97 @@ namespace AutoForestryDesignations
                 return null;
             }
             catch { return null; }
+        }
+
+        private static string? ParseString(string json, string key)
+        {
+            try
+            {
+                int idx = json.IndexOf($"\"{key}\":", StringComparison.Ordinal);
+                if (idx < 0) return null;
+                int valStart = json.IndexOf('"', idx + key.Length + 3);
+                if (valStart < 0) return null;
+                valStart++;
+                int valEnd = json.IndexOf('"', valStart);
+                if (valEnd < 0) return null;
+                return json.Substring(valStart, valEnd - valStart);
+            }
+            catch { return null; }
+        }
+
+        private static string BoolToJsonStr(bool value) => value ? "true" : "false";
+
+        internal static string BuildSettingsJson()
+        {
+            var sb = new System.Text.StringBuilder();
+            sb.AppendLine("{");
+            sb.AppendLine($"  \"settingsVersion\": \"{AutoForestryDesignationsMod.ModVersion}\",");
+            sb.AppendLine();
+            sb.AppendLine("  \"_comment\": \"AutoForestryDesignations settings. These values set the defaults loaded at game start. Most settings can also be changed per Forestry Tower in-game via the tower inspector.\",");
+            sb.AppendLine();
+            sb.AppendLine("  \"_comment_batchSize\": \"How many designations are placed per coroutine frame before yielding to the game. Lower values keep the game more responsive during large scans; higher values complete scans faster. While paused, the effective batch size is boosted by x4 and clamped. Absolute max: 200. Default: 30.\",");
+            sb.AppendLine($"  \"batchSize\": {s_batchSize},");
+            sb.AppendLine();
+            sb.AppendLine("  \"_comment_onlyFertileTiles\": \"Default for new tower panels. When true, Create Designations places designations only where the ground is fertile for tree growth. Default: true.\",");
+            sb.AppendLine($"  \"onlyFertileTiles\": {BoolToJsonStr(AutoForestryDesignationsMod.OnlyFertileTiles)},");
+            sb.AppendLine();
+            sb.AppendLine("  \"_comment_avoidTilesWithTrees\": \"Default for new tower panels. When true, Create Designations skips tiles that already contain a tree. Default: false.\",");
+            sb.AppendLine($"  \"avoidTilesWithTrees\": {BoolToJsonStr(AutoForestryDesignationsMod.AvoidTilesWithTrees)},");
+            sb.AppendLine();
+            sb.AppendLine("  \"_comment_avoidMiningDesignations\": \"Default for new tower panels. When true, Create Designations skips tiles that already contain any terrain designation, including mining, dumping, or leveling. Default: true.\",");
+            sb.AppendLine($"  \"avoidMiningDesignations\": {BoolToJsonStr(AutoForestryDesignationsMod.AvoidMiningDesignations)},");
+            sb.AppendLine();
+            sb.AppendLine("  \"_comment_onlyReachableTiles\": \"Default for new tower panels. When true, Create Designations skips candidate tiles that are not reachable by vehicle pathability from the tower area. Default: true.\",");
+            sb.AppendLine($"  \"onlyReachableTiles\": {BoolToJsonStr(AutoForestryDesignationsMod.OnlyReachableTiles)},");
+            sb.AppendLine();
+            sb.AppendLine("  \"_comment_pathabilityTargetSize\": \"Hidden tuning parameter for reachability matching. Interpreted as n*n area around each candidate center (for example 3 = 3x3). Larger values are more permissive and reduce holes; smaller values are stricter. Clamped to 1..9. Default: 3.\",");
+            sb.AppendLine($"  \"pathabilityTargetSize\": {AutoForestryDesignationsMod.PathabilityTargetSize},");
+            sb.AppendLine();
+            sb.AppendLine("  \"_comment_maxTiles\": \"Default maximum number of forestry designation tiles to place per run. 0 = no limit. Default: 0.\",");
+            sb.AppendLine($"  \"maxTiles\": {AutoForestryDesignationsMod.MaxTiles},");
+            sb.AppendLine();
+            sb.AppendLine("  \"_comment_markHarvestReadyForHarvest\": \"Default for new tower panels. When true, trees that match the tower's Harvesting Options are marked for harvest after creating designations. Default: false.\",");
+            sb.AppendLine($"  \"markHarvestReadyForHarvest\": {BoolToJsonStr(AutoForestryDesignationsMod.MarkHarvestReadyForHarvest)}");
+            sb.Append("}");
+            return sb.ToString();
+        }
+
+        internal static string? SavedSettingsPath
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(s_loadedSettingsPath))
+                    return s_loadedSettingsPath;
+                if (!string.IsNullOrWhiteSpace(s_modRootDirectoryPath))
+                    return Path.Combine(s_modRootDirectoryPath, SETTINGS_FILE_NAME);
+                return null;
+            }
+        }
+
+        internal static bool TrySaveSettings(out string savedPath)
+        {
+            string? target = SavedSettingsPath;
+            if (target == null || target.Trim().Length == 0)
+            {
+                savedPath = string.Empty;
+                Log.Warning($"[AFD] Cannot save {SETTINGS_FILE_NAME}: mod root path is unknown.");
+                return false;
+            }
+            string targetPath = target;
+
+            try
+            {
+                File.WriteAllText(targetPath, BuildSettingsJson());
+                s_loadedSettingsPath = targetPath;
+                savedPath = targetPath;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                savedPath = string.Empty;
+                Log.Warning($"[AFD] Failed to save {SETTINGS_FILE_NAME}: {ex.Message}");
+                return false;
+            }
         }
     }
 }
