@@ -100,6 +100,8 @@ namespace AutoForestryDesignations
                             var sub = new Tile2i(x + dx, y + dy);
                             if (onlyFertile && allFertile && !treesManager.IsGroundFertileAtPosition(sub))
                                 allFertile = false;
+                            if (onlyFertile && allFertile && treesManager.IsBlockedOrOccupied(sub.AsSlim))
+                                allFertile = false;
                             if (avoidWithTrees && !anyTree && treesManager.HasTree(new TreeId(sub.AsSlim)))
                                 anyTree = true;
                         }

@@ -79,12 +79,12 @@ namespace AutoForestryDesignations
             if (!s_bindings.TryGetValue(key, out var b)) return;
             var tower = b.GetTower();
             if (tower == null) return;
-            b.OnlyFertileDisplay.SetValue(new LocStrFormatted(BoolText(AutoForestryDesignation.GetTowerOnlyFertileTiles(tower))));
-            b.AvoidWithTreesDisplay.SetValue(new LocStrFormatted(BoolText(AutoForestryDesignation.GetTowerAvoidTilesWithTrees(tower))));
-            b.AvoidMiningDisplay.SetValue(new LocStrFormatted(BoolText(AutoForestryDesignation.GetTowerAvoidMiningDesignations(tower))));
-            b.OnlyReachableDisplay.SetValue(new LocStrFormatted(BoolText(AutoForestryDesignation.GetTowerOnlyReachableTiles(tower))));
+            b.OnlyFertileDisplay.SetValue(BoolText(AutoForestryDesignation.GetTowerOnlyFertileTiles(tower)));
+            b.AvoidWithTreesDisplay.SetValue(BoolText(AutoForestryDesignation.GetTowerAvoidTilesWithTrees(tower)));
+            b.AvoidMiningDisplay.SetValue(BoolText(AutoForestryDesignation.GetTowerAvoidMiningDesignations(tower)));
+            b.OnlyReachableDisplay.SetValue(BoolText(AutoForestryDesignation.GetTowerOnlyReachableTiles(tower)));
             b.MaxTilesDisplay.SetValue(new LocStrFormatted(MaxTilesText(AutoForestryDesignation.GetTowerMaxTiles(tower))));
-            b.MarkHarvestReadyDisplay.SetValue(new LocStrFormatted(BoolText(AutoForestryDesignation.GetTowerMarkHarvestReadyForHarvest(tower))));
+            b.MarkHarvestReadyDisplay.SetValue(BoolText(AutoForestryDesignation.GetTowerMarkHarvestReadyForHarvest(tower)));
         }
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace AutoForestryDesignations
             var createBtn = new ButtonIconText(
                 Button.Primary,
                 "Assets/Unity/UserInterface/EntityIcons/Designation.png",
-                new LocStrFormatted("Create Designations"))
+                AfdLocalization.CreateDesignationsBtn)
                 .OnClick((Action)delegate
                 {
                     try
@@ -116,7 +116,7 @@ namespace AutoForestryDesignations
                     }
                     catch (Exception ex) { Debug.Log($"[AFD] Create button EXCEPTION: {ex}"); }
                 });
-            createBtn.Tooltip(new LocStrFormatted("Scan the tower area and place forestry designations."));
+            createBtn.Tooltip(AfdLocalization.CreateDesignationsBtnTip);
             createBtn.Icon.Size(Px.Auto, 24.px());
 
             var clearBtn = new ButtonIcon(
@@ -132,7 +132,7 @@ namespace AutoForestryDesignations
                     }
                     catch (Exception ex) { Debug.Log($"[AFD] Clear button EXCEPTION: {ex}"); }
                 })
-                .Tooltip(new LocStrFormatted("Clear all forestry designations in this tower's area."));
+                .Tooltip(AfdLocalization.ClearDesignationsBtnTip);
 
             createBtn.MarginTopBottom(1.pt());
             clearBtn.MarginTopBottom(1.pt()).AlignSelfEnd();
@@ -155,76 +155,76 @@ namespace AutoForestryDesignations
             bool initOnlyFertile = initialTower != null
                 ? AutoForestryDesignation.GetTowerOnlyFertileTiles(initialTower)
                 : AutoForestryDesignationsMod.OnlyFertileTiles;
-            var onlyFertileDisplay = new Mafi.Unity.Ui.Library.Display(new LocStrFormatted(BoolText(initOnlyFertile)))
+            var onlyFertileDisplay = new Mafi.Unity.Ui.Library.Display(BoolText(initOnlyFertile))
                 .MinDigits(3).AlignSelfStretch().MarginTopBottom(2.px());
             panel.BodyAdd(BuildToggleRow(
-                new LocStrFormatted("Only fertile tiles"),
-                new LocStrFormatted("Place designations only where the ground is fertile for tree growth (e.g. not rock, sand, or ocean)."),
+                AfdLocalization.OnlyFertileTilesLabel,
+                AfdLocalization.OnlyFertileTilesTip,
                 onlyFertileDisplay,
                 (Action)delegate
                 {
                     var tower = getTower(); if (tower == null) return;
                     AutoForestryDesignation.SetTowerOnlyFertileTiles(tower, true);
-                    onlyFertileDisplay.SetValue(new LocStrFormatted(BoolText(true)));
+                    onlyFertileDisplay.SetValue(BoolText(true));
                 },
                 (Action)delegate
                 {
                     var tower = getTower(); if (tower == null) return;
                     AutoForestryDesignation.SetTowerOnlyFertileTiles(tower, false);
-                    onlyFertileDisplay.SetValue(new LocStrFormatted(BoolText(false)));
+                    onlyFertileDisplay.SetValue(BoolText(false));
                 }));
 
             // --- Avoid tiles with trees ---
             bool initAvoidTrees = initialTower != null
                 ? AutoForestryDesignation.GetTowerAvoidTilesWithTrees(initialTower)
                 : AutoForestryDesignationsMod.AvoidTilesWithTrees;
-            var avoidWithTreesDisplay = new Mafi.Unity.Ui.Library.Display(new LocStrFormatted(BoolText(initAvoidTrees)))
+            var avoidWithTreesDisplay = new Mafi.Unity.Ui.Library.Display(BoolText(initAvoidTrees))
                 .MinDigits(3).AlignSelfStretch().MarginTopBottom(2.px());
 
             // --- Only reachable tiles ---
             bool initOnlyReachable = initialTower != null
                 ? AutoForestryDesignation.GetTowerOnlyReachableTiles(initialTower)
                 : AutoForestryDesignationsMod.OnlyReachableTiles;
-            var onlyReachableDisplay = new Mafi.Unity.Ui.Library.Display(new LocStrFormatted(BoolText(initOnlyReachable)))
+            var onlyReachableDisplay = new Mafi.Unity.Ui.Library.Display(BoolText(initOnlyReachable))
                 .MinDigits(3).AlignSelfStretch().MarginTopBottom(2.px());
             panel.BodyAdd(BuildToggleRow(
-                new LocStrFormatted("Only reachable tiles"),
-                new LocStrFormatted("When enabled, skip designation tiles that are not reachable by vehicle pathability from the tower area."),
+                AfdLocalization.OnlyReachableTilesLabel,
+                AfdLocalization.OnlyReachableTilesTip,
                 onlyReachableDisplay,
                 (Action)delegate
                 {
                     var tower = getTower(); if (tower == null) return;
                     AutoForestryDesignation.SetTowerOnlyReachableTiles(tower, true);
-                    onlyReachableDisplay.SetValue(new LocStrFormatted(BoolText(true)));
+                    onlyReachableDisplay.SetValue(BoolText(true));
                 },
                 (Action)delegate
                 {
                     var tower = getTower(); if (tower == null) return;
                     AutoForestryDesignation.SetTowerOnlyReachableTiles(tower, false);
-                    onlyReachableDisplay.SetValue(new LocStrFormatted(BoolText(false)));
+                    onlyReachableDisplay.SetValue(BoolText(false));
                 }));
 
             // --- Avoid mining designations ---
             bool initAvoidMining = initialTower != null
                 ? AutoForestryDesignation.GetTowerAvoidMiningDesignations(initialTower)
                 : AutoForestryDesignationsMod.AvoidMiningDesignations;
-            var avoidMiningDisplay = new Mafi.Unity.Ui.Library.Display(new LocStrFormatted(BoolText(initAvoidMining)))
+            var avoidMiningDisplay = new Mafi.Unity.Ui.Library.Display(BoolText(initAvoidMining))
                 .MinDigits(3).AlignSelfStretch().MarginTopBottom(2.px());
             panel.BodyAdd(BuildToggleRow(
-                new LocStrFormatted("Avoid terrain designations"),
-                new LocStrFormatted("Skip tiles that already contain any terrain designation, including mining, dumping, or leveling."),
+                AfdLocalization.AvoidTerrainDesignationsLabel,
+                AfdLocalization.AvoidTerrainDesignationsTip,
                 avoidMiningDisplay,
                 (Action)delegate
                 {
                     var tower = getTower(); if (tower == null) return;
                     AutoForestryDesignation.SetTowerAvoidMiningDesignations(tower, true);
-                    avoidMiningDisplay.SetValue(new LocStrFormatted(BoolText(true)));
+                    avoidMiningDisplay.SetValue(BoolText(true));
                 },
                 (Action)delegate
                 {
                     var tower = getTower(); if (tower == null) return;
                     AutoForestryDesignation.SetTowerAvoidMiningDesignations(tower, false);
-                    avoidMiningDisplay.SetValue(new LocStrFormatted(BoolText(false)));
+                    avoidMiningDisplay.SetValue(BoolText(false));
                 }));
 
             // --- Max tiles ---
@@ -234,8 +234,8 @@ namespace AutoForestryDesignations
             var maxTilesDisplay = new Mafi.Unity.Ui.Library.Display(new LocStrFormatted(MaxTilesText(initMaxTiles)))
                 .MinDigits(3).AlignSelfStretch().MarginTopBottom(2.px());
             panel.BodyAdd(BuildStepRow(
-                new LocStrFormatted("Max tiles"),
-                new LocStrFormatted("Maximum number of designation tiles to place per run. 0 = no limit (\u221e)."),
+                AfdLocalization.MaxTilesLabel,
+                AfdLocalization.MaxTilesTip,
                 maxTilesDisplay,
                 (Action)delegate
                 {
@@ -257,7 +257,7 @@ namespace AutoForestryDesignations
             bool initMarkHarvestReady = initialTower != null
                 ? AutoForestryDesignation.GetTowerMarkHarvestReadyForHarvest(initialTower)
                 : AutoForestryDesignationsMod.MarkHarvestReadyForHarvest;
-            var markHarvestReadyDisplay = new Mafi.Unity.Ui.Library.Display(new LocStrFormatted(BoolText(initMarkHarvestReady)))
+            var markHarvestReadyDisplay = new Mafi.Unity.Ui.Library.Display(BoolText(initMarkHarvestReady))
                 .MinDigits(3).AlignSelfStretch().MarginTopBottom(2.px());
 
             s_bindings[key] = new Bindings(getTower, onlyFertileDisplay, avoidWithTreesDisplay, avoidMiningDisplay, onlyReachableDisplay, maxTilesDisplay, markHarvestReadyDisplay);
@@ -311,7 +311,7 @@ namespace AutoForestryDesignations
             return 1;
         }
 
-        private static string BoolText(bool value) => value ? "YES" : "NO";
+        private static LocStrFormatted BoolText(bool value) => value ? AfdLocalization.BoolYes : AfdLocalization.BoolNo;
         private static string MaxTilesText(int value) => value == 0 ? "\u221e" : value.ToString();
     }
 }

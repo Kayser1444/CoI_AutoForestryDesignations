@@ -1,8 +1,8 @@
 v0.1.3 | 2026-05-13
-* Integrated the CoI AutoHelpers localization framework as source-included helper code so AFD is ready for future translations.
-* Added a guarded localization bootstrap path that applies translations only when a `Translations/` folder is present.
-* Added a `System.Web.Extensions` reference required by the helper's translation JSON parser.
-* Added the first pilot translation entry for the Forestry Designations panel title.
+* Renamed the Forestry Information KPI label from **Tree Maturity** to **Maturity** to fit translations
+* Fixed: The **Only fertile tiles** filter now also excludes tiles blocked by buildings or other entities
+* Added experimental translation framework, including Swedish, Russian, and German translations
+* Minor cosmetic corrections
 
 v0.1.2 | 2026-05-04
 * **AFDsettings.json** is no longer distributed inside the mod ZIP — it is generated automatically in the mod folder on first run, populated with the current defaults and inline documentation.

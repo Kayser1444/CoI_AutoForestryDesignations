@@ -61,7 +61,7 @@ namespace AutoForestryDesignations
         internal static PanelWithHeader Build(Func<IAreaManagingTower?> getTower, object key)
         {
             var contentCol = new Column(PANEL_GAP_PT.pt());
-            var promptLabel = new Label(new LocStrFormatted("Press \u21ba to scan forestry composition."))
+            var promptLabel = new Label(AfdLocalization.PressToScanComposition)
                 .Color(Theme.InactiveColor);
             contentCol.Add(promptLabel);
 
@@ -72,7 +72,7 @@ namespace AutoForestryDesignations
             s_towerResolvers[key] = getTower;
 
             var panel = new PanelWithHeader()
-                .Title(new LocStrFormatted("Forestry Information"),
+                .Title(AfdLocalization.ForestryInformationTitle,
                        new LocStrFormatted($"Current trees and projected wood output in this tower's forestry area. [Kayser's Automatic Forestry Designations v{AutoForestryDesignationsMod.ModVersion}]"));
 
             var refreshButton = new ButtonIcon(Button.General,
@@ -84,7 +84,7 @@ namespace AutoForestryDesignations
                 .Compact()
                 .IconSize(14.px())
                 .MarginLeft(4.pt())
-                .Tooltip(new LocStrFormatted("Refresh forestry composition"));
+                .Tooltip(AfdLocalization.RefreshCompositionTip);
             refreshButton.OnClick((ClickEvent evt) => evt.StopPropagation());
 
             panel.Header.Add(refreshButton);
@@ -128,13 +128,13 @@ namespace AutoForestryDesignations
 
             if (forestryTower == null || treesManager == null || !currentStep.HasValue)
             {
-                col.Add(new Label(new LocStrFormatted("No forestry tower selected.")));
+                col.Add(new Label(AfdLocalization.NoForestryTowerSelected));
                 return;
             }
 
             if (!HasManagedForestryDesignation(forestryTower))
             {
-                col.Add(new Label(new LocStrFormatted("No forestry designations.")));
+                col.Add(new Label(AfdLocalization.NoForestryDesignations));
                 return;
             }
 
@@ -409,31 +409,31 @@ namespace AutoForestryDesignations
         {
             var row = new Row().Gap(PANEL_GAP_PT.pt()).AlignItemsStretch().AlignSelfStretch();
             row.Add(BuildKpi(
-                "Trees",
-                string.Format("{0}/{1}", stats.TreeCount, stats.TreeCapacity),
+                AfdLocalization.KpiTreesLabel,
+                string.Format("{0} / {1}", stats.TreeCount, stats.TreeCapacity),
                 () => BuildMatureTreeIcon(44),
-                "Managed trees currently inside this tower's forestry area. First number is current trees; second number is estimated max trees based on currently valid planting positions."));
+                AfdLocalization.KpiTreesTip));
             row.Add(BuildKpi(
-                "Tree Maturity",
+                AfdLocalization.KpiMaturityLabel,
                 string.Format("{0} ({1})", FormatPercent(stats.MaturityPercent), FormatYears(stats.AverageAgeYears)),
                 "Assets/Base/Products/Icons/TreeSapling.svg",
-                string.Format("Average maturity and current age across managed trees. Full maturity is currently <b>{0}</b>, including difficulty settings.",
-                    FormatYears(stats.AverageMaxAgeYears))));
+                new LocStrFormatted(string.Format(AfdLocalization.KpiMaturityTipFmt.TranslatedString,
+                    FormatYears(stats.AverageMaxAgeYears)))));
             row.Add(BuildKpi(
-                "Sustainable Yield",
+                AfdLocalization.KpiSustainableYieldLabel,
                 FormatAmount(stats.CapacityPerYear / 12f) + " /mo",
                 "Assets/Base/Products/Icons/Wood.svg",
-                string.Format("Maximum long-term wood production that can be maintained for this tower per in-game month, accounting for designated area, harvest threshold, and tree growth speed as per the difficulty settings (currently <b>{0}</b> average full maturity).",
-                    FormatYears(stats.AverageMaxAgeYears))));
+                new LocStrFormatted(string.Format(AfdLocalization.KpiSustainableYieldTipFmt.TranslatedString,
+                    FormatYears(stats.AverageMaxAgeYears)))));
             return row;
         }
 
-        private static Column BuildKpi(string label, string value, string iconPath, string tooltip)
+        private static Column BuildKpi(LocStr label, string value, string iconPath, LocStrFormatted tooltip)
         {
             return BuildKpi(label, value, () => new Icon(iconPath).NoTint().Size(40.px()), tooltip);
         }
 
-        private static Column BuildKpi(string label, string value, Func<UiComponent> buildIcon, string tooltip)
+        private static Column BuildKpi(LocStr label, string value, Func<UiComponent> buildIcon, LocStrFormatted tooltip)
         {
             var col = new Column()
                 .FlexGrow(1f)
@@ -444,12 +444,12 @@ namespace AutoForestryDesignations
 
             col.BorderRadius(8);
             col.Border(1.px(), Theme.BorderColor, 8);
-            col.Tooltip(new LocStrFormatted(tooltip));
+            col.Tooltip(tooltip);
 
             var topRow = new Row().AlignItemsCenter().Gap(4.pt());
             topRow.Add(buildIcon());
             var textCol = new Column(1.pt());
-            textCol.Add(new Label(new LocStrFormatted(label)).FontSize(13).FontBold().NoTextWrap());
+            textCol.Add(new Label(label).FontSize(13).FontBold().NoTextWrap());
             textCol.Add(new Label(new LocStrFormatted(value)).FontSize(12).NoTextWrap());
             topRow.Add(textCol);
             col.Add(topRow);
@@ -475,17 +475,18 @@ namespace AutoForestryDesignations
             section.BorderRadius(8);
             section.Border(1.px(), Theme.BorderColor, 8);
             section.Tooltip(new LocStrFormatted(
-                string.Format("Tree maturity breakdown across managed trees. Full maturity age depends on tree type and difficulty; current average full maturity is {0}. Vanilla forestry yield curve: 40% age = 30% yield, 60% = 60%, 80% = 88%, 100% = full.",
+                string.Format(AfdLocalization.GrowthBreakdownTipFmt.TranslatedString,
                     FormatYears(stats.AverageMaxAgeYears))));
 
             var header = new Row().AlignItemsCenter();
-            header.Add(new Label(new LocStrFormatted("Growth Breakdown")).FontBold());
+            header.Add(new Label(AfdLocalization.GrowthBreakdownHeader).FontBold());
             header.Tooltip(new LocStrFormatted(harvestDisabled
-                ? string.Format("Distribution by maturity relative to each tree's current full-growth age. Harvest option: no cutting. Average full maturity: {0}.",
+                ? string.Format(AfdLocalization.GrowthHeaderTipNoCutFmt.TranslatedString,
                     FormatYears(stats.AverageMaxAgeYears))
-                : "Distribution by maturity relative to each tree's current full-growth age. Harvest option: " +
-                  FormatYears(maxAgeYears * thresholdPercent / 100f) +
-                  " (" + thresholdPercent.ToString("F0") + "% of a " + FormatYears(maxAgeYears) + " full-growth tree)."));
+                : string.Format(AfdLocalization.GrowthHeaderTipWithCutFmt.TranslatedString,
+                    FormatYears(maxAgeYears * thresholdPercent / 100f),
+                    thresholdPercent.ToString("F0"),
+                    FormatYears(maxAgeYears))));
             section.Add(header);
 
             var bar = new Row().AlignSelfStretch().Height(20.px()).AlignItemsStretch().Background(Theme.BackgroundPanelLike);
@@ -504,7 +505,7 @@ namespace AutoForestryDesignations
                     bar.Add(new UiComponent()
                         .Width(3.px())
                         .Background(Theme.BackgroundPanelLike)
-                        .Tooltip(new LocStrFormatted("Harvest threshold")));
+                        .Tooltip(AfdLocalization.HarvestThresholdTip));
                     addedHarvestThresholdDivider = true;
                 }
 
@@ -514,12 +515,12 @@ namespace AutoForestryDesignations
                 var segment = new UiComponent()
                     .FlexGrow(bucketCount)
                     .Background(bucketColor)
-                    .Tooltip(new LocStrFormatted(string.Format("{0}: {1} trees ({2:P0} of planted, {3:P0} of capacity) [{4}; ages use current full maturity {5}]",
+                    .Tooltip(new LocStrFormatted(string.Format(AfdLocalization.SegmentTipFmt.TranslatedString,
                         bucketLabel,
                         bucketCount,
                         (float)bucketCount / plantedTotal,
                         (float)bucketCount / totalCapacity,
-                        isAboveHarvest ? "at or above harvest threshold" : "below harvest threshold",
+                        isAboveHarvest ? AfdLocalization.SegmentAboveHarvest.TranslatedString : AfdLocalization.SegmentBelowHarvest.TranslatedString,
                         FormatYears(maxAgeYears))));
                 bar.Add(segment);
             }
@@ -529,17 +530,17 @@ namespace AutoForestryDesignations
                 bar.Add(new UiComponent()
                     .FlexGrow(unusedCapacity)
                     .Background(s_unusedCapacityColor)
-                    .Tooltip(new LocStrFormatted(string.Format("Unused capacity: {0} tiles ({1:P0} of capacity)",
+                    .Tooltip(new LocStrFormatted(string.Format(AfdLocalization.UnusedCapacityTipFmt.TranslatedString,
                         unusedCapacity,
                         (float)unusedCapacity / totalCapacity))));
             }
 
             var barWithLegend = new Row(3.pt()).AlignSelfStretch().AlignItemsCenter();
             barWithLegend.Add(new Icon("Assets/Base/Products/Icons/TreeSapling.svg").NoTint().Size(20.px()).MarginBottom(2.px())
-                .Tooltip(new LocStrFormatted("Newly planted / lowest maturity")));
+                .Tooltip(AfdLocalization.NewlyPlantedTip));
             barWithLegend.Add(bar.FlexGrow(1f));
             barWithLegend.Add(BuildMatureTreeIcon(22)
-                .Tooltip(new LocStrFormatted(string.Format("Fully grown / highest maturity ({0} average full maturity in this tower).",
+                .Tooltip(new LocStrFormatted(string.Format(AfdLocalization.FullyGrownTipFmt.TranslatedString,
                     FormatYears(stats.AverageMaxAgeYears)))));
 
             section.Add(barWithLegend);
@@ -577,7 +578,7 @@ namespace AutoForestryDesignations
         private static string GetBucketLabel(int bucketIndex, float maxAgeYears)
         {
             if (bucketIndex >= BUCKET_COUNT - 1)
-                return string.Format("Fully mature ({0}, 100%)", FormatYears(maxAgeYears));
+                return string.Format(AfdLocalization.BucketFullyMatureFmt.TranslatedString, FormatYears(maxAgeYears));
 
             float start01 = (float)bucketIndex / GROWTH_STAGE_BUCKET_COUNT;
             float end01 = (float)(bucketIndex + 1) / GROWTH_STAGE_BUCKET_COUNT;
