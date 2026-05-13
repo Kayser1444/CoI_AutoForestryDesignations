@@ -7,6 +7,7 @@
 // intended to contain only original mod code/configuration; if MaFi Games material
 // is included by mistake, I intend to correct it promptly upon discovery or notice.
 using System;
+using System.IO;
 using HarmonyLib;
 using Mafi;
 using Mafi.Collections;
@@ -21,6 +22,7 @@ using Mafi.Core.PathFinding;
 using Mafi.Core.Terrain.Designation;
 using Mafi.Core.World;
 using UnityEngine;
+using CoI.AutoHelpers.Localization;
 
 namespace AutoForestryDesignations;
 
@@ -105,9 +107,14 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
     {
         try
         {
+            Debug.Log("[AFD] Initialize: starting mod initialization.");
+
             // Enable console logging for easier debugging
             ConsoleLogger.Enable();
             RegisterDebugConsoleMirroring(resolver);
+            RegisterLocalizationLateApply(resolver);
+
+            ApplyLocalizedTextIfPresent();
 
             ITerrainDesignationsManager desigManager = resolver.Resolve<ITerrainDesignationsManager>();
             IVehiclePathFindingManager vehiclePathFindingManager = resolver.Resolve<IVehiclePathFindingManager>();
@@ -124,6 +131,100 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
         {
             Debug.LogWarning("[AFD] AutoForestryDesignations init: " + ex.Message);
         }
+    }
+
+    private void RegisterLocalizationLateApply(DependencyResolver resolver)
+    {
+        IGameLoopEvents gameLoopEvents = resolver.Resolve<IGameLoopEvents>();
+        gameLoopEvents.RegisterRendererInitState(this, () =>
+        {
+            Debug.Log("[AFD] Localization: late apply at renderer init state.");
+            ApplyLocalizedTextIfPresent();
+        });
+    }
+
+    private void ApplyLocalizedTextIfPresent()
+    {
+        string translationsDirectory = Path.Combine(Manifest.RootDirectoryPath, "Translations");
+        Debug.Log($"[AFD] Localization: probing directory '{translationsDirectory}'.");
+
+        if (!Directory.Exists(translationsDirectory))
+        {
+            Debug.LogWarning("[AFD] Localization: translations directory does not exist; skipping.");
+            return;
+        }
+
+        string[] jsonFiles = Directory.GetFiles(translationsDirectory, "*.json", SearchOption.TopDirectoryOnly);
+        Array.Sort(jsonFiles, StringComparer.OrdinalIgnoreCase);
+        if (jsonFiles.Length == 0)
+        {
+            Debug.LogWarning("[AFD] Localization: no translation JSON files found.");
+        }
+        else
+        {
+            Debug.Log($"[AFD] Localization: discovered {jsonFiles.Length} file(s): {string.Join(", ", jsonFiles)}");
+        }
+
+        string currentCulture = ResolveCurrentCultureCodeForLogging() ?? "<null>";
+        Debug.Log($"[AFD] Localization: current game culture before apply = '{currentCulture}'.");
+
+        ModTranslationsApplyResult result = new ModTranslations().Apply(new ModTranslationsApplyOptions(
+            translationsDirectory,
+            typeof(AutoForestryDesignationsMod).Assembly,
+            Array.Empty<string>()));
+
+        Debug.Log(
+            $"[AFD] Localization: applied locale='{result.AppliedLocaleCode}', upserted={result.UpsertedEntryCount}, reboundFields={result.ReboundFieldCount}, diagnostics={result.Diagnostics.Count}.");
+
+        foreach (TranslationDiagnostic diagnostic in result.Diagnostics)
+        {
+            string itemInfo = diagnostic.ItemIndex.HasValue ? $", itemIndex={diagnostic.ItemIndex.Value}" : string.Empty;
+            Debug.LogWarning(
+                $"[AFD] Localization diagnostic [{diagnostic.Severity}] source='{diagnostic.SourcePath}'{itemInfo}: {diagnostic.Message}");
+        }
+
+        if (result.ReboundFieldCount == 0)
+        {
+            Debug.LogWarning("[AFD] Localization: zero fields were rebound. Localized static LocStr fields may not have been discovered.");
+        }
+
+        if (result.HasErrors)
+        {
+            Debug.LogWarning($"[AFD] Localization apply finished with {result.Diagnostics.Count} diagnostic(s).");
+        }
+    }
+
+    private static string? ResolveCurrentCultureCodeForLogging()
+    {
+        Type? localizationManagerType = Type.GetType("Mafi.Localization.LocalizationManager, Mafi", throwOnError: false);
+        if (localizationManagerType == null)
+        {
+            return null;
+        }
+
+        var currentLangInfoProperty = localizationManagerType.GetProperty(
+            "CurrentLangInfo",
+            System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+        if (currentLangInfoProperty == null)
+        {
+            return null;
+        }
+
+        object? currentLangInfo = currentLangInfoProperty.GetValue(null);
+        if (currentLangInfo == null)
+        {
+            return null;
+        }
+
+        var cultureInfoIdField = currentLangInfo.GetType().GetField(
+            "CultureInfoId",
+            System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+        if (cultureInfoIdField == null)
+        {
+            return null;
+        }
+
+        return cultureInfoIdField.GetValue(currentLangInfo) as string;
     }
 
     public void MigrateJsonConfig(VersionSlim savedVersion, Dict<string, object> savedValues)

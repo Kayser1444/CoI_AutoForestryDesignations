@@ -17,6 +17,7 @@ is included by mistake, I intend to correct it promptly upon discovery or notice
     <CaptainIndustryManagedPath Condition="'$(CaptainIndustryManagedPath)' == '' and '$(CAPTAIN_INDUSTRY_MANAGED_PATH)' != ''">$(CAPTAIN_INDUSTRY_MANAGED_PATH)</CaptainIndustryManagedPath>
     <CaptainIndustryManagedPath Condition="'$(CaptainIndustryManagedPath)' == '' and Exists('$(MSBuildProjectDirectory)\..\..\Mafi\Mafi.Base.dll')">$(MSBuildProjectDirectory)\..\..\Mafi</CaptainIndustryManagedPath>
     <CaptainIndustryManagedPath Condition="'$(CaptainIndustryManagedPath)' == ''">C:\Program Files (x86)\Steam\steamapps\common\Captain of Industry\Captain of Industry_Data\Managed</CaptainIndustryManagedPath>
+    <DefaultItemExcludes>$(DefaultItemExcludes);external\**\*</DefaultItemExcludes>
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <AssemblyName>AutoForestryDesignations</AssemblyName>
     <RootNamespace>AutoForestryDesignations</RootNamespace>
@@ -82,6 +83,11 @@ is included by mistake, I intend to correct it promptly upon discovery or notice
     <PackageReference Include="Lib.Harmony" Version="2.3.3">
       <IncludeAssets>compile; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="external\CoI_AutoHelpers\src\CoI.AutoHelpers\Localization\**\*.cs"
+             Link="CoI.AutoHelpers\Localization\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
 </Project>
