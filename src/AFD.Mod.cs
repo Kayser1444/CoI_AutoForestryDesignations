@@ -45,13 +45,14 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
 
     public ModJsonConfig JsonConfig { get; }
 
-    private static readonly ModLogger s_log = new ModLogger("AFD");
+    private readonly ModLogger m_log;
 
     public AutoForestryDesignationsMod(ModManifest manifest)
     {
         Manifest = manifest;
         ModVersion = manifest.Version.ToString();
         JsonConfig = new ModJsonConfig(this);
+        m_log = new ModLogger("AFD", "AutoForestryDesignations", ModVersion, typeof(AutoForestryDesignationsMod).Assembly);
     }
 
     public void RegisterPrototypes(ProtoRegistrator registrator)
@@ -110,11 +111,10 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
     {
         try
         {
-            s_log.LogStartupBanner("AutoForestryDesignations", ModVersion, typeof(AutoForestryDesignationsMod).Assembly);
-
-            // Enable console logging for easier debugging
-            ModConsoleLogger.Enable("[AFD]");
-            ModDebugHelpers.RegisterAutoConsoleMirroring(this, resolver.Resolve<IGameLoopEvents>(), resolver.Resolve<GameConsoleCommandsExecutor>(), "[AFD]");
+            // Enable console logging for easier debugging (must precede any log output)
+            m_log.EnableConsoleLogging();
+            m_log.LogStartupBanner();
+            m_log.RegisterAutoConsoleMirroring(this, resolver.Resolve<IGameLoopEvents>(), resolver.Resolve<GameConsoleCommandsExecutor>());
             RegisterLocalizationLateApply(resolver);
 
             ITerrainDesignationsManager desigManager = resolver.Resolve<ITerrainDesignationsManager>();
@@ -130,7 +130,7 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
         }
         catch (Exception ex)
         {
-            s_log.Exception(ex, "AutoForestryDesignations init");
+            m_log.Exception(ex, "AutoForestryDesignations init");
         }
     }
 
@@ -139,7 +139,7 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
         IGameLoopEvents gameLoopEvents = resolver.Resolve<IGameLoopEvents>();
         gameLoopEvents.RegisterRendererInitState(this, () =>
         {
-            s_log.Info("Localization: late apply at renderer init state.");
+            m_log.Info("Localization: late apply at renderer init state.");
             ApplyLocalizedTextIfPresent();
         });
     }
@@ -147,11 +147,11 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
     private void ApplyLocalizedTextIfPresent()
     {
         string translationsDirectory = Path.Combine(Manifest.RootDirectoryPath, "Translations");
-        s_log.Info($"Localization: probing directory '{translationsDirectory}'.");
+        m_log.Info($"Localization: probing directory '{translationsDirectory}'.");
 
         if (!Directory.Exists(translationsDirectory))
         {
-            s_log.Warning("Localization: translations directory does not exist; skipping.");
+            m_log.Warning("Localization: translations directory does not exist; skipping.");
             return;
         }
 
@@ -159,22 +159,22 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
         Array.Sort(jsonFiles, StringComparer.OrdinalIgnoreCase);
         if (jsonFiles.Length == 0)
         {
-            s_log.Warning("Localization: no translation JSON files found.");
+            m_log.Warning("Localization: no translation JSON files found.");
         }
         else
         {
-            s_log.Info($"Localization: discovered {jsonFiles.Length} file(s): {string.Join(", ", jsonFiles)}");
+            m_log.Info($"Localization: discovered {jsonFiles.Length} file(s): {string.Join(", ", jsonFiles)}");
         }
 
         string currentCulture = ResolveCurrentCultureCodeForLogging() ?? "<null>";
-        s_log.Info($"Localization: current game culture before apply = '{currentCulture}'.");
+        m_log.Info($"Localization: current game culture before apply = '{currentCulture}'.");
 
         ModTranslationsApplyResult result = new ModTranslations().Apply(new ModTranslationsApplyOptions(
             translationsDirectory,
             typeof(AutoForestryDesignationsMod).Assembly,
             Array.Empty<string>()));
 
-        s_log.Info(
+        m_log.Info(
             $"Localization: applied locale='{result.AppliedLocaleCode}', upserted={result.UpsertedEntryCount}, scannedFields={result.ScannedFieldCount}, reboundFields={result.ReboundFieldCount}, readonlySkipped={result.SkippedReadonlyFieldCount}, missingTranslationSkipped={result.SkippedMissingTranslationFieldCount}, failedWrites={result.FailedFieldCount}, diagnostics={result.Diagnostics.Count}.");
 
         foreach (TranslationDiagnostic diagnostic in result.Diagnostics)
@@ -182,34 +182,34 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
             string itemInfo = diagnostic.ItemIndex.HasValue ? $", itemIndex={diagnostic.ItemIndex.Value}" : string.Empty;
             string message = $"Localization diagnostic [{diagnostic.Severity}] source='{diagnostic.SourcePath}'{itemInfo}: {diagnostic.Message}";
             if (diagnostic.Severity == TranslationDiagnosticSeverity.Info)
-                s_log.Info(message);
+                m_log.Info(message);
             else
-                s_log.Warning(message);
+                m_log.Warning(message);
         }
 
         if (result.ReboundFieldCount == 0)
         {
-            s_log.Warning("Localization: zero fields were rebound. Localized static LocStr fields may not have been discovered.");
+            m_log.Warning("Localization: zero fields were rebound. Localized static LocStr fields may not have been discovered.");
         }
 
         if (result.SkippedReadonlyFieldCount > 0)
         {
-            s_log.Warning($"Localization: {result.SkippedReadonlyFieldCount} readonly field(s) could not be overwritten.");
+            m_log.Warning($"Localization: {result.SkippedReadonlyFieldCount} readonly field(s) could not be overwritten.");
         }
 
         if (result.SkippedMissingTranslationFieldCount > 0)
         {
-            s_log.Warning($"Localization: {result.SkippedMissingTranslationFieldCount} field(s) had no matching translation entry.");
+            m_log.Warning($"Localization: {result.SkippedMissingTranslationFieldCount} field(s) had no matching translation entry.");
         }
 
         if (result.FailedFieldCount > 0)
         {
-            s_log.Warning($"Localization: {result.FailedFieldCount} field write(s) failed unexpectedly.");
+            m_log.Warning($"Localization: {result.FailedFieldCount} field write(s) failed unexpectedly.");
         }
 
         if (result.HasErrors)
         {
-            s_log.Warning($"Localization apply finished with {result.Diagnostics.Count} diagnostic(s).");
+            m_log.Warning($"Localization apply finished with {result.Diagnostics.Count} diagnostic(s).");
         }
     }
 
