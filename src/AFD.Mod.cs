@@ -45,14 +45,11 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
 
     public ModJsonConfig JsonConfig { get; }
 
-    private readonly ModLogger m_log;
-
     public AutoForestryDesignationsMod(ModManifest manifest)
     {
         Manifest = manifest;
         ModVersion = manifest.Version.ToString();
         JsonConfig = new ModJsonConfig(this);
-        m_log = new ModLogger("AFD", "AutoForestryDesignations", ModVersion, typeof(AutoForestryDesignationsMod).Assembly);
     }
 
     public void RegisterPrototypes(ProtoRegistrator registrator)
@@ -112,8 +109,8 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
         try
         {
             // Enable console logging for easier debugging (must precede any log output)
-            m_log.EnableConsoleLogging();
-            m_log.RegisterAutoConsoleMirroring(this, resolver.Resolve<IGameLoopEvents>(), resolver.Resolve<GameConsoleCommandsExecutor>());
+            AutoForestryDesignation.s_log.EnableConsoleLogging();
+            AutoForestryDesignation.s_log.RegisterAutoConsoleMirroring(this, resolver.Resolve<IGameLoopEvents>(), resolver.Resolve<GameConsoleCommandsExecutor>());
             RegisterLocalizationLateApply(resolver);
 
             ITerrainDesignationsManager desigManager = resolver.Resolve<ITerrainDesignationsManager>();
@@ -129,7 +126,7 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
         }
         catch (Exception ex)
         {
-            m_log.Exception(ex, "AutoForestryDesignations init");
+            AutoForestryDesignation.s_log.Exception(ex, "AutoForestryDesignations init");
         }
     }
 
@@ -138,7 +135,8 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
         IGameLoopEvents gameLoopEvents = resolver.Resolve<IGameLoopEvents>();
         gameLoopEvents.RegisterRendererInitState(this, () =>
         {
-            m_log.Info("Localization: late apply at renderer init state.");
+            AutoForestryDesignation.s_log.Info($"AutoForestryDesignations v{ModVersion} | dll: {ModLogger.GetDllBuildTimestamp(typeof(AutoForestryDesignationsMod).Assembly)}");
+            AutoForestryDesignation.s_log.Info("Localization: late apply at renderer init state.");
             ApplyLocalizedTextIfPresent();
         });
     }
@@ -146,11 +144,11 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
     private void ApplyLocalizedTextIfPresent()
     {
         string translationsDirectory = Path.Combine(Manifest.RootDirectoryPath, "Translations");
-        m_log.Info($"Localization: probing directory '{translationsDirectory}'.");
+        AutoForestryDesignation.s_log.Info($"Localization: probing directory '{translationsDirectory}'.");
 
         if (!Directory.Exists(translationsDirectory))
         {
-            m_log.Warning("Localization: translations directory does not exist; skipping.");
+            AutoForestryDesignation.s_log.Warning("Localization: translations directory does not exist; skipping.");
             return;
         }
 
@@ -158,22 +156,22 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
         Array.Sort(jsonFiles, StringComparer.OrdinalIgnoreCase);
         if (jsonFiles.Length == 0)
         {
-            m_log.Warning("Localization: no translation JSON files found.");
+            AutoForestryDesignation.s_log.Warning("Localization: no translation JSON files found.");
         }
         else
         {
-            m_log.Info($"Localization: discovered {jsonFiles.Length} file(s): {string.Join(", ", jsonFiles)}");
+            AutoForestryDesignation.s_log.Info($"Localization: discovered {jsonFiles.Length} file(s): {string.Join(", ", jsonFiles)}");
         }
 
         string currentCulture = ResolveCurrentCultureCodeForLogging() ?? "<null>";
-        m_log.Info($"Localization: current game culture before apply = '{currentCulture}'.");
+        AutoForestryDesignation.s_log.Info($"Localization: current game culture before apply = '{currentCulture}'.");
 
         ModTranslationsApplyResult result = new ModTranslations().Apply(new ModTranslationsApplyOptions(
             translationsDirectory,
             typeof(AutoForestryDesignationsMod).Assembly,
             Array.Empty<string>()));
 
-        m_log.Info(
+        AutoForestryDesignation.s_log.Info(
             $"Localization: applied locale='{result.AppliedLocaleCode}', upserted={result.UpsertedEntryCount}, scannedFields={result.ScannedFieldCount}, reboundFields={result.ReboundFieldCount}, readonlySkipped={result.SkippedReadonlyFieldCount}, missingTranslationSkipped={result.SkippedMissingTranslationFieldCount}, failedWrites={result.FailedFieldCount}, diagnostics={result.Diagnostics.Count}.");
 
         foreach (TranslationDiagnostic diagnostic in result.Diagnostics)
@@ -181,34 +179,34 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
             string itemInfo = diagnostic.ItemIndex.HasValue ? $", itemIndex={diagnostic.ItemIndex.Value}" : string.Empty;
             string message = $"Localization diagnostic [{diagnostic.Severity}] source='{diagnostic.SourcePath}'{itemInfo}: {diagnostic.Message}";
             if (diagnostic.Severity == TranslationDiagnosticSeverity.Info)
-                m_log.Info(message);
+                AutoForestryDesignation.s_log.Info(message);
             else
-                m_log.Warning(message);
+                AutoForestryDesignation.s_log.Warning(message);
         }
 
         if (result.ReboundFieldCount == 0)
         {
-            m_log.Warning("Localization: zero fields were rebound. Localized static LocStr fields may not have been discovered.");
+            AutoForestryDesignation.s_log.Warning("Localization: zero fields were rebound. Localized static LocStr fields may not have been discovered.");
         }
 
         if (result.SkippedReadonlyFieldCount > 0)
         {
-            m_log.Warning($"Localization: {result.SkippedReadonlyFieldCount} readonly field(s) could not be overwritten.");
+            AutoForestryDesignation.s_log.Warning($"Localization: {result.SkippedReadonlyFieldCount} readonly field(s) could not be overwritten.");
         }
 
         if (result.SkippedMissingTranslationFieldCount > 0)
         {
-            m_log.Warning($"Localization: {result.SkippedMissingTranslationFieldCount} field(s) had no matching translation entry.");
+            AutoForestryDesignation.s_log.Warning($"Localization: {result.SkippedMissingTranslationFieldCount} field(s) had no matching translation entry.");
         }
 
         if (result.FailedFieldCount > 0)
         {
-            m_log.Warning($"Localization: {result.FailedFieldCount} field write(s) failed unexpectedly.");
+            AutoForestryDesignation.s_log.Warning($"Localization: {result.FailedFieldCount} field write(s) failed unexpectedly.");
         }
 
         if (result.HasErrors)
         {
-            m_log.Warning($"Localization apply finished with {result.Diagnostics.Count} diagnostic(s).");
+            AutoForestryDesignation.s_log.Warning($"Localization apply finished with {result.Diagnostics.Count} diagnostic(s).");
         }
     }
 

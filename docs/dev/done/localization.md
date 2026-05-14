@@ -52,7 +52,7 @@ field values.
    `CoI.AutoHelpers.Localization`).
 3. Calls `ModTranslations.Apply` with `AFD_` as the key prefix and
    `typeof(AfdLocalization)` as the target type so only AFD fields are rebound.
-4. Logs a summary of the apply result via `m_log`.
+4. Logs a summary of the apply result via `AutoForestryDesignation.s_log`.
 
 ### Key prefix scoping
 

@@ -25,11 +25,14 @@ using Mafi.Core.Vehicles.TreeHarvesters;
 using Mafi.Core.Vehicles.TreePlanters;
 using Mafi.Core.World;
 using UnityEngine;
+using CoI.AutoHelpers.Logging;
 
 namespace AutoForestryDesignations
 {
     public static partial class AutoForestryDesignation
     {
+        internal static readonly ModLogger s_log = new ModLogger("AFD");
+
         private static TerrainDesignationsManager? s_desigManager;
         private static TerrainDesignationProto? s_forestryProto;
         private static MonoBehaviour? s_coroutineHost;
@@ -80,7 +83,7 @@ namespace AutoForestryDesignations
         [System.Diagnostics.Conditional("DEBUG")]
         internal static void LogDebug(string message)
         {
-            Log.Info(message);
+            s_log.Info(message);
         }
 
         private static bool TryGetTowerEntityId(IAreaManagingTower tower, out EntityId entityId)
