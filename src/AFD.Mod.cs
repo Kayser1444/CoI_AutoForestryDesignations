@@ -114,8 +114,6 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
             RegisterDebugConsoleMirroring(resolver);
             RegisterLocalizationLateApply(resolver);
 
-            ApplyLocalizedTextIfPresent();
-
             ITerrainDesignationsManager desigManager = resolver.Resolve<ITerrainDesignationsManager>();
             IVehiclePathFindingManager vehiclePathFindingManager = resolver.Resolve<IVehiclePathFindingManager>();
             ProtosDb protosDb = resolver.Resolve<ProtosDb>();
@@ -179,8 +177,11 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
         foreach (TranslationDiagnostic diagnostic in result.Diagnostics)
         {
             string itemInfo = diagnostic.ItemIndex.HasValue ? $", itemIndex={diagnostic.ItemIndex.Value}" : string.Empty;
-            Log.Warning(
-                $"[AFD] Localization diagnostic [{diagnostic.Severity}] source='{diagnostic.SourcePath}'{itemInfo}: {diagnostic.Message}");
+            string message = $"[AFD] Localization diagnostic [{diagnostic.Severity}] source='{diagnostic.SourcePath}'{itemInfo}: {diagnostic.Message}";
+            if (diagnostic.Severity == TranslationDiagnosticSeverity.Info)
+                Log.Info(message);
+            else
+                Log.Warning(message);
         }
 
         if (result.ReboundFieldCount == 0)
