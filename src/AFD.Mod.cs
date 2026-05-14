@@ -113,7 +113,6 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
         {
             // Enable console logging for easier debugging (must precede any log output)
             m_log.EnableConsoleLogging();
-            m_log.LogStartupBanner();
             m_log.RegisterAutoConsoleMirroring(this, resolver.Resolve<IGameLoopEvents>(), resolver.Resolve<GameConsoleCommandsExecutor>());
             RegisterLocalizationLateApply(resolver);
 
