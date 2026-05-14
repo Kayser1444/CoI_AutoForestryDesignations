@@ -30,6 +30,10 @@ Thumbs.db
 Desktop.ini
 .DS_Store
 
+# Helper link (Windows junction pointing to live CoI_AutoHelpers workspace folder)
+# Switch to a real submodule when pinning a stable release.
+external/
+
 # NuGet
 packages/
 *.nupkg
