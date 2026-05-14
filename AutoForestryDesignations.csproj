@@ -88,6 +88,8 @@ is included by mistake, I intend to correct it promptly upon discovery or notice
   <ItemGroup>
     <Compile Include="external\CoI_AutoHelpers\src\CoI.AutoHelpers\Localization\**\*.cs"
              Link="CoI.AutoHelpers\Localization\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="external\CoI_AutoHelpers\src\CoI.AutoHelpers\Logging\**\*.cs"
+             Link="CoI.AutoHelpers\Logging\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
 </Project>

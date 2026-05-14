@@ -23,6 +23,7 @@ using Mafi.Core.Terrain.Designation;
 using Mafi.Core.World;
 using UnityEngine;
 using CoI.AutoHelpers.Localization;
+using CoI.AutoHelpers.Logging;
 
 namespace AutoForestryDesignations;
 
@@ -43,6 +44,8 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
     public static string ModVersion { get; private set; } = "?";
 
     public ModJsonConfig JsonConfig { get; }
+
+    private static readonly ModLogger s_log = new ModLogger("AFD");
 
     public AutoForestryDesignationsMod(ModManifest manifest)
     {
@@ -107,11 +110,11 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
     {
         try
         {
-            Log.Info("[AFD] Initialize: starting mod initialization.");
+            s_log.LogStartupBanner("AutoForestryDesignations", ModVersion, typeof(AutoForestryDesignationsMod).Assembly);
 
             // Enable console logging for easier debugging
-            ConsoleLogger.Enable();
-            RegisterDebugConsoleMirroring(resolver);
+            ModConsoleLogger.Enable("[AFD]");
+            ModDebugHelpers.RegisterAutoConsoleMirroring(this, resolver.Resolve<IGameLoopEvents>(), resolver.Resolve<GameConsoleCommandsExecutor>(), "[AFD]");
             RegisterLocalizationLateApply(resolver);
 
             ITerrainDesignationsManager desigManager = resolver.Resolve<ITerrainDesignationsManager>();
@@ -127,7 +130,7 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
         }
         catch (Exception ex)
         {
-            Log.Exception(ex, "[AFD] AutoForestryDesignations init");
+            s_log.Exception(ex, "AutoForestryDesignations init");
         }
     }
 
@@ -136,7 +139,7 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
         IGameLoopEvents gameLoopEvents = resolver.Resolve<IGameLoopEvents>();
         gameLoopEvents.RegisterRendererInitState(this, () =>
         {
-            Log.Info("[AFD] Localization: late apply at renderer init state.");
+            s_log.Info("Localization: late apply at renderer init state.");
             ApplyLocalizedTextIfPresent();
         });
     }
@@ -144,11 +147,11 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
     private void ApplyLocalizedTextIfPresent()
     {
         string translationsDirectory = Path.Combine(Manifest.RootDirectoryPath, "Translations");
-        Log.Info($"[AFD] Localization: probing directory '{translationsDirectory}'.");
+        s_log.Info($"Localization: probing directory '{translationsDirectory}'.");
 
         if (!Directory.Exists(translationsDirectory))
         {
-            Log.Warning("[AFD] Localization: translations directory does not exist; skipping.");
+            s_log.Warning("Localization: translations directory does not exist; skipping.");
             return;
         }
 
@@ -156,57 +159,57 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
         Array.Sort(jsonFiles, StringComparer.OrdinalIgnoreCase);
         if (jsonFiles.Length == 0)
         {
-            Log.Warning("[AFD] Localization: no translation JSON files found.");
+            s_log.Warning("Localization: no translation JSON files found.");
         }
         else
         {
-            Log.Info($"[AFD] Localization: discovered {jsonFiles.Length} file(s): {string.Join(", ", jsonFiles)}");
+            s_log.Info($"Localization: discovered {jsonFiles.Length} file(s): {string.Join(", ", jsonFiles)}");
         }
 
         string currentCulture = ResolveCurrentCultureCodeForLogging() ?? "<null>";
-        Log.Info($"[AFD] Localization: current game culture before apply = '{currentCulture}'.");
+        s_log.Info($"Localization: current game culture before apply = '{currentCulture}'.");
 
         ModTranslationsApplyResult result = new ModTranslations().Apply(new ModTranslationsApplyOptions(
             translationsDirectory,
             typeof(AutoForestryDesignationsMod).Assembly,
             Array.Empty<string>()));
 
-        Log.Info(
-            $"[AFD] Localization: applied locale='{result.AppliedLocaleCode}', upserted={result.UpsertedEntryCount}, scannedFields={result.ScannedFieldCount}, reboundFields={result.ReboundFieldCount}, readonlySkipped={result.SkippedReadonlyFieldCount}, missingTranslationSkipped={result.SkippedMissingTranslationFieldCount}, failedWrites={result.FailedFieldCount}, diagnostics={result.Diagnostics.Count}.");
+        s_log.Info(
+            $"Localization: applied locale='{result.AppliedLocaleCode}', upserted={result.UpsertedEntryCount}, scannedFields={result.ScannedFieldCount}, reboundFields={result.ReboundFieldCount}, readonlySkipped={result.SkippedReadonlyFieldCount}, missingTranslationSkipped={result.SkippedMissingTranslationFieldCount}, failedWrites={result.FailedFieldCount}, diagnostics={result.Diagnostics.Count}.");
 
         foreach (TranslationDiagnostic diagnostic in result.Diagnostics)
         {
             string itemInfo = diagnostic.ItemIndex.HasValue ? $", itemIndex={diagnostic.ItemIndex.Value}" : string.Empty;
-            string message = $"[AFD] Localization diagnostic [{diagnostic.Severity}] source='{diagnostic.SourcePath}'{itemInfo}: {diagnostic.Message}";
+            string message = $"Localization diagnostic [{diagnostic.Severity}] source='{diagnostic.SourcePath}'{itemInfo}: {diagnostic.Message}";
             if (diagnostic.Severity == TranslationDiagnosticSeverity.Info)
-                Log.Info(message);
+                s_log.Info(message);
             else
-                Log.Warning(message);
+                s_log.Warning(message);
         }
 
         if (result.ReboundFieldCount == 0)
         {
-            Log.Warning("[AFD] Localization: zero fields were rebound. Localized static LocStr fields may not have been discovered.");
+            s_log.Warning("Localization: zero fields were rebound. Localized static LocStr fields may not have been discovered.");
         }
 
         if (result.SkippedReadonlyFieldCount > 0)
         {
-            Log.Warning($"[AFD] Localization: {result.SkippedReadonlyFieldCount} readonly field(s) could not be overwritten.");
+            s_log.Warning($"Localization: {result.SkippedReadonlyFieldCount} readonly field(s) could not be overwritten.");
         }
 
         if (result.SkippedMissingTranslationFieldCount > 0)
         {
-            Log.Warning($"[AFD] Localization: {result.SkippedMissingTranslationFieldCount} field(s) had no matching translation entry.");
+            s_log.Warning($"Localization: {result.SkippedMissingTranslationFieldCount} field(s) had no matching translation entry.");
         }
 
         if (result.FailedFieldCount > 0)
         {
-            Log.Warning($"[AFD] Localization: {result.FailedFieldCount} field write(s) failed unexpectedly.");
+            s_log.Warning($"Localization: {result.FailedFieldCount} field write(s) failed unexpectedly.");
         }
 
         if (result.HasErrors)
         {
-            Log.Warning($"[AFD] Localization apply finished with {result.Diagnostics.Count} diagnostic(s).");
+            s_log.Warning($"Localization apply finished with {result.Diagnostics.Count} diagnostic(s).");
         }
     }
 
@@ -246,21 +249,6 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
     public void MigrateJsonConfig(VersionSlim savedVersion, Dict<string, object> savedValues)
     {
         savedValues.Clear();
-    }
-
-    [System.Diagnostics.Conditional("DEBUG")]
-    private void RegisterDebugConsoleMirroring(DependencyResolver resolver)
-    {
-        var gameLoopEvents = resolver.Resolve<IGameLoopEvents>();
-        var consoleCommands = resolver.Resolve<GameConsoleCommandsExecutor>();
-        gameLoopEvents.RegisterRendererInitState(this, () =>
-        {
-            bool enabled = consoleCommands.ExecuteOrSchedule("also_log_to_console true");
-            if (enabled)
-                Debug.Log("[AFD] Debug build: auto-executed also_log_to_console.");
-            else
-                Debug.LogWarning("[AFD] Debug build: failed to auto-execute also_log_to_console.");
-        });
     }
 
     public void Dispose()
