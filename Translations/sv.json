@@ -1,39 +1,150 @@
 [
-  ["AFD_ForestryDesignationsTitle", "Skogsbruksanvisningar"],
-  ["AFD_ForestryInformationTitle", "Skogsbruksinformation"],
-  ["AFD_CreateDesignationsBtn", "Skapa anvisningar"],
-  ["AFD_CreateDesignationsBtnTip", "Skanna tornets område och placera skogsbruksanvisningar."],
-  ["AFD_ClearDesignationsBtnTip", "Rensa alla skogsbruksanvisningar i det här tornets område."],
-  ["AFD_RefreshCompositionTip", "Uppdatera skogsbruksöversikt"],
-  ["AFD_BoolYes", "JA"],
-  ["AFD_BoolNo", "NEJ"],
-  ["AFD_OnlyFertileTilesLabel", "Endast bördiga rutor"],
-  ["AFD_OnlyFertileTilesTip", "Placera anvisningar endast där marken lämpar sig för trädplantering: bördig mark (inte sten, sand eller hav) och ingen byggnad eller annan enhet blockerar platsen."],
-  ["AFD_OnlyReachableTilesLabel", "Endast nåbara rutor"],
-  ["AFD_OnlyReachableTilesTip", "Hoppa över anvisningsrutor som inte kan nås via fordonsvägar från tornets område."],
-  ["AFD_AvoidTerrainDesignationsLabel", "Undvik terränganvisningar"],
-  ["AFD_AvoidTerrainDesignationsTip", "Hoppa över rutor som redan har en terränganvisning, inklusive grävning, tippning eller utjämning."],
-  ["AFD_MaxTilesLabel", "Max rutor"],
-  ["AFD_MaxTilesTip", "Maximalt antal anvisningsrutor att placera per körning. 0 = ingen gräns (∞)."],
-  ["AFD_NoForestryTowerSelected", "Inget skogsbrukstorn valt."],
-  ["AFD_NoForestryDesignations", "Inga skogsbruksanvisningar."],
-  ["AFD_PressToScanComposition", "Tryck på ↺ för att skanna skogsbruksöversikten."],
-  ["AFD_KpiTreesLabel", "Träd"],
-  ["AFD_KpiMaturityLabel", "Tillväxt"],
-  ["AFD_KpiSustainableYieldLabel", "Hållbart virkesutbyte"],
-  ["AFD_KpiTreesTip", "Träd som hanteras av det här tornets skogsbruksområde. Första siffran är nuvarande träd; andra siffran är uppskattad maxkapacitet baserat på giltiga planteringspositioner."],
-  ["AFD_KpiMaturityTipFmt", "Genomsnittlig tillväxt och nuvarande ålder för hanterade träd. Full tillväxt är för närvarande <b>{0}</b>, inklusive svårighetsinställningar."],
-  ["AFD_KpiSustainableYieldTipFmt", "Maximalt långsiktigt virkesutbyte för det här tornet per spelmånad, med hänsyn till anvisat område, avverkningströskeln och trädens tillväxthastighet enligt svårighetsinställningarna (för närvarande <b>{0}</b> genomsnittlig full tillväxt)."],
-  ["AFD_GrowthBreakdownHeader", "Tillväxtfördelning"],
-  ["AFD_GrowthBreakdownTipFmt", "Tillväxtprofil för hanterade träd. Full tillväxt beror på trädtyp och svårighet; nuvarande genomsnittlig full tillväxt är {0}. Kurva för virkesutbyte: 40% ålder = 30% utbyte, 60% = 60%, 80% = 88%, 100% = fullt."],
-  ["AFD_GrowthHeaderTipNoCutFmt", "Fördelning efter tillväxt relativt varje träds nuvarande fulla tillväxtålder. Avverkningsalternativ: ingen avverkning. Genomsnittlig full tillväxt: {0}."],
-  ["AFD_GrowthHeaderTipWithCutFmt", "Fördelning efter tillväxt relativt varje träds nuvarande fulla tillväxtålder. Avverkningsalternativ: {0} ({1}% av ett {2} fullvuxet träd)."],
-  ["AFD_HarvestThresholdTip", "Avverka efter"],
-  ["AFD_SegmentTipFmt", "{0}: {1} träd ({2:P0} av planterade, {3:P0} av kapacitet) [{4}; åldrar använder nuvarande full tillväxt {5}]"],
-  ["AFD_SegmentAboveHarvest", "vid eller över avverkningströskeln"],
-  ["AFD_SegmentBelowHarvest", "under avverkningströskeln"],
-  ["AFD_UnusedCapacityTipFmt", "Outnyttjad kapacitet: {0} rutor ({1:P0} av kapacitet)"],
-  ["AFD_NewlyPlantedTip", "Nyplanterade / lägsta tillväxt"],
-  ["AFD_FullyGrownTipFmt", "Fullvuxna / högsta tillväxt ({0} genomsnittlig full tillväxt i det här tornet)."],
-  ["AFD_BucketFullyMatureFmt", "Fullvuxet ({0}, 100%)"]
+  [
+    "AFD_ForestryDesignationsTitle",
+    "Skogsbruksanvisningar"
+  ],
+  [
+    "AFD_ForestryInformationTitle",
+    "Skogsbruksinformation"
+  ],
+  [
+    "AFD_CreateDesignationsBtn",
+    "Skapa anvisningar"
+  ],
+  [
+    "AFD_CreateDesignationsBtnTip",
+    "Skanna tornets område och placera skogsbruksanvisningar."
+  ],
+  [
+    "AFD_ClearDesignationsBtnTip",
+    "Rensa alla skogsbruksanvisningar i det här tornets område."
+  ],
+  [
+    "AFD_RefreshCompositionTip",
+    "Uppdatera skogsbruksöversikt"
+  ],
+  [
+    "AFD_BoolYes",
+    "JA"
+  ],
+  [
+    "AFD_BoolNo",
+    "NEJ"
+  ],
+  [
+    "AFD_OnlyFertileTilesLabel",
+    "Endast bördiga rutor"
+  ],
+  [
+    "AFD_OnlyFertileTilesTip",
+    "Placera anvisningar endast där marken lämpar sig för trädplantering: bördig mark (inte sten, sand eller hav) och ingen byggnad eller annan enhet blockerar platsen."
+  ],
+  [
+    "AFD_OnlyReachableTilesLabel",
+    "Endast nåbara rutor"
+  ],
+  [
+    "AFD_OnlyReachableTilesTip",
+    "Hoppa över anvisningsrutor som inte kan nås via fordonsvägar från tornets område."
+  ],
+  [
+    "AFD_AvoidTerrainDesignationsLabel",
+    "Undvik terränganvisningar"
+  ],
+  [
+    "AFD_AvoidTerrainDesignationsTip",
+    "Hoppa över rutor som redan har en terränganvisning, inklusive grävning, tippning eller utjämning."
+  ],
+  [
+    "AFD_MaxTilesLabel",
+    "Max rutor"
+  ],
+  [
+    "AFD_MaxTilesTip",
+    "Maximalt antal anvisningsrutor att placera per körning. 0 = ingen gräns (∞)."
+  ],
+  [
+    "AFD_NoForestryTowerSelected",
+    "Inget skogsbrukstorn valt."
+  ],
+  [
+    "AFD_NoForestryDesignations",
+    "Inga skogsbruksanvisningar."
+  ],
+  [
+    "AFD_PressToScanComposition",
+    "Tryck på ↺ för att skanna skogsbruksöversikten."
+  ],
+  [
+    "AFD_KpiTreesLabel",
+    "Träd"
+  ],
+  [
+    "AFD_KpiMaturityLabel",
+    "Tillväxt"
+  ],
+  [
+    "AFD_KpiSustainableYieldLabel",
+    "Hållbart virkesutbyte"
+  ],
+  [
+    "AFD_KpiTreesTip",
+    "Träd som hanteras av det här tornets skogsbruksområde. Första siffran är nuvarande träd; andra siffran är uppskattad maxkapacitet baserat på giltiga planteringspositioner."
+  ],
+  [
+    "AFD_KpiMaturityTipFmt",
+    "Genomsnittlig tillväxt och nuvarande ålder för hanterade träd. Full tillväxt är för närvarande <b>{0}</b>, inklusive svårighetsinställningar."
+  ],
+  [
+    "AFD_KpiSustainableYieldTipFmt",
+    "Maximalt långsiktigt virkesutbyte för det här tornet per spelmånad, med hänsyn till anvisat område, avverkningströskeln och trädens tillväxthastighet enligt svårighetsinställningarna (för närvarande <b>{0}</b> genomsnittlig full tillväxt)."
+  ],
+  [
+    "AFD_GrowthBreakdownHeader",
+    "Tillväxtfördelning"
+  ],
+  [
+    "AFD_GrowthBreakdownTipFmt",
+    "Tillväxtprofil för hanterade träd. Full tillväxt beror på trädtyp och svårighet; nuvarande genomsnittlig full tillväxt är {0}. Kurva för virkesutbyte: 40% ålder = 30% utbyte, 60% = 60%, 80% = 88%, 100% = fullt."
+  ],
+  [
+    "AFD_GrowthHeaderTipNoCutFmt",
+    "Fördelning efter tillväxt relativt varje träds nuvarande fulla tillväxtålder. Avverkningsalternativ: ingen avverkning. Genomsnittlig full tillväxt: {0}."
+  ],
+  [
+    "AFD_GrowthHeaderTipWithCutFmt",
+    "Fördelning efter tillväxt relativt varje träds nuvarande fulla tillväxtålder. Avverkningsalternativ: {0} ({1}% av ett {2} fullvuxet träd)."
+  ],
+  [
+    "AFD_HarvestThresholdTip",
+    "Avverka efter"
+  ],
+  [
+    "AFD_SegmentTipFmt",
+    "{0}: {1} träd ({2:P0} av planterade, {3:P0} av kapacitet) [{4}; åldrar använder nuvarande full tillväxt {5}]"
+  ],
+  [
+    "AFD_SegmentAboveHarvest",
+    "vid eller över avverkningströskeln"
+  ],
+  [
+    "AFD_SegmentBelowHarvest",
+    "under avverkningströskeln"
+  ],
+  [
+    "AFD_UnusedCapacityTipFmt",
+    "Outnyttjad kapacitet: {0} rutor ({1:P0} av kapacitet)"
+  ],
+  [
+    "AFD_NewlyPlantedTip",
+    "Nyplanterade / lägsta tillväxt"
+  ],
+  [
+    "AFD_FullyGrownTipFmt",
+    "Fullvuxna / högsta tillväxt ({0} genomsnittlig full tillväxt i det här tornet)."
+  ],
+  [
+    "AFD_BucketFullyMatureFmt",
+    "Fullvuxet ({0}, 100%)"
+  ]
 ]
