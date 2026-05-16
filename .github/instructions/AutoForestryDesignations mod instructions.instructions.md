@@ -5,6 +5,13 @@ description: Describe when these instructions should be loaded by the agent base
 
 <!-- Tip: Use /create-instructions in chat to generate content with agent assistance -->
 
+# Build verification
+After every code change, run a Debug build to confirm the project compiles cleanly:
+```powershell
+dotnet build AutoForestryDesignations.sln -c Debug
+```
+Fix any errors before proceeding. Do not leave a change in a broken build state.
+
 # Check if version has been released and increment if needed
 If the current version seems to have been released (i.e the zip file in the workspace matches the manifest's version), suggest incrementing the manifests version number for the next release, so that users can easily track updates and mod managers can detect new versions.
 
