@@ -1,0 +1,150 @@
+[
+  [
+    "AFD_ForestryDesignationsTitle",
+    "Designações Florestais"
+  ],
+  [
+    "AFD_ForestryInformationTitle",
+    "Informações Florestais"
+  ],
+  [
+    "AFD_CreateDesignationsBtn",
+    "Criar Designações"
+  ],
+  [
+    "AFD_CreateDesignationsBtnTip",
+    "Examinar a área da torre e colocar designações florestais."
+  ],
+  [
+    "AFD_ClearDesignationsBtnTip",
+    "Limpar todas as designações florestais na área desta torre."
+  ],
+  [
+    "AFD_RefreshCompositionTip",
+    "Atualizar composição florestal"
+  ],
+  [
+    "AFD_BoolYes",
+    "SIM"
+  ],
+  [
+    "AFD_BoolNo",
+    "NÃO"
+  ],
+  [
+    "AFD_OnlyFertileTilesLabel",
+    "Apenas terrenos férteis"
+  ],
+  [
+    "AFD_OnlyFertileTilesTip",
+    "Colocar designações apenas onde o solo é válido para plantar árvores: terreno fértil (não rocha, areia ou oceano) e não ocupado por uma construção ou outra entidade."
+  ],
+  [
+    "AFD_OnlyReachableTilesLabel",
+    "Apenas áreas acessíveis"
+  ],
+  [
+    "AFD_OnlyReachableTilesTip",
+    "Quando ativado, ignorar áreas de designação que não são acessíveis por veículos a partir da área da torre."
+  ],
+  [
+    "AFD_AvoidTerrainDesignationsLabel",
+    "Evitar designações de terreno"
+  ],
+  [
+    "AFD_AvoidTerrainDesignationsTip",
+    "Ignorar áreas que já contenham qualquer designação de terreno, incluindo mineração, despejo ou nivelamento."
+  ],
+  [
+    "AFD_MaxTilesLabel",
+    "Máx. de áreas"
+  ],
+  [
+    "AFD_MaxTilesTip",
+    "Número máximo de áreas de designação a colocar por execução. 0 = sem limite (∞)."
+  ],
+  [
+    "AFD_NoForestryTowerSelected",
+    "Nenhuma torre florestal selecionada."
+  ],
+  [
+    "AFD_NoForestryDesignations",
+    "Nenhuma designação florestal."
+  ],
+  [
+    "AFD_PressToScanComposition",
+    "Pressione ↺ para examinar a composição florestal."
+  ],
+  [
+    "AFD_KpiTreesLabel",
+    "Árvores"
+  ],
+  [
+    "AFD_KpiMaturityLabel",
+    "Maturidade"
+  ],
+  [
+    "AFD_KpiSustainableYieldLabel",
+    "Rendimento Sustentável"
+  ],
+  [
+    "AFD_KpiTreesTip",
+    "Árvores geridas atualmente dentro da área florestal desta torre. O primeiro número é o total atual; o segundo número é o máximo estimado com base nas posições de plantio atualmente válidas."
+  ],
+  [
+    "AFD_KpiMaturityTipFmt",
+    "Maturidade média e idade atual das árvores geridas. A maturidade total é atualmente <b>{0}</b>, incluindo configurações de dificuldade."
+  ],
+  [
+    "AFD_KpiSustainableYieldTipFmt",
+    "Produção máxima de madeira a longo prazo que pode ser mantida para esta torre por mês de jogo, considerando a área designada, o limite de colheita e a velocidade de crescimento das árvores conforme as configurações de dificuldade (atualmente <b>{0}</b> de maturidade total média)."
+  ],
+  [
+    "AFD_GrowthBreakdownHeader",
+    "Repartição do Crescimento"
+  ],
+  [
+    "AFD_GrowthBreakdownTipFmt",
+    "Repartição da maturidade das árvores geridas. A idade de maturidade total depende do tipo de árvore e da dificuldade; a maturidade total média atual é {0}. Curva de rendimento florestal padrão: 40% da idade = 30% do rendimento, 60% = 60%, 80% = 88%, 100% = total."
+  ],
+  [
+    "AFD_GrowthHeaderTipNoCutFmt",
+    "Distribuição por maturidade relativa à idade atual de crescimento total de cada árvore. Opção de colheita: nenhum corte. Maturidade total média: {0}."
+  ],
+  [
+    "AFD_GrowthHeaderTipWithCutFmt",
+    "Distribuição por maturidade relativa à idade atual de crescimento total de cada árvore. Opção de colheita: {0} ({1}% de uma árvore {2} de crescimento total)."
+  ],
+  [
+    "AFD_HarvestThresholdTip",
+    "Limite de colheita"
+  ],
+  [
+    "AFD_SegmentTipFmt",
+    "{0}: {1} árvores ({2:P0} das plantadas, {3:P0} da capacidade) [{4}; idades usam maturidade total atual {5}]"
+  ],
+  [
+    "AFD_SegmentAboveHarvest",
+    "no limite ou acima do limite de colheita"
+  ],
+  [
+    "AFD_SegmentBelowHarvest",
+    "abaixo do limite de colheita"
+  ],
+  [
+    "AFD_UnusedCapacityTipFmt",
+    "Capacidade não utilizada: {0} áreas ({1:P0} da capacidade)"
+  ],
+  [
+    "AFD_NewlyPlantedTip",
+    "Recém-plantado / maturidade mais baixa"
+  ],
+  [
+    "AFD_FullyGrownTipFmt",
+    "Totalmente crescida / maturidade mais alta ({0} de maturidade total média nesta torre)."
+  ],
+  [
+    "AFD_BucketFullyMatureFmt",
+    "Totalmente madura ({0}, 100%)"
+  ]
+]
