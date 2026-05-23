@@ -143,7 +143,7 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
 
     private void ApplyLocalizedTextIfPresent()
     {
-        string translationsDirectory = Path.Combine(Manifest.RootDirectoryPath, "Translations");
+        string translationsDirectory = Path.Combine(Manifest.RootDirectoryPath, "translations");
         AutoForestryDesignation.s_log.Info($"Localization: probing directory '{translationsDirectory}'.");
 
         if (!Directory.Exists(translationsDirectory))
