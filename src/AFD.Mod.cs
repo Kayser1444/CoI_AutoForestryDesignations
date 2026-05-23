@@ -184,7 +184,7 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
                 AutoForestryDesignation.s_log.Warning(message);
         }
 
-        if (result.ReboundFieldCount == 0)
+        if (result.UpsertedEntryCount > 0 && result.ReboundFieldCount == 0)
         {
             AutoForestryDesignation.s_log.Warning("Localization: zero fields were rebound. Localized static LocStr fields may not have been discovered.");
         }
