@@ -1,0 +1,150 @@
+[
+  [
+    "AFD_ForestryDesignationsTitle",
+    "Designazioni forestali"
+  ],
+  [
+    "AFD_ForestryInformationTitle",
+    "Informazioni sul settore forestale"
+  ],
+  [
+    "AFD_CreateDesignationsBtn",
+    "Crea designazioni"
+  ],
+  [
+    "AFD_CreateDesignationsBtnTip",
+    "Esamina l'area della torre e posiziona le designazioni forestali."
+  ],
+  [
+    "AFD_ClearDesignationsBtnTip",
+    "Cancella tutte le designazioni forestali nell'area di questa torre."
+  ],
+  [
+    "AFD_RefreshCompositionTip",
+    "Aggiorna la composizione forestale"
+  ],
+  [
+    "AFD_BoolYes",
+    "SÌ"
+  ],
+  [
+    "AFD_BoolNo",
+    "NO"
+  ],
+  [
+    "AFD_OnlyFertileTilesLabel",
+    "Solo caselle fertili"
+  ],
+  [
+    "AFD_OnlyFertileTilesTip",
+    "Posiziona designazioni solo dove il terreno è idoneo alla piantumazione di alberi: terreno fertile (non roccia, sabbia od oceano) e non occupato da edifici o altre entità."
+  ],
+  [
+    "AFD_OnlyReachableTilesLabel",
+    "Solo caselle raggiungibili"
+  ],
+  [
+    "AFD_OnlyReachableTilesTip",
+    "Se questa opzione è attivata, salta le caselle designate che non sono raggiungibili tramite percorsi percorribili in veicolo dall'area della torre."
+  ],
+  [
+    "AFD_AvoidTerrainDesignationsLabel",
+    "Evita le designazioni del terreno"
+  ],
+  [
+    "AFD_AvoidTerrainDesignationsTip",
+    "Esclude le caselle che contengono già una designazione del terreno, comprese quelle destinate all'estrazione mineraria, allo scarico o al livellamento."
+  ],
+  [
+    "AFD_MaxTilesLabel",
+    "Numero massimo di caselle"
+  ],
+  [
+    "AFD_MaxTilesTip",
+    "Numero massimo di caselle di designazione da posizionare per ogni esecuzione. 0 = nessun limite (∞)."
+  ],
+  [
+    "AFD_NoForestryTowerSelected",
+    "Non è stata selezionata alcuna torre forestale."
+  ],
+  [
+    "AFD_NoForestryDesignations",
+    "Nessuna designazione forestale."
+  ],
+  [
+    "AFD_PressToScanComposition",
+    "Premere ↺ per analizzare la composizione del bosco."
+  ],
+  [
+    "AFD_KpiTreesLabel",
+    "Alberi"
+  ],
+  [
+    "AFD_KpiMaturityLabel",
+    "Maturità"
+  ],
+  [
+    "AFD_KpiSustainableYieldLabel",
+    "Rendimento sostenibile"
+  ],
+  [
+    "AFD_KpiTreesTip",
+    "Alberi presenti attualmente all'interno dell'area forestale di questa torre. Il primo numero indica il numero attuale di alberi; il secondo numero indica il numero massimo stimato di alberi in base alle posizioni di piantumazione attualmente valide."
+  ],
+  [
+    "AFD_KpiMaturityTipFmt",
+    "Maturità media ed età attuale degli alberi gestiti. La maturità completa è attualmente <b>{0}</b>, comprese le impostazioni di difficoltà."
+  ],
+  [
+    "AFD_KpiSustainableYieldTipFmt",
+    "Produzione massima di legname a lungo termine che può essere mantenuta per questa torre ogni mese di gioco, tenendo conto dell'area designata, della soglia di raccolta e della velocità di crescita degli alberi in base alle impostazioni di difficoltà (attualmente <b>{0}</b> media a piena maturità)."
+  ],
+  [
+    "AFD_GrowthBreakdownHeader",
+    "Analisi della crescita"
+  ],
+  [
+    "AFD_GrowthBreakdownTipFmt",
+    "Distribuzione della maturità degli alberi gestiti. L'età di piena maturità dipende dalla specie arborea e dal grado di difficoltà; attualmente, l'età media di piena maturità è {0}. Curva di resa standard della silvicoltura: al 40% dell'età = 30% di resa, al 60% = 60%, all'80% = 88%, al 100% = piena resa."
+  ],
+  [
+    "AFD_GrowthHeaderTipNoCutFmt",
+    "Distribuzione in base alla maturità rispetto all'età attuale di piena crescita di ciascun albero. Opzione di raccolta: nessun taglio. Maturità media: {0}."
+  ],
+  [
+    "AFD_GrowthHeaderTipWithCutFmt",
+    "Distribuzione in base alla maturità rispetto all'età attuale di piena crescita di ciascun albero. Opzione di raccolta: {0} ({1}% di un albero a piena crescita {2})."
+  ],
+  [
+    "AFD_HarvestThresholdTip",
+    "Soglia di raccolta"
+  ],
+  [
+    "AFD_SegmentTipFmt",
+    "{0}: {1} alberi ({2:P0} piantati, {3:P0} di capacità) [{4}; per l'età si utilizza la maturità attuale {5}]"
+  ],
+  [
+    "AFD_SegmentAboveHarvest",
+    "pari o superiore alla soglia di raccolta"
+  ],
+  [
+    "AFD_SegmentBelowHarvest",
+    "al di sotto della soglia di raccolta"
+  ],
+  [
+    "AFD_UnusedCapacityTipFmt",
+    "Capacità inutilizzata: {0} caselle ({1:P0} della capacità)"
+  ],
+  [
+    "AFD_NewlyPlantedTip",
+    "Appena piantato / maturazione minima"
+  ],
+  [
+    "AFD_FullyGrownTipFmt",
+    "Piena maturazione / massima maturità ({0} è la maturità media in questa torre)."
+  ],
+  [
+    "AFD_BucketFullyMatureFmt",
+    "Completamente maturo ({0}, 100%)"
+  ]
+]
