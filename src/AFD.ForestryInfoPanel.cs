@@ -582,13 +582,14 @@ namespace AutoForestryDesignations
             int plantedTotal = Math.Max(1, stats.TreeCount);
             if (unusedCapacity > 0)
             {
-                var unusedSegment = new UiComponent()
+                var unusedSegment = new Row()
                     .FlexGrow(unusedCapacity)
                     .Background(s_unusedCapacityColor)
                     .Tooltip(new LocStrFormatted(string.Format(AfdLocalization.UnusedCapacityTipFmt.TranslatedString,
                         unusedCapacity,
                         (float)unusedCapacity / totalCapacity)));
                 unusedSegment.OnMouseEnterLeave(onEnter: () => ClearActiveHighlights(), onLeave: () => { });
+                unusedSegment.Add(new UiComponent().Class(Cls.displayGlass).IgnoreInputPicking());
                 bar.Add(unusedSegment);
             }
 
@@ -605,7 +606,7 @@ namespace AutoForestryDesignations
                 var hoverBucketColor = bucketColor.Lerp(ColorRgba.White, Percent.Twenty);
                 string bucketLabel = GetBucketLabel(i, maxAgeYears);
 
-                var segment = new UiComponent()
+                var segment = new Row()
                     .FlexGrow(bucketCount)
                     .Background(bucketColor)
                     .Class(Cls.clickable)
@@ -668,10 +669,9 @@ namespace AutoForestryDesignations
                     }
                     AutoForestryDesignation.ActivateHarvestOverlayIfNeeded();
                 });
+                segment.Add(new UiComponent().Class(Cls.displayGlass).IgnoreInputPicking());
                 bar.Add(segment);
             }
-
-            bar.Add(new UiComponent().Class(Cls.displayGlass).IgnoreInputPicking());
 
             var barWithLegend = new Row(3.pt()).AlignSelfStretch().AlignItemsCenter();
             barWithLegend.Add(new Icon("Assets/Base/Products/Icons/TreeSapling.svg").NoTint().Size(24.px()).MarginBottom(2.px())
