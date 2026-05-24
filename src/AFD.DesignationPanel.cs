@@ -21,6 +21,7 @@ using Mafi.Unity.UiToolkit.Library;
 using Mafi.Unity.Ui.Library;
 using Row = Mafi.Unity.UiToolkit.Library.Row;
 using UnityEngine;
+using ClickEvent = UnityEngine.UIElements.ClickEvent;
 
 namespace AutoForestryDesignations
 {
@@ -42,9 +43,11 @@ namespace AutoForestryDesignations
             public Mafi.Unity.Ui.Library.Display OnlyReachableDisplay { get; }
             public Mafi.Unity.Ui.Library.Display MaxTilesDisplay { get; }
             public Mafi.Unity.Ui.Library.Display MarkHarvestReadyDisplay { get; }
+            public PanelWithHeader Panel { get; }
 
             public Bindings(
                 Func<IAreaManagingTower?> getTower,
+                PanelWithHeader panel,
                 Mafi.Unity.Ui.Library.Display onlyFertileDisplay,
                 Mafi.Unity.Ui.Library.Display avoidWithTreesDisplay,
                 Mafi.Unity.Ui.Library.Display avoidMiningDisplay,
@@ -53,6 +56,7 @@ namespace AutoForestryDesignations
                 Mafi.Unity.Ui.Library.Display markHarvestReadyDisplay)
             {
                 GetTower = getTower;
+                Panel = panel;
                 OnlyFertileDisplay = onlyFertileDisplay;
                 AvoidWithTreesDisplay = avoidWithTreesDisplay;
                 AvoidMiningDisplay = avoidMiningDisplay;
@@ -85,6 +89,7 @@ namespace AutoForestryDesignations
             b.OnlyReachableDisplay.SetValue(BoolText(AutoForestryDesignation.GetTowerOnlyReachableTiles(tower)));
             b.MaxTilesDisplay.SetValue(new LocStrFormatted(MaxTilesText(AutoForestryDesignation.GetTowerMaxTiles(tower))));
             b.MarkHarvestReadyDisplay.SetValue(BoolText(AutoForestryDesignation.GetTowerMarkHarvestReadyForHarvest(tower)));
+            b.Panel.Collapsed(AutoForestryDesignation.GetTowerForestryDesignationsPanelCollapsed(tower));
         }
 
         /// <summary>
@@ -146,10 +151,17 @@ namespace AutoForestryDesignations
             var panel = new PanelWithHeader()
                 .Title(AfdLocalization.ForestryDesignationsTitle,
                        new LocStrFormatted($"Create automatic forestry designations. [Kayser's Automatic Forestry Designations v{AutoForestryDesignationsMod.ModVersion}]"));
-            panel.Collapsed(AutoForestryDesignationsMod.ForestryDesignationsPanelCollapsed);
-            panel.BodyAdd(contentRow);
-
             var initialTower = getTower();
+            panel.Collapsed(initialTower != null
+                ? AutoForestryDesignation.GetTowerForestryDesignationsPanelCollapsed(initialTower)
+                : AutoForestryDesignationsMod.ForestryDesignationsPanelCollapsed);
+            panel.Header.OnClick((ClickEvent evt) =>
+            {
+                var tower = getTower();
+                if (tower != null)
+                    AutoForestryDesignation.SetTowerForestryDesignationsPanelCollapsed(tower, panel.IsCollapsed);
+            });
+            panel.BodyAdd(contentRow);
 
             // --- Only fertile tiles ---
             bool initOnlyFertile = initialTower != null
@@ -260,7 +272,7 @@ namespace AutoForestryDesignations
             var markHarvestReadyDisplay = new Mafi.Unity.Ui.Library.Display(BoolText(initMarkHarvestReady))
                 .MinDigits(3).AlignSelfStretch().MarginTopBottom(2.px());
 
-            s_bindings[key] = new Bindings(getTower, onlyFertileDisplay, avoidWithTreesDisplay, avoidMiningDisplay, onlyReachableDisplay, maxTilesDisplay, markHarvestReadyDisplay);
+            s_bindings[key] = new Bindings(getTower, panel, onlyFertileDisplay, avoidWithTreesDisplay, avoidMiningDisplay, onlyReachableDisplay, maxTilesDisplay, markHarvestReadyDisplay);
             return panel;
         }
 

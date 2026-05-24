@@ -57,6 +57,8 @@ namespace AutoForestryDesignations
             new Dictionary<object, Action>();
         private static readonly Dictionary<object, Func<IAreaManagingTower?>> s_towerResolvers =
             new Dictionary<object, Func<IAreaManagingTower?>>();
+        private static readonly Dictionary<object, PanelWithHeader> s_panels =
+            new Dictionary<object, PanelWithHeader>();
 
         internal static PanelWithHeader Build(Func<IAreaManagingTower?> getTower, object key)
         {
@@ -89,12 +91,30 @@ namespace AutoForestryDesignations
 
             panel.Header.Add(refreshButton);
             panel.BodyAdd(contentCol);
-            panel.Collapsed(AutoForestryDesignationsMod.ForestryInformationPanelCollapsed);
+            var initialTower = getTower();
+            panel.Collapsed(initialTower != null
+                ? AutoForestryDesignation.GetTowerForestryInformationPanelCollapsed(initialTower)
+                : AutoForestryDesignationsMod.ForestryInformationPanelCollapsed);
+            panel.Header.OnClick((ClickEvent evt) =>
+            {
+                var tower = getTower();
+                if (tower != null)
+                    AutoForestryDesignation.SetTowerForestryInformationPanelCollapsed(tower, panel.IsCollapsed);
+            });
+            s_panels[key] = panel;
             return panel;
         }
 
         internal static void RefreshContent(object key)
         {
+            if (s_panels.TryGetValue(key, out var panel)
+                && s_towerResolvers.TryGetValue(key, out var getTower))
+            {
+                var tower = getTower();
+                if (tower != null)
+                    panel.Collapsed(AutoForestryDesignation.GetTowerForestryInformationPanelCollapsed(tower));
+            }
+
             if (s_refreshCallbacks.TryGetValue(key, out var cb))
                 try { cb?.Invoke(); } catch { }
         }

@@ -19,17 +19,24 @@ using Mafi.Core.Simulation;
 using Mafi.Core.Prototypes;
 using Mafi.Core.Console;
 using Mafi.Core.PathFinding;
+using Mafi.Core.SaveGame;
 using Mafi.Core.Terrain.Designation;
 using Mafi.Core.World;
 using UnityEngine;
 using CoI.AutoHelpers.Localization;
 using CoI.AutoHelpers.Logging;
+using CoI.AutoHelpers.Persistence;
 
 namespace AutoForestryDesignations;
 
 public sealed class AutoForestryDesignationsMod : IMod, IDisposable
 {
     private Harmony? m_harmony;
+    private readonly ModSaveLifecycle m_saveLifecycle = new ModSaveLifecycle();
+    private IGameLoopEvents? m_gameLoopEvents;
+    private ISimLoopEvents? m_simLoopEvents;
+    private ISaveManager? m_saveManager;
+    private IModStateJsonStore? m_towerSettingsStateStore;
 
     public string Name => "Auto Forestry Designations";
 
@@ -110,7 +117,14 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
         {
             // Enable console logging for easier debugging (must precede any log output)
             AutoForestryDesignation.s_log.EnableConsoleLogging();
-            AutoForestryDesignation.s_log.RegisterAutoConsoleMirroring(this, resolver.Resolve<IGameLoopEvents>(), resolver.Resolve<GameConsoleCommandsExecutor>());
+            m_gameLoopEvents = resolver.Resolve<IGameLoopEvents>();
+            m_simLoopEvents = resolver.Resolve<ISimLoopEvents>();
+            m_saveManager = resolver.Resolve<ISaveManager>();
+            m_gameLoopEvents.Terminate.AddNonSaveable(this, onGameTerminated);
+            m_simLoopEvents.BeforeSave.AddNonSaveable(this, beforeSave);
+            m_saveManager.OnSaveDone += onSaveDone;
+
+            AutoForestryDesignation.s_log.RegisterAutoConsoleMirroring(this, m_gameLoopEvents, resolver.Resolve<GameConsoleCommandsExecutor>());
             RegisterLocalizationLateApply(resolver);
 
             ITerrainDesignationsManager desigManager = resolver.Resolve<ITerrainDesignationsManager>();
@@ -120,13 +134,59 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
             IEntitiesManager entitiesManager = resolver.Resolve<IEntitiesManager>();
             AutoForestryDesignationsTicker ticker = new GameObject("AutoForestryDesignationsTicker").AddComponent<AutoForestryDesignationsTicker>();
             UnityEngine.Object.DontDestroyOnLoad(ticker.gameObject);
-            ISimLoopEvents simLoopEvents = resolver.Resolve<ISimLoopEvents>();
             AutoForestryDesignation.SetModRootDirectoryPath(Manifest.RootDirectoryPath);
-            AutoForestryDesignation.Initialize(desigManager, protosDb, worldMapManager, ticker, entitiesManager, simLoopEvents, vehiclePathFindingManager);
+            AutoForestryDesignation.Initialize(desigManager, protosDb, worldMapManager, ticker, entitiesManager, m_simLoopEvents, vehiclePathFindingManager);
+            m_towerSettingsStateStore = ModStateJsonStores.CreateDefault(JsonConfig, AutoForestryDesignation.TowerSettingsConfigKey);
+            AutoForestryDesignation.LoadTowerSettingsFromJsonStore(m_towerSettingsStateStore);
         }
         catch (Exception ex)
         {
+            unsubscribeWorldEvents();
             AutoForestryDesignation.s_log.Exception(ex, "AutoForestryDesignations init");
+        }
+    }
+
+    private void beforeSave()
+    {
+        IModStateJsonStore store = m_towerSettingsStateStore
+            ?? ModStateJsonStores.CreateDefault(JsonConfig, AutoForestryDesignation.TowerSettingsConfigKey);
+        m_towerSettingsStateStore = store;
+        AutoForestryDesignation.SaveTowerSettingsToJsonStore(store);
+        m_saveLifecycle.BeforeVanillaSave();
+    }
+
+    private void onSaveDone(SaveResult result)
+    {
+        m_saveLifecycle.AfterVanillaSave();
+    }
+
+    private void onGameTerminated()
+    {
+        unsubscribeWorldEvents();
+        m_saveLifecycle.DisposeRuntime();
+    }
+
+    private void unsubscribeWorldEvents()
+    {
+        if (m_gameLoopEvents != null)
+        {
+            try { m_gameLoopEvents.Terminate.RemoveNonSaveable(this, onGameTerminated); }
+            catch { }
+            m_gameLoopEvents = null;
+        }
+
+        if (m_simLoopEvents != null)
+        {
+            try { m_simLoopEvents.BeforeSave.RemoveNonSaveable(this, beforeSave); }
+            catch { }
+            m_simLoopEvents = null;
+        }
+
+        if (m_saveManager != null)
+        {
+            try { m_saveManager.OnSaveDone -= onSaveDone; }
+            catch { }
+            m_saveManager = null;
         }
     }
 
@@ -245,11 +305,13 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
 
     public void MigrateJsonConfig(VersionSlim savedVersion, Dict<string, object> savedValues)
     {
-        savedValues.Clear();
     }
 
     public void Dispose()
     {
+        unsubscribeWorldEvents();
+        m_saveLifecycle.DisposeRuntime();
         m_harmony?.UnpatchAll("com.auto-forestry-designations.mod");
     }
 }
+

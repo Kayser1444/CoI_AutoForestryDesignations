@@ -90,6 +90,12 @@ is included by mistake, I intend to correct it promptly upon discovery or notice
              Link="CoI.AutoHelpers\Localization\%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="external\CoI_AutoHelpers\src\CoI.AutoHelpers\Logging\**\*.cs"
              Link="CoI.AutoHelpers\Logging\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="external\CoI_AutoHelpers\src\CoI.AutoHelpers\Persistence\**\*.cs"
+             Link="CoI.AutoHelpers\Persistence\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="external\CoI_AutoHelpers\src\CoI.AutoHelpers\Runtime\**\*.cs"
+             Link="CoI.AutoHelpers\Runtime\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="external\CoI_AutoHelpers\src\CoI.AutoHelpers\VanillaAttachments\**\*.cs"
+             Link="CoI.AutoHelpers\VanillaAttachments\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>
