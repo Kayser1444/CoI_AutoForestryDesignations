@@ -121,11 +121,11 @@
   ],
   [
     "AFD_SegmentTipFmt",
-    "{0}: {1} árboles ({2:P0} de los plantados, {3:P0} de la capacidad) [{4}; las edades usan la madurez completa actual {5}]"
+    "<b>{0}</b>\n{1} árboles ({2:P0} de los plantados, {3:P0} de la capacidad)\n{4}"
   ],
   [
     "AFD_SegmentAboveHarvest",
-    "en o por encima del umbral de cosecha"
+    "por encima del umbral de cosecha"
   ],
   [
     "AFD_SegmentBelowHarvest",
@@ -134,6 +134,10 @@
   [
     "AFD_UnusedCapacityTipFmt",
     "Capacidad sin usar: {0} casillas ({1:P0} de la capacidad)"
+  ],
+  [
+    "AFD_SegmentInteractionHint",
+    "Pasa el cursor para resaltar los árboles de esta etapa.\nHaz clic para marcarlos o desmarcarlos para cosecha."
   ],
   [
     "AFD_NewlyPlantedTip",
@@ -146,5 +150,29 @@
   [
     "AFD_BucketFullyMatureFmt",
     "Madurez completa ({0}, 100%)"
+  ],
+  [
+    "AFD_BucketNewlyPlantedName",
+    "Recién plantado"
+  ],
+  [
+    "AFD_BucketYoungName",
+    "Joven"
+  ],
+  [
+    "AFD_BucketGrowingName",
+    "En crecimiento"
+  ],
+  [
+    "AFD_BucketMaturingName",
+    "Madurando"
+  ],
+  [
+    "AFD_BucketNearlyMatureName",
+    "Casi maduro"
+  ],
+  [
+    "AFD_BucketRangeFmt",
+    "{0} ({1}-{2}, {3:P0}-{4:P0})"
   ]
 ]

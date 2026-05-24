@@ -121,11 +121,11 @@
   ],
   [
     "AFD_SegmentTipFmt",
-    "{0}: {1} alberi ({2:P0} piantati, {3:P0} di capacità) [{4}; per l'età si utilizza la maturità attuale {5}]"
+    "<b>{0}</b>\n{1} alberi ({2:P0} piantati, {3:P0} di capacità)\n{4}"
   ],
   [
     "AFD_SegmentAboveHarvest",
-    "pari o superiore alla soglia di raccolta"
+    "sopra la soglia di raccolta"
   ],
   [
     "AFD_SegmentBelowHarvest",
@@ -134,6 +134,10 @@
   [
     "AFD_UnusedCapacityTipFmt",
     "Capacità inutilizzata: {0} caselle ({1:P0} della capacità)"
+  ],
+  [
+    "AFD_SegmentInteractionHint",
+    "Passa sopra per evidenziare gli alberi in questa fase.\nFai clic per marcarli o deselezionarli per la raccolta."
   ],
   [
     "AFD_NewlyPlantedTip",
@@ -146,5 +150,29 @@
   [
     "AFD_BucketFullyMatureFmt",
     "Completamente maturo ({0}, 100%)"
+  ],
+  [
+    "AFD_BucketNewlyPlantedName",
+    "Appena piantato"
+  ],
+  [
+    "AFD_BucketYoungName",
+    "Giovane"
+  ],
+  [
+    "AFD_BucketGrowingName",
+    "In crescita"
+  ],
+  [
+    "AFD_BucketMaturingName",
+    "In maturazione"
+  ],
+  [
+    "AFD_BucketNearlyMatureName",
+    "Quasi maturo"
+  ],
+  [
+    "AFD_BucketRangeFmt",
+    "{0} ({1}-{2}, {3:P0}-{4:P0})"
   ]
 ]

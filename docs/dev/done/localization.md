@@ -65,9 +65,57 @@ strings if a user puts a file with broad keys in the translations folder.
 
 ## Translation file format
 
-Files are JSON arrays of `{ "key": "...", "value": "..." }` objects. Files are
-loaded in alphabetical order; later files override earlier ones for duplicate
-keys (controlled by `DuplicateTranslationKeyBehavior.LastWins`).
+Files are JSON arrays of string tuples:
+
+```json
+[
+  ["AFD_Key", "Translated text"]
+]
+```
+
+Two-item tuples are ordinary strings. Three-item tuples are reserved for
+singular/plural translations:
+
+```json
+[
+  ["AFD_CountFmt", "{0} tree", "{0} trees"]
+]
+```
+
+Do not use the third item for translator notes or context; the loader treats it
+as plural UI text. Files are loaded in alphabetical order; later files override
+earlier ones for duplicate keys (controlled by
+`DuplicateTranslationKeyBehavior.LastWins`).
+
+### Format placeholders
+
+Prefer numeric .NET placeholders such as `{0}`, `{1}`, and `{2:P0}` for all new
+localized strings. Avoid named placeholders such as `{entity}` unless a vanilla
+API explicitly requires that exact token. Numeric placeholders are harder for
+machine translation to mistranslate and are validated naturally by
+`string.Format` call sites.
+
+Translators may reorder numeric placeholders to fit the target language, but
+must preserve the exact placeholder spelling and format suffix. For example,
+`{2:P0}` must remain `{2:P0}`, not `{2}` or a translated word.
+
+### Rich text in UI strings
+
+AFD tooltips support Unity rich text. The following tags were verified in-game
+in a translated tooltip:
+
+| Markup | Result |
+|---|---|
+| `<b>text</b>` | Bold |
+| `<i>text</i>` | Italic |
+| `<u>text</u>` | Underline |
+| `<color=#66ff66>text</color>` | Hex color |
+| `<size=120%>text</size>` | Relative text size |
+| `\n` | Line break |
+
+Use rich text sparingly and only when it improves readability in a tooltip or
+other UI surface. Keep tags balanced, and preserve placeholders exactly when
+wrapping formatted text around them.
 
 The `TranslationTemplateExporter` from `CoI.AutoHelpers.Localization` can
 generate a template file from the declared `LocStr` fields for use by

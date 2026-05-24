@@ -121,11 +121,11 @@
   ],
   [
     "AFD_SegmentTipFmt",
-    "{0}: {1} Bäume ({2:P0} der gepflanzten, {3:P0} der Kapazität) [{4}; Alter verwenden aktuelles volles Wachstum {5}]"
+    "<b>{0}</b>\n{1} Bäume ({2:P0} der gepflanzten, {3:P0} der Kapazität)\n{4}"
   ],
   [
     "AFD_SegmentAboveHarvest",
-    "bei oder über der Ernteschwelle"
+    "über der Ernteschwelle"
   ],
   [
     "AFD_SegmentBelowHarvest",
@@ -134,6 +134,10 @@
   [
     "AFD_UnusedCapacityTipFmt",
     "Ungenutzte Kapazität: {0} Felder ({1:P0} der Kapazität)"
+  ],
+  [
+    "AFD_SegmentInteractionHint",
+    "Darüberfahren, um Bäume in diesem Stadium hervorzuheben.\nKlicken, um sie zur Ernte zu markieren oder die Markierung zu entfernen."
   ],
   [
     "AFD_NewlyPlantedTip",
@@ -146,5 +150,29 @@
   [
     "AFD_BucketFullyMatureFmt",
     "Voll ausgewachsen ({0}, 100%)"
+  ],
+  [
+    "AFD_BucketNewlyPlantedName",
+    "Neu gepflanzt"
+  ],
+  [
+    "AFD_BucketYoungName",
+    "Jung"
+  ],
+  [
+    "AFD_BucketGrowingName",
+    "Wachsend"
+  ],
+  [
+    "AFD_BucketMaturingName",
+    "Reifend"
+  ],
+  [
+    "AFD_BucketNearlyMatureName",
+    "Fast ausgewachsen"
+  ],
+  [
+    "AFD_BucketRangeFmt",
+    "{0} ({1}-{2}, {3:P0}-{4:P0})"
   ]
 ]

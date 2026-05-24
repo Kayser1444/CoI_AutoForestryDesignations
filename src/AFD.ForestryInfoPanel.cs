@@ -720,9 +720,24 @@ namespace AutoForestryDesignations
 
             float start01 = (float)bucketIndex / GROWTH_STAGE_BUCKET_COUNT;
             float end01 = (float)(bucketIndex + 1) / GROWTH_STAGE_BUCKET_COUNT;
-            return string.Format("{0}-{1}",
+            return string.Format(AfdLocalization.BucketRangeFmt.TranslatedString,
+                GetBucketName(bucketIndex),
                 FormatYears(maxAgeYears * start01),
-                FormatYears(maxAgeYears * end01));
+                FormatYears(maxAgeYears * end01),
+                start01,
+                end01);
+        }
+
+        private static string GetBucketName(int bucketIndex)
+        {
+            switch (bucketIndex)
+            {
+                case 0: return AfdLocalization.BucketNewlyPlantedName.TranslatedString;
+                case 1: return AfdLocalization.BucketYoungName.TranslatedString;
+                case 2: return AfdLocalization.BucketGrowingName.TranslatedString;
+                case 3: return AfdLocalization.BucketMaturingName.TranslatedString;
+                default: return AfdLocalization.BucketNearlyMatureName.TranslatedString;
+            }
         }
 
         private static string FormatYears(float years)

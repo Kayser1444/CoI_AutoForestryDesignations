@@ -164,13 +164,13 @@ namespace AutoForestryDesignations
 
         public static LocStr SegmentTipFmt = Loc.Str(
             "AFD_SegmentTipFmt",
-            "{0}: {1} trees ({2:P0} of planted, {3:P0} of capacity) [{4}; ages use current full maturity {5}]",
-            "Tooltip template on a growth bar segment. {0}=bucket label, {1}=count, {2}=fraction of planted, {3}=fraction of capacity, {4}=above/below harvest, {5}=max age string.");
+            "<b>{0}</b>\n{1} trees ({2:P0} planted, {3:P0} capacity)\n{4}",
+            "Tooltip template on a growth bar segment. {0}=bucket label, {1}=count, {2}=fraction of planted, {3}=fraction of capacity, {4}=above/below harvest.");
 
         public static LocStr SegmentAboveHarvest = Loc.Str(
             "AFD_SegmentAboveHarvest",
-            "at or above harvest threshold",
-            "Used as {4} in SegmentTipFmt when the bucket is at or above the harvest threshold.");
+            "above harvest threshold",
+            "Used as {4} in SegmentTipFmt when the bucket is above the harvest threshold.");
 
         public static LocStr SegmentBelowHarvest = Loc.Str(
             "AFD_SegmentBelowHarvest",
@@ -184,7 +184,7 @@ namespace AutoForestryDesignations
 
         public static LocStr SegmentInteractionHint = Loc.Str(
             "AFD_SegmentInteractionHint",
-            "Hover to highlight trees in this stage. Click to mark / unmark highlighted for harvest.",
+            "Hover to highlight trees in this stage.\nClick to mark or unmark them for harvest.",
             "Interaction hint appended to growth bar segment tooltips.");
 
         public static LocStr NewlyPlantedTip = Loc.Str(
@@ -201,5 +201,35 @@ namespace AutoForestryDesignations
             "AFD_BucketFullyMatureFmt",
             "Fully mature ({0}, 100%)",
             "Label template for the fully-mature growth bucket. {0} = max age string.");
+
+        public static LocStr BucketNewlyPlantedName = Loc.Str(
+            "AFD_BucketNewlyPlantedName",
+            "Newly planted",
+            "Name of the 0-20% tree maturity bucket.");
+
+        public static LocStr BucketYoungName = Loc.Str(
+            "AFD_BucketYoungName",
+            "Young",
+            "Name of the 20-40% tree maturity bucket.");
+
+        public static LocStr BucketGrowingName = Loc.Str(
+            "AFD_BucketGrowingName",
+            "Growing",
+            "Name of the 40-60% tree maturity bucket.");
+
+        public static LocStr BucketMaturingName = Loc.Str(
+            "AFD_BucketMaturingName",
+            "Maturing",
+            "Name of the 60-80% tree maturity bucket.");
+
+        public static LocStr BucketNearlyMatureName = Loc.Str(
+            "AFD_BucketNearlyMatureName",
+            "Nearly mature",
+            "Name of the 80-100% tree maturity bucket.");
+
+        public static LocStr BucketRangeFmt = Loc.Str(
+            "AFD_BucketRangeFmt",
+            "{0} ({1}-{2}, {3:P0}-{4:P0})",
+            "Label template for non-full growth buckets. {0}=bucket name, {1}=start age, {2}=end age, {3}=start maturity percent, {4}=end maturity percent.");
     }
 }

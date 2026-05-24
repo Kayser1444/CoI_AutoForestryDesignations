@@ -121,11 +121,11 @@
   ],
   [
     "AFD_SegmentTipFmt",
-    "{0}: {1} träd ({2:P0} av planterade, {3:P0} av kapacitet) [{4}; åldrar använder nuvarande full tillväxt {5}]"
+    "<b>{0}</b>\n{1} träd ({2:P0} av planterade, {3:P0} av kapacitet)\n{4}"
   ],
   [
     "AFD_SegmentAboveHarvest",
-    "vid eller över avverkningströskeln"
+    "över avverkningströskeln"
   ],
   [
     "AFD_SegmentBelowHarvest",
@@ -134,6 +134,10 @@
   [
     "AFD_UnusedCapacityTipFmt",
     "Outnyttjad kapacitet: {0} rutor ({1:P0} av kapacitet)"
+  ],
+  [
+    "AFD_SegmentInteractionHint",
+    "Hovra för att markera träd i det här stadiet.\nKlicka för att markera eller avmarkera dem för avverkning."
   ],
   [
     "AFD_NewlyPlantedTip",
@@ -146,5 +150,29 @@
   [
     "AFD_BucketFullyMatureFmt",
     "Fullvuxet ({0}, 100%)"
+  ],
+  [
+    "AFD_BucketNewlyPlantedName",
+    "Nyplanterade"
+  ],
+  [
+    "AFD_BucketYoungName",
+    "Unga"
+  ],
+  [
+    "AFD_BucketGrowingName",
+    "Växande"
+  ],
+  [
+    "AFD_BucketMaturingName",
+    "Mognande"
+  ],
+  [
+    "AFD_BucketNearlyMatureName",
+    "Nästan fullvuxna"
+  ],
+  [
+    "AFD_BucketRangeFmt",
+    "{0} ({1}-{2}, {3:P0}-{4:P0})"
   ]
 ]

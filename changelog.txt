@@ -3,6 +3,7 @@ v0.1.5 | 2026-05-24
 * Per-tower options now survive quit/reload and remain preserved in the save even if the mod is temporarily removed.
 * Tower settings persistence now saves only per-tower values that differ from the current defaults, keeping the saved state compact.
 * Improved the Forestry information growth distribution bar with a clearer bordered style, 24 px height, hover feedback, and tooltips that explain the hover/click interactions.
+* Growth-stage tooltips now use named brackets, cleaner multi-line formatting, and simpler harvest-threshold wording.
 * Hovering a growth-stage segment now highlights the corresponding trees with a brighter tint of that segment's colour.
 * Clicking a growth-stage segment now marks or unmarks the highlighted trees for harvest and opens the Tree harvesting overlay; the overlay is hidden again when the inspector closes.
 * The Trees KPI now uses a live green display box for the current managed-tree count and refreshes while the inspector is open.

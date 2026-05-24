@@ -7,6 +7,6 @@ what has already shipped.
 
 Make the persistence layer co-exist with actual mod settings.
 
-Spinner box for active trees
-
 Align the background style of cards to the vanilla style (with tiny speckles)
+
+See if we can make the glass effect for each bracket instead of the whole bar
