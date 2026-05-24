@@ -263,7 +263,7 @@ namespace AutoForestryDesignations
             float averageMaxAgeYears = treeCount > 0 ? maxAgeYearsSum / treeCount : 0f;
             int treeCapacity = EstimateTreeCapacity(tower, treesManager, treeCount);
             float capacityPerYear = EstimateCapacityPerYear(tower, treesManager, treeCapacity);
-            AutoForestryDesignation.LogDebug(string.Format("[AFD] CollectStats: trees={0}/{1} woodReserve={2} maturity={3:F1}% avgAge={4:F1}y avgMaxAge={5:F1}y maxAge={6:F1}y buckets=[{7}] capacity/month={8:F1}",
+            AutoForestryDesignation.LogDebug(string.Format("CollectStats: trees={0}/{1} woodReserve={2} maturity={3:F1}% avgAge={4:F1}y avgMaxAge={5:F1}y maxAge={6:F1}y buckets=[{7}] capacity/month={8:F1}",
                 treeCount, treeCapacity, woodReserve, averageMaturityPercent, averageAgeYears, averageMaxAgeYears, maxAgeYears,
                 string.Join(",", growthBuckets), capacityPerYear / 12f));
             var bucketTrees = new TreeId[BUCKET_COUNT][];
@@ -326,7 +326,7 @@ namespace AutoForestryDesignations
             }
 
             AutoForestryDesignation.LogDebug(string.Format(
-                "[AFD] EstimateTreeCapacity: live={0} spacing={1} validNow={2} future={3} => capacity={4}",
+                "EstimateTreeCapacity: live={0} spacing={1} validNow={2} future={3} => capacity={4}",
                 liveManagedTreeCount, spacing, candidates.Count, futureTrees.Count,
                 liveManagedTreeCount + futureTrees.Count));
             return liveManagedTreeCount + futureTrees.Count;
@@ -377,7 +377,7 @@ namespace AutoForestryDesignations
         {
             if (effectiveTreeCapacity <= 0)
             {
-                AutoForestryDesignation.LogDebug("[AFD] EstimateCapacityPerYear: effectiveTreeCapacity=0, returning 0");
+                AutoForestryDesignation.LogDebug("EstimateCapacityPerYear: effectiveTreeCapacity=0, returning 0");
                 return 0f;
             }
 
@@ -394,11 +394,11 @@ namespace AutoForestryDesignations
 
             float capacity = effectiveTreeCapacity * weightedYieldPerTreePerYear;
             AutoForestryDesignation.LogDebug(string.Format(
-                "[AFD] EstimateCapacityPerYear: effectiveCap={0} harvestDisabled={1} harvestGrowth={2:P0} yieldPerTree/y={3:F2} (fallback={4}) => capacity/y={5:F1}",
+                "EstimateCapacityPerYear: effectiveCap={0} harvestDisabled={1} harvestGrowth={2:P0} yieldPerTree/y={3:F2} (fallback={4}) => capacity/y={5:F1}",
                 effectiveTreeCapacity,
                 harvestDisabled, harvestGrowth01,
                 weightedYieldPerTreePerYear, usedFallback, capacity));
-            AutoForestryDesignation.LogDebug(string.Format("[AFD] NOTE: capacity/month={0:F1} (capacity/y={1:F1})", capacity / 12f, capacity));
+            AutoForestryDesignation.LogDebug(string.Format("NOTE: capacity/month={0:F1} (capacity/y={1:F1})", capacity / 12f, capacity));
             return capacity;
         }
 
@@ -407,7 +407,7 @@ namespace AutoForestryDesignations
             var treeTypes = tower.TreeTypes;
             if (treeTypes.Count == 0)
             {
-                AutoForestryDesignation.LogDebug("[AFD] EstimateConfiguredYieldPerTreePerYear: no configured tree types");
+                AutoForestryDesignation.LogDebug("EstimateConfiguredYieldPerTreePerYear: no configured tree types");
                 return 0f;
             }
 
@@ -437,7 +437,7 @@ namespace AutoForestryDesignations
             }
 
             float result = totalWeight > 0 ? weightedSum / totalWeight : 0f;
-            AutoForestryDesignation.LogDebug(string.Format("[AFD] EstimateConfiguredYieldPerTreePerYear: weightedSum={0:F2} totalWeight={1} => {2:F2}/tree/y",
+            AutoForestryDesignation.LogDebug(string.Format("EstimateConfiguredYieldPerTreePerYear: weightedSum={0:F2} totalWeight={1} => {2:F2}/tree/y",
                 weightedSum, totalWeight, result));
             return result;
         }
@@ -464,7 +464,7 @@ namespace AutoForestryDesignations
             }
 
             float result = count > 0 ? sum / count : 0f;
-            AutoForestryDesignation.LogDebug(string.Format("[AFD] EstimateCurrentYieldPerTreePerYear: sum={0:F2} count={1} => {2:F2}/tree/y",
+            AutoForestryDesignation.LogDebug(string.Format("EstimateCurrentYieldPerTreePerYear: sum={0:F2} count={1} => {2:F2}/tree/y",
                 sum, count, result));
             return result;
         }
@@ -492,13 +492,13 @@ namespace AutoForestryDesignations
         {
             var col = new Column()
                 .FlexGrow(1f)
-                .Background(Theme.BackgroundDark)
                 .OverflowHidden()
                 .Padding(CARD_PADDING_PT.pt())
                 .Gap(2.pt());
             col.BorderRadius(8);
             col.Border(1.px(), Theme.BorderColor, 8);
             col.Tooltip(tooltip);
+            col.Add(new UiComponent().Class(Cls.panelBg).BackgroundTint(new ColorRgba(0, 0, 0, 96)).FixRepeatedBgForPanel().AbsolutePositionFillParent());
 
             var topRow = new Row().AlignItemsCenter().Gap(4.pt());
             topRow.Add(BuildMatureTreeIcon(44));
@@ -526,7 +526,6 @@ namespace AutoForestryDesignations
         {
             var col = new Column()
                 .FlexGrow(1f)
-                .Background(Theme.BackgroundDark)
                 .OverflowHidden()
                 .Padding(CARD_PADDING_PT.pt())
                 .Gap(2.pt());
@@ -534,6 +533,7 @@ namespace AutoForestryDesignations
             col.BorderRadius(8);
             col.Border(1.px(), Theme.BorderColor, 8);
             col.Tooltip(tooltip);
+            col.Add(new UiComponent().Class(Cls.panelBg).BackgroundTint(new ColorRgba(0, 0, 0, 96)).FixRepeatedBgForPanel().AbsolutePositionFillParent());
 
             var topRow = new Row().AlignItemsCenter().Gap(4.pt());
             topRow.Add(buildIcon());
@@ -558,11 +558,13 @@ namespace AutoForestryDesignations
 
             var section = new Column(2.pt())
                 .AlignSelfStretch()
-                .Background(Theme.BackgroundDark)
+                .OverflowHidden()
                 .Padding(CARD_PADDING_PT.pt())
+                .PaddingBottom((CARD_PADDING_PT + 4).pt())
                 .Gap(2.pt());
             section.BorderRadius(8);
             section.Border(1.px(), Theme.BorderColor, 8);
+            section.Add(new UiComponent().Class(Cls.panelBg).BackgroundTint(new ColorRgba(0, 0, 0, 96)).FixRepeatedBgForPanel().AbsolutePositionFillParent());
             section.Tooltip(new LocStrFormatted(
                 string.Format(AfdLocalization.GrowthBreakdownTipFmt.TranslatedString,
                     FormatYears(stats.AverageMaxAgeYears))));
@@ -578,7 +580,7 @@ namespace AutoForestryDesignations
                     FormatYears(maxAgeYears))));
             section.Add(header);
 
-            var bar = new Row().AlignSelfStretch().Height(24.px()).AlignItemsStretch().Background(Theme.BackgroundPanelLike).OverflowHidden().Class(Cls.displayBg).Border(1.px(), Theme.BorderColor, 3);
+            var bar = new Row().Height(24.px()).AlignItemsStretch().Background(Theme.BackgroundPanelLike).OverflowHidden().Class(Cls.displayBg).Border(1.px(), Theme.BorderColor, 3);
             int plantedTotal = Math.Max(1, stats.TreeCount);
             if (unusedCapacity > 0)
             {
@@ -609,8 +611,8 @@ namespace AutoForestryDesignations
                 var segment = new Row()
                     .FlexGrow(bucketCount)
                     .Background(bucketColor)
-                    .Class(Cls.clickable)
-                    .Tooltip(new LocStrFormatted(string.Format(AfdLocalization.SegmentTipFmt.TranslatedString,
+                    .Class(Cls.clickable);
+                segment.Tooltip(new LocStrFormatted(string.Format(AfdLocalization.SegmentTipFmt.TranslatedString,
                         bucketLabel,
                         bucketCount,
                         (float)bucketCount / plantedTotal,
@@ -674,10 +676,10 @@ namespace AutoForestryDesignations
             }
 
             var barWithLegend = new Row(3.pt()).AlignSelfStretch().AlignItemsCenter();
-            barWithLegend.Add(new Icon("Assets/Base/Products/Icons/TreeSapling.svg").NoTint().Size(24.px()).MarginBottom(2.px())
+            barWithLegend.Add(new Icon("Assets/Base/Products/Icons/TreeSapling.svg").NoTint().Size(24.px())
                 .Tooltip(AfdLocalization.NewlyPlantedTip));
             barWithLegend.Add(bar.FlexGrow(1f));
-            barWithLegend.Add(BuildMatureTreeIcon(26)
+            barWithLegend.Add(BuildMatureTreeIcon(24)
                 .Tooltip(new LocStrFormatted(string.Format(AfdLocalization.FullyGrownTipFmt.TranslatedString,
                     FormatYears(stats.AverageMaxAgeYears)))));
 

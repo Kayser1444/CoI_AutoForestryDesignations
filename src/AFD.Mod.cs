@@ -203,20 +203,20 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
             try
             {
                 AutoForestryDesignation.SetTreesRenderer(resolver.Resolve<TreesRenderer>());
-                AutoForestryDesignation.s_log.Info("[AFD] TreesRenderer resolved successfully.");
+                AutoForestryDesignation.s_log.Info("TreesRenderer resolved successfully.");
             }
             catch (Exception ex)
             {
-                AutoForestryDesignation.s_log.Warning($"[AFD] TreesRenderer not available at renderer init: {ex.Message}");
+                AutoForestryDesignation.s_log.Warning($"TreesRenderer not available at renderer init: {ex.Message}");
             }
             try
             {
                 AutoForestryDesignation.SetHarvestHighlightManager(resolver.Resolve<TreeHarvestingHighlightManager>());
-                AutoForestryDesignation.s_log.Info("[AFD] TreeHarvestingHighlightManager resolved successfully.");
+                AutoForestryDesignation.s_log.Info("TreeHarvestingHighlightManager resolved successfully.");
             }
             catch (Exception ex)
             {
-                AutoForestryDesignation.s_log.Warning($"[AFD] TreeHarvestingHighlightManager not available at renderer init: {ex.Message}");
+                AutoForestryDesignation.s_log.Warning($"TreeHarvestingHighlightManager not available at renderer init: {ex.Message}");
             }
         });
     }

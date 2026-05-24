@@ -1,4 +1,6 @@
 v0.1.5 | 2026-05-24
+* Forestry information panel cards now use a speckled panel background texture with a semi-transparent tint, matching the visual style of other game panels
+* Improved visual alignment of the growth breakdown bar and bottom spacing of the Growth breakdown card
 * Added vanilla save-backed persistence for per-tower Forestry designations settings, including panel collapsed states, using CoI AutoHelpers JSON state storage.
 * Per-tower options now survive quit/reload and remain preserved in the save even if the mod is temporarily removed.
 * Tower settings persistence now saves only per-tower values that differ from the current defaults, keeping the saved state compact.

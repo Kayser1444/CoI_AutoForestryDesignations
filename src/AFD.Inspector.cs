@@ -26,7 +26,7 @@ namespace AutoForestryDesignations
         {
             try
             {
-                LogDebug("[AFD] Apply() called");
+                LogDebug("Apply() called");
                 
                 var assembly = typeof(Mafi.Unity.Entities.EntityMb).Assembly;
                 var inspectorType = assembly.GetType("Mafi.Unity.Ui.Inspectors.ForestryTowerInspector");
@@ -36,16 +36,16 @@ namespace AutoForestryDesignations
                     return;
                 }
 
-                LogDebug("[AFD] Found ForestryTowerInspector type");
+                LogDebug("Found ForestryTowerInspector type");
 
                 var ctors = inspectorType.GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-                LogDebug($"[AFD] Found {ctors.Length} constructors");
+                LogDebug($"Found {ctors.Length} constructors");
                 
                 if (ctors.Length > 0)
                 {
                     harmony.Patch(ctors[0],
                         postfix: new HarmonyMethod(typeof(AutoForestryDesignation), nameof(InspectorCtorPostfix)));
-                    LogDebug("[AFD] Patched first constructor");
+                    LogDebug("Patched first constructor");
                 }
 
                 // Patch OnActivated() on ForestryTowerInspector (DeclaredOnly — safe, does not affect
@@ -121,7 +121,7 @@ namespace AutoForestryDesignations
                 if (!s_settingsLoadAttempted)
                     LoadSettingsFromJson();
 
-                LogDebug("[AFD] InspectorCtorPostfix called");
+                LogDebug("InspectorCtorPostfix called");
 
                 var inspectorType = __instance.GetType();
                 var baseType = inspectorType;
@@ -162,7 +162,7 @@ namespace AutoForestryDesignations
                         mainBody.InsertAt(0, afdPanel);
                         mainBody.InsertAt(1, forestryInfoPanel);
                         mainBody.Show();
-                        LogDebug("[AFD] Forestry designations panel inserted");
+                        LogDebug("Forestry designations panel inserted");
                     }
                     else
                     {
