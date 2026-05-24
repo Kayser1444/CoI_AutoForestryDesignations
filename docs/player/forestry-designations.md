@@ -45,6 +45,11 @@ be toggled independently per tower. Global defaults are read from
 | **Only reachable tiles** | On | Run a vehicle pathability check; skip tiles that harvester / planter vehicles cannot reach. |
 | **Max tiles** | 0 (no limit) | Cap the number of designations placed per run. Use **Shift** / **Ctrl** on the +/− buttons for larger steps. |
 
+Per-tower settings and panel collapsed states are saved with the game. A tower
+only stores values that differ from the current global defaults, so changing
+the defaults in `AFDsettings.json` still affects towers that have not been
+customized.
+
 ---
 
 ## Forestry Information panel

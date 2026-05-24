@@ -70,3 +70,13 @@ AFD patches `ForestryTower.SetCutAtPercentage` to trigger a forestry info refres
 |---|-------|----------|
 | 5.1 | After scan, remove the tower or shrink its area → trigger cleanup. | Orphaned forestry designations outside the new area are removed. No stale entries. |
 | 5.2 | Save and reload game after a scan. | Forestry designations persist correctly. AFD panels re-initialize without errors on the reloaded save. |
+
+---
+
+## 6 — Per-tower saved state
+
+| # | Steps | Expected |
+|---|-------|----------|
+| 6.1 | Change one setting on a single forestry tower, save, quit to desktop, and reload. | The changed setting is restored for that tower only. Other towers continue using the global defaults. |
+| 6.2 | Collapse or expand the Forestry Designations and Forestry Information panels on one tower, save, quit, and reload. | Each panel restores its per-tower collapsed state. |
+| 6.3 | Reset a customized tower back to the current global defaults, save, and inspect/reload. | The tower no longer needs a saved override record; after reload it still follows the current defaults. |

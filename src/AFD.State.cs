@@ -82,6 +82,18 @@ namespace AutoForestryDesignations
             public void SetMarkHarvestReadyForHarvest(bool value) => MarkHarvestReadyForHarvest = value;
             public void SetForestryDesignationsPanelCollapsed(bool value) => ForestryDesignationsPanelCollapsed = value;
             public void SetForestryInformationPanelCollapsed(bool value) => ForestryInformationPanelCollapsed = value;
+
+            public bool MatchesGlobalDefaults()
+            {
+                return OnlyFertileTiles == AutoForestryDesignationsMod.OnlyFertileTiles
+                    && AvoidTilesWithTrees == AutoForestryDesignationsMod.AvoidTilesWithTrees
+                    && AvoidMiningDesignations == AutoForestryDesignationsMod.AvoidMiningDesignations
+                    && OnlyReachableTiles == AutoForestryDesignationsMod.OnlyReachableTiles
+                    && MaxTiles == AutoForestryDesignationsMod.MaxTiles
+                    && MarkHarvestReadyForHarvest == AutoForestryDesignationsMod.MarkHarvestReadyForHarvest
+                    && ForestryDesignationsPanelCollapsed == AutoForestryDesignationsMod.ForestryDesignationsPanelCollapsed
+                    && ForestryInformationPanelCollapsed == AutoForestryDesignationsMod.ForestryInformationPanelCollapsed;
+            }
         }
 
         private static readonly Dictionary<EntityId, AFDTowerSettings> s_towerSettingsByEntityId =
@@ -120,30 +132,61 @@ namespace AutoForestryDesignations
             return AFDTowerSettings.FromGlobalDefaults();
         }
 
+        private static AFDTowerSettings GetTowerSettingsOrDefaults(IAreaManagingTower tower)
+        {
+            if (TryGetTowerEntityId(tower, out EntityId entityId)
+                && s_towerSettingsByEntityId.TryGetValue(entityId, out AFDTowerSettings settings))
+            {
+                return settings;
+            }
+
+            return AFDTowerSettings.FromGlobalDefaults();
+        }
+
+        private static void UpdateTowerSettings(IAreaManagingTower tower, Action<AFDTowerSettings> update)
+        {
+            if (!TryGetTowerEntityId(tower, out EntityId entityId))
+            {
+                return;
+            }
+
+            if (!s_towerSettingsByEntityId.TryGetValue(entityId, out AFDTowerSettings settings))
+            {
+                settings = AFDTowerSettings.FromGlobalDefaults();
+                s_towerSettingsByEntityId[entityId] = settings;
+            }
+
+            update(settings);
+            if (settings.MatchesGlobalDefaults())
+            {
+                s_towerSettingsByEntityId.Remove(entityId);
+            }
+        }
+
         // --- Forestry per-tower settings accessors ---
-        internal static bool GetTowerOnlyFertileTiles(IAreaManagingTower tower) => GetOrCreateTowerSettings(tower).OnlyFertileTiles;
-        internal static void SetTowerOnlyFertileTiles(IAreaManagingTower tower, bool value) => GetOrCreateTowerSettings(tower).SetOnlyFertileTiles(value);
+        internal static bool GetTowerOnlyFertileTiles(IAreaManagingTower tower) => GetTowerSettingsOrDefaults(tower).OnlyFertileTiles;
+        internal static void SetTowerOnlyFertileTiles(IAreaManagingTower tower, bool value) => UpdateTowerSettings(tower, settings => settings.SetOnlyFertileTiles(value));
 
-        internal static bool GetTowerAvoidTilesWithTrees(IAreaManagingTower tower) => GetOrCreateTowerSettings(tower).AvoidTilesWithTrees;
-        internal static void SetTowerAvoidTilesWithTrees(IAreaManagingTower tower, bool value) => GetOrCreateTowerSettings(tower).SetAvoidTilesWithTrees(value);
+        internal static bool GetTowerAvoidTilesWithTrees(IAreaManagingTower tower) => GetTowerSettingsOrDefaults(tower).AvoidTilesWithTrees;
+        internal static void SetTowerAvoidTilesWithTrees(IAreaManagingTower tower, bool value) => UpdateTowerSettings(tower, settings => settings.SetAvoidTilesWithTrees(value));
 
-        internal static bool GetTowerAvoidMiningDesignations(IAreaManagingTower tower) => GetOrCreateTowerSettings(tower).AvoidMiningDesignations;
-        internal static void SetTowerAvoidMiningDesignations(IAreaManagingTower tower, bool value) => GetOrCreateTowerSettings(tower).SetAvoidMiningDesignations(value);
+        internal static bool GetTowerAvoidMiningDesignations(IAreaManagingTower tower) => GetTowerSettingsOrDefaults(tower).AvoidMiningDesignations;
+        internal static void SetTowerAvoidMiningDesignations(IAreaManagingTower tower, bool value) => UpdateTowerSettings(tower, settings => settings.SetAvoidMiningDesignations(value));
 
-        internal static bool GetTowerOnlyReachableTiles(IAreaManagingTower tower) => GetOrCreateTowerSettings(tower).OnlyReachableTiles;
-        internal static void SetTowerOnlyReachableTiles(IAreaManagingTower tower, bool value) => GetOrCreateTowerSettings(tower).SetOnlyReachableTiles(value);
+        internal static bool GetTowerOnlyReachableTiles(IAreaManagingTower tower) => GetTowerSettingsOrDefaults(tower).OnlyReachableTiles;
+        internal static void SetTowerOnlyReachableTiles(IAreaManagingTower tower, bool value) => UpdateTowerSettings(tower, settings => settings.SetOnlyReachableTiles(value));
 
-        internal static int GetTowerMaxTiles(IAreaManagingTower tower) => GetOrCreateTowerSettings(tower).MaxTiles;
-        internal static void SetTowerMaxTiles(IAreaManagingTower tower, int value) => GetOrCreateTowerSettings(tower).SetMaxTiles(value);
+        internal static int GetTowerMaxTiles(IAreaManagingTower tower) => GetTowerSettingsOrDefaults(tower).MaxTiles;
+        internal static void SetTowerMaxTiles(IAreaManagingTower tower, int value) => UpdateTowerSettings(tower, settings => settings.SetMaxTiles(value));
 
-        internal static bool GetTowerMarkHarvestReadyForHarvest(IAreaManagingTower tower) => GetOrCreateTowerSettings(tower).MarkHarvestReadyForHarvest;
-        internal static void SetTowerMarkHarvestReadyForHarvest(IAreaManagingTower tower, bool value) => GetOrCreateTowerSettings(tower).SetMarkHarvestReadyForHarvest(value);
+        internal static bool GetTowerMarkHarvestReadyForHarvest(IAreaManagingTower tower) => GetTowerSettingsOrDefaults(tower).MarkHarvestReadyForHarvest;
+        internal static void SetTowerMarkHarvestReadyForHarvest(IAreaManagingTower tower, bool value) => UpdateTowerSettings(tower, settings => settings.SetMarkHarvestReadyForHarvest(value));
 
-        internal static bool GetTowerForestryDesignationsPanelCollapsed(IAreaManagingTower tower) => GetOrCreateTowerSettings(tower).ForestryDesignationsPanelCollapsed;
-        internal static void SetTowerForestryDesignationsPanelCollapsed(IAreaManagingTower tower, bool value) => GetOrCreateTowerSettings(tower).SetForestryDesignationsPanelCollapsed(value);
+        internal static bool GetTowerForestryDesignationsPanelCollapsed(IAreaManagingTower tower) => GetTowerSettingsOrDefaults(tower).ForestryDesignationsPanelCollapsed;
+        internal static void SetTowerForestryDesignationsPanelCollapsed(IAreaManagingTower tower, bool value) => UpdateTowerSettings(tower, settings => settings.SetForestryDesignationsPanelCollapsed(value));
 
-        internal static bool GetTowerForestryInformationPanelCollapsed(IAreaManagingTower tower) => GetOrCreateTowerSettings(tower).ForestryInformationPanelCollapsed;
-        internal static void SetTowerForestryInformationPanelCollapsed(IAreaManagingTower tower, bool value) => GetOrCreateTowerSettings(tower).SetForestryInformationPanelCollapsed(value);
+        internal static bool GetTowerForestryInformationPanelCollapsed(IAreaManagingTower tower) => GetTowerSettingsOrDefaults(tower).ForestryInformationPanelCollapsed;
+        internal static void SetTowerForestryInformationPanelCollapsed(IAreaManagingTower tower, bool value) => UpdateTowerSettings(tower, settings => settings.SetForestryInformationPanelCollapsed(value));
 
         public static void Initialize(
             ITerrainDesignationsManager desigManager,

@@ -2,6 +2,7 @@ Unreleased
 * Added vanilla save-backed persistence for per-tower Forestry Designations settings using CoI AutoHelpers JSON state storage
 * Per-tower options now survive quit/reload and are preserved in the save even if the mod is temporarily removed
 * Forestry Designations and Forestry Information panel collapsed states are now remembered per tower
+* Tower settings persistence now uses a slim override schema, saving only per-tower values that differ from the current defaults
 * Added a CoI v0.8.5 regression test plan covering inspector injection, area editing, scanning, harvest refresh, and cleanup
 
 v0.1.4 | 2026-05-14

@@ -46,7 +46,7 @@ namespace AutoForestryDesignations
 
         internal static void SaveTowerSettingsToJsonStore(IModStateJsonStore store)
         {
-            string json = BuildTowerSettingsStateJsonForConfig();
+            string json = BuildTowerSettingsStateJsonForConfig(out int savedCount);
             ModStateJsonSaveResult result = store.SaveJson(json);
             if (!result.Succeeded)
             {
@@ -54,11 +54,17 @@ namespace AutoForestryDesignations
                 return;
             }
 
-            s_log.Info($"Persistence: staged {s_towerSettingsByEntityId.Count} tower setting record(s) in {store.StorageKind}.");
+            s_log.Info($"Persistence: staged {savedCount} tower setting override record(s) in {store.StorageKind}.");
         }
 
         internal static string BuildTowerSettingsStateJsonForConfig()
         {
+            return BuildTowerSettingsStateJsonForConfig(out int _);
+        }
+
+        private static string BuildTowerSettingsStateJsonForConfig(out int savedCount)
+        {
+            savedCount = 0;
             var sb = new StringBuilder();
             sb.Append("{\"schemaVersion\":");
             sb.Append(TowerSettingsConfigSchemaVersion.ToString(CultureInfo.InvariantCulture));
@@ -74,30 +80,28 @@ namespace AutoForestryDesignations
                 }
 
                 AFDTowerSettings settings = pair.Value;
+                if (settings.MatchesGlobalDefaults())
+                {
+                    continue;
+                }
+
                 if (!first)
                 {
                     sb.Append(',');
                 }
 
                 first = false;
+                savedCount++;
                 sb.Append("{\"entityId\":");
                 sb.Append(entityId.Value.ToString(CultureInfo.InvariantCulture));
-                sb.Append(",\"onlyFertileTiles\":");
-                AppendJsonBool(sb, settings.OnlyFertileTiles);
-                sb.Append(",\"avoidTilesWithTrees\":");
-                AppendJsonBool(sb, settings.AvoidTilesWithTrees);
-                sb.Append(",\"avoidMiningDesignations\":");
-                AppendJsonBool(sb, settings.AvoidMiningDesignations);
-                sb.Append(",\"onlyReachableTiles\":");
-                AppendJsonBool(sb, settings.OnlyReachableTiles);
-                sb.Append(",\"maxTiles\":");
-                sb.Append(settings.MaxTiles.ToString(CultureInfo.InvariantCulture));
-                sb.Append(",\"markHarvestReadyForHarvest\":");
-                AppendJsonBool(sb, settings.MarkHarvestReadyForHarvest);
-                sb.Append(",\"forestryDesignationsPanelCollapsed\":");
-                AppendJsonBool(sb, settings.ForestryDesignationsPanelCollapsed);
-                sb.Append(",\"forestryInformationPanelCollapsed\":");
-                AppendJsonBool(sb, settings.ForestryInformationPanelCollapsed);
+                AppendBoolOverride(sb, "onlyFertileTiles", settings.OnlyFertileTiles, AutoForestryDesignationsMod.OnlyFertileTiles);
+                AppendBoolOverride(sb, "avoidTilesWithTrees", settings.AvoidTilesWithTrees, AutoForestryDesignationsMod.AvoidTilesWithTrees);
+                AppendBoolOverride(sb, "avoidMiningDesignations", settings.AvoidMiningDesignations, AutoForestryDesignationsMod.AvoidMiningDesignations);
+                AppendBoolOverride(sb, "onlyReachableTiles", settings.OnlyReachableTiles, AutoForestryDesignationsMod.OnlyReachableTiles);
+                AppendIntOverride(sb, "maxTiles", settings.MaxTiles, AutoForestryDesignationsMod.MaxTiles);
+                AppendBoolOverride(sb, "markHarvestReadyForHarvest", settings.MarkHarvestReadyForHarvest, AutoForestryDesignationsMod.MarkHarvestReadyForHarvest);
+                AppendBoolOverride(sb, "forestryDesignationsPanelCollapsed", settings.ForestryDesignationsPanelCollapsed, AutoForestryDesignationsMod.ForestryDesignationsPanelCollapsed);
+                AppendBoolOverride(sb, "forestryInformationPanelCollapsed", settings.ForestryInformationPanelCollapsed, AutoForestryDesignationsMod.ForestryInformationPanelCollapsed);
                 sb.Append('}');
             }
 
@@ -155,11 +159,40 @@ namespace AutoForestryDesignations
                 if (TryGetBool(entry, "forestryInformationPanelCollapsed", out bool forestryInformationPanelCollapsed))
                     settings.SetForestryInformationPanelCollapsed(forestryInformationPanelCollapsed);
 
-                s_towerSettingsByEntityId[new EntityId(entityIdValue)] = settings;
-                loadedCount++;
+                if (!settings.MatchesGlobalDefaults())
+                {
+                    s_towerSettingsByEntityId[new EntityId(entityIdValue)] = settings;
+                    loadedCount++;
+                }
             }
 
             return true;
+        }
+
+        private static void AppendBoolOverride(StringBuilder sb, string name, bool value, bool defaultValue)
+        {
+            if (value == defaultValue)
+            {
+                return;
+            }
+
+            sb.Append(",\"");
+            sb.Append(name);
+            sb.Append("\":");
+            AppendJsonBool(sb, value);
+        }
+
+        private static void AppendIntOverride(StringBuilder sb, string name, int value, int defaultValue)
+        {
+            if (value == defaultValue)
+            {
+                return;
+            }
+
+            sb.Append(",\"");
+            sb.Append(name);
+            sb.Append("\":");
+            sb.Append(value.ToString(CultureInfo.InvariantCulture));
         }
 
         private static void AppendJsonBool(StringBuilder sb, bool value)

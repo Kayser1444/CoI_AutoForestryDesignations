@@ -12,6 +12,7 @@ to per-tower settings.
 |---|---|
 | `AFD.Scan.cs` | Scan coroutine, candidate collection, filtering, sorting, pathability BFS |
 | `AFD.State.cs` | Static state fields, per-tower settings, initialization |
+| `AFD.TowerSettingsConfigPersistence.cs` | Save-backed JSON persistence for per-tower settings |
 | `AFD.Ticker.cs` | Coroutine host; dispatches `CreateDesignationsCoroutine` |
 
 ---
@@ -44,6 +45,14 @@ saved overrides.
 | `OnlyReachableTiles` | `AFDsettings.json` | Run pathability BFS; skip unreachable tiles |
 | `MaxTiles` | `AFDsettings.json` | Cap the number of designations placed; `0` = no cap |
 | `MarkHarvestReadyForHarvest` | `AFDsettings.json` | Set harvest-ready flag on mature-enough trees |
+
+Tower settings are persisted through CoI AutoHelpers' JSON state storage using
+the vanilla mod config save chunk. The saved root object currently contains
+`schemaVersion` and `towerSettings`. Each `towerSettings` entry is keyed by
+`entityId` and is sparse: fields are written only when they differ from the
+current global defaults. Loading starts from the current defaults and applies
+any saved fields, which keeps older full records compatible and lets default
+changes flow through to towers that have no overrides.
 
 ---
 
