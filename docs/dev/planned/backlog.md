@@ -5,11 +5,8 @@ what has already shipped.
 
 ## UI / Polish
 
-- Frame around bar chart in the Forestry Information panel
-- Improve or remove spacer in graph
+Make the persistence layer co-exist with actual mod settings.
 
-## Remove technical debug messages from translations - done?
+Spinner box for active trees
 
-## Highlight trees onHover the bracket in the chart
-
-Maybe even mark for harvest?
+Align the background style of cards to the vanilla style (with tiny speckles)

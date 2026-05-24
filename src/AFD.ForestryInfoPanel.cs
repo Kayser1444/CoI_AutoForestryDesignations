@@ -7,6 +7,7 @@
 // intended to contain only original mod code/configuration; if MaFi Games material
 // is included by mistake, I intend to correct it promptly upon discovery or notice.
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Mafi;
 using Mafi.Core.Buildings.Forestry;
@@ -15,6 +16,7 @@ using Mafi.Core.Terrain;
 using Mafi.Core.Terrain.Designation;
 using Mafi.Core.Terrain.Trees;
 using Mafi.Localization;
+using Mafi.Unity.Terrain;
 using Mafi.Unity.UiToolkit;
 using Mafi.Unity.UiToolkit.Component;
 using Mafi.Unity.UiToolkit.Library;
@@ -59,6 +61,50 @@ namespace AutoForestryDesignations
             new Dictionary<object, Func<IAreaManagingTower?>>();
         private static readonly Dictionary<object, PanelWithHeader> s_panels =
             new Dictionary<object, PanelWithHeader>();
+
+        private static ColorRgba s_activeHighlightColor;
+        private static TreeId[]? s_hoveredBucketTrees;
+
+        private static Mafi.Unity.Ui.Library.Display? s_treeCountDisplay;
+        private static UnityEngine.Coroutine? s_liveCountCoroutine;
+
+        internal static void StopLiveTreeCount()
+        {
+            AutoForestryDesignation.StopCoroutine(s_liveCountCoroutine);
+            s_liveCountCoroutine = null;
+            s_treeCountDisplay = null;
+        }
+
+        private static IEnumerator LiveTreeCountCoroutine(ForestryTower tower)
+        {
+            var wait = new UnityEngine.WaitForSeconds(0.5f);
+            while (true)
+            {
+                yield return wait;
+                var display = s_treeCountDisplay;
+                var treesManager = AutoForestryDesignation.GetTreesManager();
+                if (display == null || treesManager == null) yield break;
+                int count = 0;
+                foreach (TreeId treeId in tower.Trees)
+                    if (IsTreeInManagedDesignation(tower, treeId) && treesManager.Trees.ContainsKey(treeId))
+                        count++;
+                display.SetValue(new LocStrFormatted(count.ToString()));
+            }
+        }
+
+        private static void ClearActiveHighlights()
+        {
+            var trees = s_hoveredBucketTrees;
+            if (trees == null) return;
+            s_hoveredBucketTrees = null;
+            var renderer = AutoForestryDesignation.GetTreesRenderer();
+            if (renderer == null) return;
+            foreach (var treeId in trees)
+            {
+                try { renderer.RemoveHighlight(treeId, s_activeHighlightColor, ignoreDestroyedTrees: true); }
+                catch { }
+            }
+        }
 
         internal static PanelWithHeader Build(Func<IAreaManagingTower?> getTower, object key)
         {
@@ -140,6 +186,8 @@ namespace AutoForestryDesignations
 
         private static void PopulateContent(Column col, IAreaManagingTower? tower)
         {
+            StopLiveTreeCount();
+            ClearActiveHighlights();
             col.Clear();
 
             var forestryTower = tower as ForestryTower;
@@ -159,7 +207,7 @@ namespace AutoForestryDesignations
             }
 
             var stats = CollectStats(forestryTower, treesManager, currentStep.Value);
-            col.Add(BuildKpiRow(stats));
+            col.Add(BuildKpiRow(forestryTower, stats));
             col.Add(BuildGrowthSection(forestryTower, stats));
         }
 
@@ -179,6 +227,8 @@ namespace AutoForestryDesignations
             float growthSum01 = 0f;
             int woodReserve = 0;
             int[] growthBuckets = new int[BUCKET_COUNT];
+            var bucketTreeLists = new List<TreeId>[BUCKET_COUNT];
+            for (int k = 0; k < BUCKET_COUNT; k++) bucketTreeLists[k] = new List<TreeId>();
             float maxAgeYears = 0f;
             float ageYearsSum = 0f;
             float maxAgeYearsSum = 0f;
@@ -204,10 +254,8 @@ namespace AutoForestryDesignations
                 maxAgeYearsSum += treeMaxAgeYears;
                 woodReserve += woodThisTree;
                 growthBuckets[bucket]++;
+                bucketTreeLists[bucket].Add(treeId);
                 maxAgeYears = Math.Max(maxAgeYears, treeMaxAgeYears);
-
-                AutoForestryDesignation.LogDebug(string.Format("[AFD] tree {0}: proto={1} plantedAt={2} maxAge={3:F1}y growth={4:P0} ageYears={5:F1}y wood={6}",
-                    treeId, treeData.Proto.Id, treeData.PlantedAtTick, treeMaxAgeYears, growth01, ageYears, woodThisTree));
             }
 
             float averageMaturityPercent = treeCount > 0 ? (growthSum01 / treeCount) * 100f : 0f;
@@ -218,7 +266,9 @@ namespace AutoForestryDesignations
             AutoForestryDesignation.LogDebug(string.Format("[AFD] CollectStats: trees={0}/{1} woodReserve={2} maturity={3:F1}% avgAge={4:F1}y avgMaxAge={5:F1}y maxAge={6:F1}y buckets=[{7}] capacity/month={8:F1}",
                 treeCount, treeCapacity, woodReserve, averageMaturityPercent, averageAgeYears, averageMaxAgeYears, maxAgeYears,
                 string.Join(",", growthBuckets), capacityPerYear / 12f));
-            return new ForestryStats(treeCount, treeCapacity, averageMaturityPercent, averageAgeYears, averageMaxAgeYears, woodReserve, capacityPerYear, maxAgeYears, growthBuckets);
+            var bucketTrees = new TreeId[BUCKET_COUNT][];
+            for (int k = 0; k < BUCKET_COUNT; k++) bucketTrees[k] = bucketTreeLists[k].ToArray();
+            return new ForestryStats(treeCount, treeCapacity, averageMaturityPercent, averageAgeYears, averageMaxAgeYears, woodReserve, capacityPerYear, maxAgeYears, growthBuckets, bucketTrees);
         }
 
         private static int EstimateTreeCapacity(ForestryTower tower, TreesManager treesManager, int liveManagedTreeCount)
@@ -379,9 +429,6 @@ namespace AutoForestryDesignations
                     int yieldAtHarvest = treeProto.GetHarvestedQuantity(harvestPercent).Value;
                     float yieldPerYear = yieldAtHarvest / harvestAgeYears;
                     groupYieldPerTreePerYear += yieldPerYear;
-                    AutoForestryDesignation.LogDebug(string.Format(
-                        "[AFD]   configured group '{0}' proto '{1}': maxAge={2:F1}y harvestAge={3:F1}y yieldAtHarvest={4} yieldPerYear={5:F2}",
-                        entry.Key.Id, treeProto.Id, maxAgeY, harvestAgeYears, yieldAtHarvest, yieldPerYear));
                 }
                 groupYieldPerTreePerYear /= entry.Key.Trees.Length;
 
@@ -414,9 +461,6 @@ namespace AutoForestryDesignations
                 float yieldPerYear = yieldAtHarvest / harvestAgeYears;
                 sum += yieldPerYear;
                 count++;
-                AutoForestryDesignation.LogDebug(string.Format(
-                    "[AFD]   current tree proto '{0}': maxAge={1:F1}y harvestAge={2:F1}y yieldAtHarvest={3} yieldPerYear={4:F2}",
-                    treeData.Proto.Id, maxAgeY, harvestAgeYears, yieldAtHarvest, yieldPerYear));
             }
 
             float result = count > 0 ? sum / count : 0f;
@@ -425,14 +469,10 @@ namespace AutoForestryDesignations
             return result;
         }
 
-        private static Row BuildKpiRow(ForestryStats stats)
+        private static Row BuildKpiRow(ForestryTower tower, ForestryStats stats)
         {
             var row = new Row().Gap(PANEL_GAP_PT.pt()).AlignItemsStretch().AlignSelfStretch();
-            row.Add(BuildKpi(
-                AfdLocalization.KpiTreesLabel,
-                string.Format("{0} / {1}", stats.TreeCount, stats.TreeCapacity),
-                () => BuildMatureTreeIcon(44),
-                AfdLocalization.KpiTreesTip));
+            row.Add(BuildTreesKpi(tower, stats, AfdLocalization.KpiTreesTip));
             row.Add(BuildKpi(
                 AfdLocalization.KpiMaturityLabel,
                 string.Format("{0} ({1})", FormatPercent(stats.MaturityPercent), FormatYears(stats.AverageAgeYears)),
@@ -446,6 +486,35 @@ namespace AutoForestryDesignations
                 new LocStrFormatted(string.Format(AfdLocalization.KpiSustainableYieldTipFmt.TranslatedString,
                     FormatYears(stats.AverageMaxAgeYears)))));
             return row;
+        }
+
+        private static Column BuildTreesKpi(ForestryTower tower, ForestryStats stats, LocStrFormatted tooltip)
+        {
+            var col = new Column()
+                .FlexGrow(1f)
+                .Background(Theme.BackgroundDark)
+                .OverflowHidden()
+                .Padding(CARD_PADDING_PT.pt())
+                .Gap(2.pt());
+            col.BorderRadius(8);
+            col.Border(1.px(), Theme.BorderColor, 8);
+            col.Tooltip(tooltip);
+
+            var topRow = new Row().AlignItemsCenter().Gap(4.pt());
+            topRow.Add(BuildMatureTreeIcon(44));
+            var textCol = new Column(1.pt());
+            textCol.Add(new Label(AfdLocalization.KpiTreesLabel).FontSize(13).FontBold().NoTextWrap());
+            var countDisplay = new Mafi.Unity.Ui.Library.Display(new LocStrFormatted(stats.TreeCount.ToString())).MinDigits(3);
+            ((IComponentWithStateColor)countDisplay).SetState(DisplayState.Positive);
+            s_treeCountDisplay = countDisplay;
+            s_liveCountCoroutine = AutoForestryDesignation.StartCoroutine(LiveTreeCountCoroutine(tower));
+            var valueRow = new Row().AlignItemsCenter().Gap(2.pt());
+            valueRow.Add(countDisplay);
+            valueRow.Add(new Label(new LocStrFormatted($"/ {stats.TreeCapacity}")).FontSize(12).NoTextWrap());
+            textCol.Add(valueRow);
+            topRow.Add(textCol);
+            col.Add(topRow);
+            return col;
         }
 
         private static Column BuildKpi(LocStr label, string value, string iconPath, LocStrFormatted tooltip)
@@ -509,9 +578,20 @@ namespace AutoForestryDesignations
                     FormatYears(maxAgeYears))));
             section.Add(header);
 
-            var bar = new Row().AlignSelfStretch().Height(20.px()).AlignItemsStretch().Background(Theme.BackgroundPanelLike);
+            var bar = new Row().AlignSelfStretch().Height(24.px()).AlignItemsStretch().Background(Theme.BackgroundPanelLike).OverflowHidden().Class(Cls.displayBg).Border(1.px(), Theme.BorderColor, 3);
             int plantedTotal = Math.Max(1, stats.TreeCount);
-            bool addedHarvestThresholdDivider = false;
+            if (unusedCapacity > 0)
+            {
+                var unusedSegment = new UiComponent()
+                    .FlexGrow(unusedCapacity)
+                    .Background(s_unusedCapacityColor)
+                    .Tooltip(new LocStrFormatted(string.Format(AfdLocalization.UnusedCapacityTipFmt.TranslatedString,
+                        unusedCapacity,
+                        (float)unusedCapacity / totalCapacity)));
+                unusedSegment.OnMouseEnterLeave(onEnter: () => ClearActiveHighlights(), onLeave: () => { });
+                bar.Add(unusedSegment);
+            }
+
             for (int i = 0; i < BUCKET_COUNT; i++)
             {
                 int bucketCount = stats.GrowthBuckets[i];
@@ -520,46 +600,84 @@ namespace AutoForestryDesignations
 
                 float bucketMidpoint01 = GetBucketMidpoint01(i);
                 bool isAboveHarvest = !harvestDisabled && bucketMidpoint01 >= threshold01;
-                if (isAboveHarvest && !addedHarvestThresholdDivider)
-                {
-                    bar.Add(new UiComponent()
-                        .Width(3.px())
-                        .Background(Theme.BackgroundPanelLike)
-                        .Tooltip(AfdLocalization.HarvestThresholdTip));
-                    addedHarvestThresholdDivider = true;
-                }
 
                 var bucketColor = isAboveHarvest ? s_aboveHarvestColors[i] : s_belowHarvestColors[i];
+                var hoverBucketColor = bucketColor.Lerp(ColorRgba.White, Percent.Twenty);
                 string bucketLabel = GetBucketLabel(i, maxAgeYears);
 
                 var segment = new UiComponent()
                     .FlexGrow(bucketCount)
                     .Background(bucketColor)
+                    .Class(Cls.clickable)
                     .Tooltip(new LocStrFormatted(string.Format(AfdLocalization.SegmentTipFmt.TranslatedString,
                         bucketLabel,
                         bucketCount,
                         (float)bucketCount / plantedTotal,
                         (float)bucketCount / totalCapacity,
                         isAboveHarvest ? AfdLocalization.SegmentAboveHarvest.TranslatedString : AfdLocalization.SegmentBelowHarvest.TranslatedString,
-                        FormatYears(maxAgeYears))));
+                        FormatYears(maxAgeYears))
+                        + "\n\n" + AfdLocalization.SegmentInteractionHint.TranslatedString));
+                var capturedBucketTrees = stats.BucketTrees[i];
+                segment.OnMouseEnterLeave(
+                    onEnter: () =>
+                    {
+                        segment.Background(hoverBucketColor);
+                        ClearActiveHighlights();
+                        s_activeHighlightColor = bucketColor.Lerp(ColorRgba.White, Percent.FromFloat(0.6f));
+                        var treesRenderer = AutoForestryDesignation.GetTreesRenderer();
+                        if (treesRenderer == null || capturedBucketTrees.Length == 0) return;
+                        foreach (var treeId in capturedBucketTrees)
+                        {
+                            try { treesRenderer.AddHighlight(treeId, s_activeHighlightColor); }
+                            catch { }
+                        }
+                        s_hoveredBucketTrees = capturedBucketTrees;
+                    },
+                    onLeave: () =>
+                    {
+                        segment.Background(bucketColor);
+                        ClearActiveHighlights();
+                    }
+                );
+                segment.OnClick((ClickEvent evt) =>
+                {
+                    evt.StopPropagation();
+                    var treesManager = AutoForestryDesignation.GetTreesManager();
+                    if (treesManager == null || capturedBucketTrees.Length == 0) return;
+                    bool allSelected = true;
+                    foreach (var treeId in capturedBucketTrees)
+                    {
+                        if (!treesManager.IsTreeSelected(treeId))
+                        {
+                            allSelected = false;
+                            break;
+                        }
+                    }
+                    if (allSelected)
+                    {
+                        foreach (var treeId in capturedBucketTrees)
+                            try { treesManager.RemoveFromHarvest(treeId); } catch { }
+                    }
+                    else
+                    {
+                        foreach (var treeId in capturedBucketTrees)
+                        {
+                            if (!treesManager.IsTreeSelected(treeId))
+                                try { treesManager.AddToHarvest(treeId); } catch { }
+                        }
+                    }
+                    AutoForestryDesignation.ActivateHarvestOverlayIfNeeded();
+                });
                 bar.Add(segment);
             }
 
-            if (unusedCapacity > 0)
-            {
-                bar.Add(new UiComponent()
-                    .FlexGrow(unusedCapacity)
-                    .Background(s_unusedCapacityColor)
-                    .Tooltip(new LocStrFormatted(string.Format(AfdLocalization.UnusedCapacityTipFmt.TranslatedString,
-                        unusedCapacity,
-                        (float)unusedCapacity / totalCapacity))));
-            }
+            bar.Add(new UiComponent().Class(Cls.displayGlass).IgnoreInputPicking());
 
             var barWithLegend = new Row(3.pt()).AlignSelfStretch().AlignItemsCenter();
-            barWithLegend.Add(new Icon("Assets/Base/Products/Icons/TreeSapling.svg").NoTint().Size(20.px()).MarginBottom(2.px())
+            barWithLegend.Add(new Icon("Assets/Base/Products/Icons/TreeSapling.svg").NoTint().Size(24.px()).MarginBottom(2.px())
                 .Tooltip(AfdLocalization.NewlyPlantedTip));
             barWithLegend.Add(bar.FlexGrow(1f));
-            barWithLegend.Add(BuildMatureTreeIcon(22)
+            barWithLegend.Add(BuildMatureTreeIcon(26)
                 .Tooltip(new LocStrFormatted(string.Format(AfdLocalization.FullyGrownTipFmt.TranslatedString,
                     FormatYears(stats.AverageMaxAgeYears)))));
 
@@ -665,6 +783,7 @@ namespace AutoForestryDesignations
             public float CapacityPerYear { get; }
             public float MaxAgeYears { get; }
             public int[] GrowthBuckets { get; }
+            public TreeId[][] BucketTrees { get; }
 
             public ForestryStats(
                 int treeCount,
@@ -675,7 +794,8 @@ namespace AutoForestryDesignations
                 int woodReserve,
                 float capacityPerYear,
                 float maxAgeYears,
-                int[] growthBuckets)
+                int[] growthBuckets,
+                TreeId[][] bucketTrees)
             {
                 TreeCount = treeCount;
                 TreeCapacity = treeCapacity;
@@ -686,6 +806,7 @@ namespace AutoForestryDesignations
                 CapacityPerYear = capacityPerYear;
                 MaxAgeYears = maxAgeYears;
                 GrowthBuckets = growthBuckets;
+                BucketTrees = bucketTrees;
             }
         }
     }

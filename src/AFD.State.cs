@@ -24,6 +24,9 @@ using Mafi.Core.Terrain.Trees;
 using Mafi.Core.Vehicles.TreeHarvesters;
 using Mafi.Core.Vehicles.TreePlanters;
 using Mafi.Core.World;
+using Mafi.Unity.Terrain;
+using Mafi.Unity.Trees;
+using Mafi.Unity.Utils;
 using UnityEngine;
 using CoI.AutoHelpers.Logging;
 
@@ -225,7 +228,26 @@ namespace AutoForestryDesignations
         /// <summary>Returns true once Initialize has completed successfully.</summary>
         internal static bool IsInitialized => s_desigManager != null && s_coroutineHost != null;
 
+        private static TreesRenderer? s_treesRenderer;
+        internal static void SetTreesRenderer(TreesRenderer? renderer) => s_treesRenderer = renderer;
+        internal static TreesRenderer? GetTreesRenderer() => s_treesRenderer;
+
         internal static TreesManager? GetTreesManager() => s_desigManager?.TreesManager;
+
+        private static IActivator? s_harvestOverlayActivator;
+        internal static void SetHarvestHighlightManager(TreeHarvestingHighlightManager? manager)
+            => s_harvestOverlayActivator = manager?.CreateActivator();
+        internal static void ActivateHarvestOverlayIfNeeded()
+            => s_harvestOverlayActivator?.ActivateIfNotActive();
+        internal static void DeactivateHarvestOverlay()
+            => s_harvestOverlayActivator?.DeactivateIfActive();
+
+        internal static UnityEngine.Coroutine? StartCoroutine(System.Collections.IEnumerator routine)
+            => s_coroutineHost?.StartCoroutine(routine);
+        internal static void StopCoroutine(UnityEngine.Coroutine? coroutine)
+        {
+            if (coroutine != null) s_coroutineHost?.StopCoroutine(coroutine);
+        }
 
         internal static SimStep? GetCurrentSimStep() => s_simLoopEvents?.CurrentStep;
 

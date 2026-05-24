@@ -86,14 +86,14 @@ public sealed class AfdConsoleCommands
         return $"[AFD] MarkHarvestReadyForHarvest set to {AutoForestryDesignationsMod.MarkHarvestReadyForHarvest}.";
     }
 
-    [ConsoleCommand(false, false, "Sets whether the Forestry Designations panel starts collapsed by default (true/false).", null)]
+    [ConsoleCommand(false, false, "Sets whether the Forestry designations panel starts collapsed by default (true/false).", null)]
     private string afdSetForestryDesignationsPanelCollapsed(bool value)
     {
         AutoForestryDesignationsMod.SetForestryDesignationsPanelCollapsed(value);
         return $"[AFD] ForestryDesignationsPanelCollapsed set to {AutoForestryDesignationsMod.ForestryDesignationsPanelCollapsed}.";
     }
 
-    [ConsoleCommand(false, false, "Sets whether the Forestry Information panel starts collapsed by default (true/false).", null)]
+    [ConsoleCommand(false, false, "Sets whether the Forestry information panel starts collapsed by default (true/false).", null)]
     private string afdSetForestryInformationPanelCollapsed(bool value)
     {
         AutoForestryDesignationsMod.SetForestryInformationPanelCollapsed(value);

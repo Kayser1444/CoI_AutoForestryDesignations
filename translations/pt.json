@@ -1,15 +1,15 @@
 [
   [
     "AFD_ForestryDesignationsTitle",
-    "Designações Florestais"
+    "Designações florestais"
   ],
   [
     "AFD_ForestryInformationTitle",
-    "Informações Florestais"
+    "Informações florestais"
   ],
   [
     "AFD_CreateDesignationsBtn",
-    "Criar Designações"
+    "Criar designações"
   ],
   [
     "AFD_CreateDesignationsBtnTip",
@@ -25,11 +25,11 @@
   ],
   [
     "AFD_BoolYes",
-    "SIM"
+    "Sim"
   ],
   [
     "AFD_BoolNo",
-    "NÃO"
+    "Não"
   ],
   [
     "AFD_OnlyFertileTilesLabel",
@@ -57,7 +57,7 @@
   ],
   [
     "AFD_MaxTilesLabel",
-    "Máx. de áreas"
+    "Número máximo de designações"
   ],
   [
     "AFD_MaxTilesTip",
@@ -85,11 +85,11 @@
   ],
   [
     "AFD_KpiSustainableYieldLabel",
-    "Rendimento Sustentável"
+    "Rendimento sustentável"
   ],
   [
     "AFD_KpiTreesTip",
-    "Árvores geridas atualmente dentro da área florestal desta torre. O primeiro número é o total atual; o segundo número é o máximo estimado com base nas posições de plantio atualmente válidas."
+    "Contagem em tempo real das árvores geridas atualmente dentro da área florestal desta torre. O primeiro número são as árvores neste momento; o segundo número é o máximo estimado com base nas posições de plantio atualmente válidas."
   ],
   [
     "AFD_KpiMaturityTipFmt",
@@ -101,7 +101,7 @@
   ],
   [
     "AFD_GrowthBreakdownHeader",
-    "Repartição do Crescimento"
+    "Repartição do crescimento"
   ],
   [
     "AFD_GrowthBreakdownTipFmt",

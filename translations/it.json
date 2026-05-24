@@ -25,11 +25,11 @@
   ],
   [
     "AFD_BoolYes",
-    "SÌ"
+    "Sì"
   ],
   [
     "AFD_BoolNo",
-    "NO"
+    "No"
   ],
   [
     "AFD_OnlyFertileTilesLabel",
@@ -57,7 +57,7 @@
   ],
   [
     "AFD_MaxTilesLabel",
-    "Numero massimo di caselle"
+    "Numero massimo di designazioni"
   ],
   [
     "AFD_MaxTilesTip",
@@ -89,7 +89,7 @@
   ],
   [
     "AFD_KpiTreesTip",
-    "Alberi presenti attualmente all'interno dell'area forestale di questa torre. Il primo numero indica il numero attuale di alberi; il secondo numero indica il numero massimo stimato di alberi in base alle posizioni di piantumazione attualmente valide."
+    "Conteggio in tempo reale degli alberi gestiti attuali all'interno dell'area forestale di questa torre. Il primo numero indica gli alberi presenti ora; il secondo numero indica il numero massimo stimato di alberi in base alle posizioni di piantumazione attualmente valide."
   ],
   [
     "AFD_KpiMaturityTipFmt",

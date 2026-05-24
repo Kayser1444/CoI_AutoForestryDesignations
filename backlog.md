@@ -6,4 +6,4 @@ Items planned for future releases.
 
 * Frame around bar chart
 * Spacing around `/` in Trees card
-* Rename **Tree Maturity** label to **Maturity**
+* Rename **Tree maturity** label to **Maturity**

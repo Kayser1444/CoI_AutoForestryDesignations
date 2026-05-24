@@ -26,7 +26,7 @@ using ClickEvent = UnityEngine.UIElements.ClickEvent;
 namespace AutoForestryDesignations
 {
     /// <summary>
-    /// Builds the "Forestry Designations" inspector panel independently of any specific
+    /// Builds the "Forestry designations" inspector panel independently of any specific
     /// inspector type. Call <see cref="Build"/> and insert the returned panel wherever
     /// needed. Can be used by external mods via <see cref="AutoForestryDesignationsApi"/>.
     /// </summary>
@@ -93,7 +93,7 @@ namespace AutoForestryDesignations
         }
 
         /// <summary>
-        /// Builds the full "Forestry Designations" panel and returns it. Insert the result
+        /// Builds the full "Forestry designations" panel and returns it. Insert the result
         /// at any position in any inspector's <c>Column</c>.
         /// </summary>
         /// <param name="getTower">

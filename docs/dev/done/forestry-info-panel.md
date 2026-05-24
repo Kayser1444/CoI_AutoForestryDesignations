@@ -1,9 +1,9 @@
-# Forestry Information Panel — Architecture Reference
+# Forestry information panel — Architecture reference
 
 ## Feature summary
 
-`AFD.ForestryInfoPanel.cs` implements the **Forestry Information** panel that
-appears in the Forestry Tower inspector. It samples live tree data inside the
+`AFD.ForestryInfoPanel.cs` implements the **Forestry information** panel that
+appears in the forestry tower inspector. It samples live tree data inside the
 tower's area and presents a snapshot of tree count, growth maturity, sustainable
 yield, estimated capacity, and a growth-bucket bar chart.
 

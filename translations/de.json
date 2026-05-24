@@ -25,11 +25,11 @@
   ],
   [
     "AFD_BoolYes",
-    "JA"
+    "Ja"
   ],
   [
     "AFD_BoolNo",
-    "NEIN"
+    "Nein"
   ],
   [
     "AFD_OnlyFertileTilesLabel",
@@ -57,7 +57,7 @@
   ],
   [
     "AFD_MaxTilesLabel",
-    "Max. Felder"
+    "Maximale Anzahl von Gebieten"
   ],
   [
     "AFD_MaxTilesTip",
@@ -89,7 +89,7 @@
   ],
   [
     "AFD_KpiTreesTip",
-    "Bäume im Forstgebiet dieses Turms. Die erste Zahl sind aktuelle Bäume; die zweite Zahl ist die geschätzte maximale Baumzahl basierend auf gültigen Pflanzpositionen."
+    "Live-Zählung der aktuell verwalteten Bäume im Forstgebiet dieses Turms. Die erste Zahl sind Bäume im Moment; die zweite Zahl ist die geschätzte maximale Baumzahl basierend auf aktuell gültigen Pflanzpositionen."
   ],
   [
     "AFD_KpiMaturityTipFmt",

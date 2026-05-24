@@ -1,4 +1,4 @@
-# AFD Public API — Forestry Designations
+# AFD public API — Forestry designations
 
 This document covers the public API surface of AutoForestryDesignations.
 
@@ -43,7 +43,7 @@ Use these to embed AFD's inspector panels inside a custom inspector layout.
 PanelWithHeader BuildDesignationPanel(Func<IAreaManagingTower?> getTower, object key)
 ```
 
-Builds the **Forestry Designations** panel (Create / Clear buttons and per-tower
+Builds the **Forestry designations** panel (create / clear buttons and per-tower
 settings toggles). Pass an opaque `key` (typically your inspector instance) that
 is used to identify this panel for refresh operations.
 
@@ -51,14 +51,14 @@ is used to identify this panel for refresh operations.
 void RefreshDesignationPanel(object key)
 ```
 
-Refreshes the display values of a previously built Forestry Designations panel.
+Refreshes the display values of a previously built Forestry designations panel.
 Call this when the inspector activates or switches to a different tower.
 
 ```csharp
 PanelWithHeader BuildForestryInfoPanel(Func<IAreaManagingTower?> getTower, object key)
 ```
 
-Builds the **Forestry Information** panel (tree count, maturity, sustainable
+Builds the **Forestry information** panel (tree count, maturity, sustainable
 yield, estimated capacity, growth distribution). The panel's built-in refresh
 button triggers a re-scan of tree data.
 
@@ -66,7 +66,7 @@ button triggers a re-scan of tree data.
 void RefreshForestryInfoPanel(object key)
 ```
 
-Refreshes the display values of a previously built Forestry Information panel.
+Refreshes the display values of a previously built Forestry information panel.
 
 Pass the same `key` to all panel-builder and refresh calls for a given inspector
 instance.

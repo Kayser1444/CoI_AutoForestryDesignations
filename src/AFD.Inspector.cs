@@ -66,6 +66,19 @@ namespace AutoForestryDesignations
 
                 try
                 {
+                    var onDeactivatedMethod = inspectorType.GetMethod("OnDeactivated",
+                        BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
+                    if (onDeactivatedMethod != null)
+                        harmony.Patch(onDeactivatedMethod,
+                            postfix: new HarmonyMethod(typeof(AutoForestryDesignation), nameof(InspectorDeactivatePostfix)));
+                }
+                catch (Exception ex3)
+                {
+                    Log.Warning($"[AFD] EXCEPTION patching OnDeactivated: {ex3}");
+                }
+
+                try
+                {
                     var setCutAtPercentageMethod = typeof(ForestryTower).GetMethod(nameof(ForestryTower.SetCutAtPercentage),
                         BindingFlags.Instance | BindingFlags.Public);
                     if (setCutAtPercentageMethod != null)
@@ -88,6 +101,12 @@ namespace AutoForestryDesignations
         {
             DesignationPanel.RefreshDisplays(__instance);
             ForestryInfoPanel.RefreshContent(__instance);
+        }
+
+        public static void InspectorDeactivatePostfix(object __instance)
+        {
+            AutoForestryDesignation.DeactivateHarvestOverlay();
+            ForestryInfoPanel.StopLiveTreeCount();
         }
 
         public static void ForestryTowerSetCutAtPercentagePostfix(ForestryTower __instance)
@@ -143,7 +162,7 @@ namespace AutoForestryDesignations
                         mainBody.InsertAt(0, afdPanel);
                         mainBody.InsertAt(1, forestryInfoPanel);
                         mainBody.Show();
-                        LogDebug("[AFD] Forestry Designations panel inserted");
+                        LogDebug("[AFD] Forestry designations panel inserted");
                     }
                     else
                     {

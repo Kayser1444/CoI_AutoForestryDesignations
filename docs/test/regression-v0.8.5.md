@@ -23,7 +23,7 @@ The `ForestryTowerInspector` constructor gained `ForestryDesignationController`,
 
 | # | Steps | Expected |
 |---|-------|----------|
-| 1.1 | Click any forestry tower. | Inspector opens. AFD Designation panel and Forestry Info panel both render without errors. Debug log shows `[AFD] Forestry Designations panel inserted`. |
+| 1.1 | Click any forestry tower. | Inspector opens. AFD designation panel and Forestry info panel both render without errors. Debug log shows `[AFD] Forestry designations panel inserted`. |
 | 1.2 | Open multiple different forestry towers in sequence. | No double-injection (guarded by `HasBindings` equivalent). No layout corruption. |
 | 1.3 | Switch to a different entity then re-click the forestry tower. | `OnActivated` postfix fires; both panels refresh to their default prompt state. |
 | 1.4 | Click the new **Edit Areas** button in the inspector. | Area polygon editor opens. On close, inspector re-opens with AFD panels intact and no errors. |
@@ -50,7 +50,7 @@ AFD patches `ForestryTower.SetCutAtPercentage` to trigger a forestry info refres
 
 | # | Steps | Expected |
 |---|-------|----------|
-| 3.1 | Open forestry tower inspector → change the **Harvesting Options** dropdown. | AFD postfix fires. Debug log shows info refresh queued for that tower. No errors. |
+| 3.1 | Open forestry tower inspector → change the **Harvesting options** dropdown. | AFD postfix fires. Debug log shows info refresh queued for that tower. No errors. |
 | 3.2 | Change harvest percentage repeatedly (stress). | No errors or duplicate queuing issues. |
 
 ---
@@ -78,5 +78,5 @@ AFD patches `ForestryTower.SetCutAtPercentage` to trigger a forestry info refres
 | # | Steps | Expected |
 |---|-------|----------|
 | 6.1 | Change one setting on a single forestry tower, save, quit to desktop, and reload. | The changed setting is restored for that tower only. Other towers continue using the global defaults. |
-| 6.2 | Collapse or expand the Forestry Designations and Forestry Information panels on one tower, save, quit, and reload. | Each panel restores its per-tower collapsed state. |
+| 6.2 | Collapse or expand the Forestry designations and Forestry information panels on one tower, save, quit, and reload. | Each panel restores its per-tower collapsed state. |
 | 6.3 | Reset a customized tower back to the current global defaults, save, and inspect/reload. | The tower no longer needs a saved override record; after reload it still follows the current defaults. |

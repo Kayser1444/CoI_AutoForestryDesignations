@@ -22,6 +22,8 @@ using Mafi.Core.PathFinding;
 using Mafi.Core.SaveGame;
 using Mafi.Core.Terrain.Designation;
 using Mafi.Core.World;
+using Mafi.Unity.Terrain;
+using Mafi.Unity.Trees;
 using UnityEngine;
 using CoI.AutoHelpers.Localization;
 using CoI.AutoHelpers.Logging;
@@ -103,11 +105,11 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
     public static bool MarkHarvestReadyForHarvest { get; private set; } = false;
     public static void SetMarkHarvestReadyForHarvest(bool value) => MarkHarvestReadyForHarvest = value;
 
-    /// <summary>Default collapsed state for the Forestry Designations inspector panel.</summary>
+    /// <summary>Default collapsed state for the Forestry designations inspector panel.</summary>
     public static bool ForestryDesignationsPanelCollapsed { get; private set; } = false;
     public static void SetForestryDesignationsPanelCollapsed(bool value) => ForestryDesignationsPanelCollapsed = value;
 
-    /// <summary>Default collapsed state for the Forestry Information inspector panel.</summary>
+    /// <summary>Default collapsed state for the Forestry information inspector panel.</summary>
     public static bool ForestryInformationPanelCollapsed { get; private set; } = false;
     public static void SetForestryInformationPanelCollapsed(bool value) => ForestryInformationPanelCollapsed = value;
 
@@ -198,6 +200,24 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
             AutoForestryDesignation.s_log.Info($"AutoForestryDesignations v{ModVersion} | dll: {ModLogger.GetDllBuildTimestamp(typeof(AutoForestryDesignationsMod).Assembly)}");
             AutoForestryDesignation.s_log.Info("Localization: late apply at renderer init state.");
             ApplyLocalizedTextIfPresent();
+            try
+            {
+                AutoForestryDesignation.SetTreesRenderer(resolver.Resolve<TreesRenderer>());
+                AutoForestryDesignation.s_log.Info("[AFD] TreesRenderer resolved successfully.");
+            }
+            catch (Exception ex)
+            {
+                AutoForestryDesignation.s_log.Warning($"[AFD] TreesRenderer not available at renderer init: {ex.Message}");
+            }
+            try
+            {
+                AutoForestryDesignation.SetHarvestHighlightManager(resolver.Resolve<TreeHarvestingHighlightManager>());
+                AutoForestryDesignation.s_log.Info("[AFD] TreeHarvestingHighlightManager resolved successfully.");
+            }
+            catch (Exception ex)
+            {
+                AutoForestryDesignation.s_log.Warning($"[AFD] TreeHarvestingHighlightManager not available at renderer init: {ex.Message}");
+            }
         });
     }
 

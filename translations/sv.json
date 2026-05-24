@@ -25,11 +25,11 @@
   ],
   [
     "AFD_BoolYes",
-    "JA"
+    "Ja"
   ],
   [
     "AFD_BoolNo",
-    "NEJ"
+    "Nej"
   ],
   [
     "AFD_OnlyFertileTilesLabel",
@@ -57,7 +57,7 @@
   ],
   [
     "AFD_MaxTilesLabel",
-    "Max rutor"
+    "Maximalt antal anvisningar"
   ],
   [
     "AFD_MaxTilesTip",
@@ -89,7 +89,7 @@
   ],
   [
     "AFD_KpiTreesTip",
-    "Träd som hanteras av det här tornets skogsbruksområde. Första siffran är nuvarande träd; andra siffran är uppskattad maxkapacitet baserat på giltiga planteringspositioner."
+    "Liveantal för träd som hanteras inom det här tornets skogsbruksområde. Första siffran är träd just nu; andra siffran är uppskattad maxkapacitet baserat på aktuella giltiga planteringspositioner."
   ],
   [
     "AFD_KpiMaturityTipFmt",

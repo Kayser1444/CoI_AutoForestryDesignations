@@ -26,8 +26,8 @@ internal static class AfdLocalization
 {
     public static LocStr ForestryDesignationsTitle = Loc.Str(
         "AFD_ForestryDesignationsTitle",
-        "Forestry Designations",
-        "Title of the Forestry Designations inspector panel.");
+        "Forestry designations",
+        "Title of the Forestry designations inspector panel.");
     // ...
 }
 ```

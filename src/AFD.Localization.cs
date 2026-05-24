@@ -7,44 +7,44 @@ namespace AutoForestryDesignations
         // --- Panel titles ---
         public static LocStr ForestryDesignationsTitle = Loc.Str(
             "AFD_ForestryDesignationsTitle",
-            "Forestry Designations",
-            "Title of the Forestry Designations inspector panel.");
+            "Forestry designations",
+            "Title of the Forestry designations inspector panel.");
 
         public static LocStr ForestryInformationTitle = Loc.Str(
             "AFD_ForestryInformationTitle",
-            "Forestry Information",
-            "Title of the Forestry Information inspector panel.");
+            "Forestry information",
+            "Title of the Forestry information inspector panel.");
 
         // --- Buttons ---
         public static LocStr CreateDesignationsBtn = Loc.Str(
             "AFD_CreateDesignationsBtn",
-            "Create Designations",
-            "Label on the Create Designations button.");
+            "Create designations",
+            "Label on the Create designations button.");
 
         public static LocStr CreateDesignationsBtnTip = Loc.Str(
             "AFD_CreateDesignationsBtnTip",
             "Scan the tower area and place forestry designations.",
-            "Tooltip on the Create Designations button.");
+            "Tooltip on the Create designations button.");
 
         public static LocStr ClearDesignationsBtnTip = Loc.Str(
             "AFD_ClearDesignationsBtnTip",
             "Clear all forestry designations in this tower's area.",
-            "Tooltip on the Clear Designations (trash) button.");
+            "Tooltip on the Clear designations (trash) button.");
 
         public static LocStr RefreshCompositionTip = Loc.Str(
             "AFD_RefreshCompositionTip",
             "Refresh forestry composition",
-            "Tooltip on the refresh button in the Forestry Information panel.");
+            "Tooltip on the refresh button in the Forestry information panel.");
 
         // --- Bool toggle display values ---
         public static LocStr BoolYes = Loc.Str(
             "AFD_BoolYes",
-            "YES",
+            "Yes",
             "Displayed in a toggle control when the option is enabled.");
 
         public static LocStr BoolNo = Loc.Str(
             "AFD_BoolNo",
-            "NO",
+            "No",
             "Displayed in a toggle control when the option is disabled.");
 
         // --- Setting labels and tooltips ---
@@ -80,7 +80,7 @@ namespace AutoForestryDesignations
 
         public static LocStr MaxTilesLabel = Loc.Str(
             "AFD_MaxTilesLabel",
-            "Max tiles",
+            "Maximum number of designations",
             "Label for the Max Tiles step setting.");
 
         public static LocStr MaxTilesTip = Loc.Str(
@@ -92,38 +92,38 @@ namespace AutoForestryDesignations
         public static LocStr NoForestryTowerSelected = Loc.Str(
             "AFD_NoForestryTowerSelected",
             "No forestry tower selected.",
-            "Shown in the Forestry Information panel when no tower is active.");
+            "Shown in the Forestry information panel when no tower is active.");
 
         public static LocStr NoForestryDesignations = Loc.Str(
             "AFD_NoForestryDesignations",
             "No forestry designations.",
-            "Shown in the Forestry Information panel when the tower has no managed forestry designations.");
+            "Shown in the Forestry information panel when the tower has no managed forestry designations.");
 
         public static LocStr PressToScanComposition = Loc.Str(
             "AFD_PressToScanComposition",
             "Press \u21ba to scan forestry composition.",
-            "Prompt shown in the Forestry Information panel before the first scan.");
+            "Prompt shown in the Forestry information panel before the first scan.");
 
         // --- KPI card labels ---
         public static LocStr KpiTreesLabel = Loc.Str(
             "AFD_KpiTreesLabel",
             "Trees",
-            "Label on the Trees KPI card in the Forestry Information panel.");
+            "Label on the Trees KPI card in the Forestry information panel.");
 
         public static LocStr KpiMaturityLabel = Loc.Str(
             "AFD_KpiMaturityLabel",
             "Maturity",
-            "Label on the Maturity KPI card in the Forestry Information panel.");
+            "Label on the Maturity KPI card in the Forestry information panel.");
 
         public static LocStr KpiSustainableYieldLabel = Loc.Str(
             "AFD_KpiSustainableYieldLabel",
-            "Sustainable Yield",
-            "Label on the Sustainable Yield KPI card in the Forestry Information panel.");
+            "Sustainable yield",
+            "Label on the Sustainable yield KPI card in the Forestry information panel.");
 
         // --- KPI card tooltips (format templates: {0} = formatted age string) ---
         public static LocStr KpiTreesTip = Loc.Str(
             "AFD_KpiTreesTip",
-            "Managed trees currently inside this tower's forestry area. First number is current trees; second number is estimated max trees based on currently valid planting positions.",
+            "Live count of current managed trees inside this tower's forestry area. First number is trees right now; second number is estimated max trees based on currently valid planting positions.",
             "Tooltip on the Trees KPI card.");
 
         public static LocStr KpiMaturityTipFmt = Loc.Str(
@@ -134,12 +134,12 @@ namespace AutoForestryDesignations
         public static LocStr KpiSustainableYieldTipFmt = Loc.Str(
             "AFD_KpiSustainableYieldTipFmt",
             "Maximum long-term wood production that can be maintained for this tower per in-game month, accounting for designated area, harvest threshold, and tree growth speed as per the difficulty settings (currently <b>{0}</b> average full maturity).",
-            "Tooltip template on the Sustainable Yield KPI card. {0} = average full maturity age string.");
+            "Tooltip template on the Sustainable yield KPI card. {0} = average full maturity age string.");
 
-        // --- Growth Breakdown section ---
+        // --- Growth breakdown section ---
         public static LocStr GrowthBreakdownHeader = Loc.Str(
             "AFD_GrowthBreakdownHeader",
-            "Growth Breakdown",
+            "Growth breakdown",
             "Header label for the growth breakdown bar section.");
 
         public static LocStr GrowthBreakdownTipFmt = Loc.Str(
@@ -181,6 +181,11 @@ namespace AutoForestryDesignations
             "AFD_UnusedCapacityTipFmt",
             "Unused capacity: {0} tiles ({1:P0} of capacity)",
             "Tooltip template on the unused capacity segment in the growth bar. {0}=count, {1}=fraction of capacity.");
+
+        public static LocStr SegmentInteractionHint = Loc.Str(
+            "AFD_SegmentInteractionHint",
+            "Hover to highlight trees in this stage. Click to mark / unmark highlighted for harvest.",
+            "Interaction hint appended to growth bar segment tooltips.");
 
         public static LocStr NewlyPlantedTip = Loc.Str(
             "AFD_NewlyPlantedTip",

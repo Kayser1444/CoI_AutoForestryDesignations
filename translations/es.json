@@ -25,11 +25,11 @@
   ],
   [
     "AFD_BoolYes",
-    "SÍ"
+    "Sí"
   ],
   [
     "AFD_BoolNo",
-    "NO"
+    "No"
   ],
   [
     "AFD_OnlyFertileTilesLabel",
@@ -57,7 +57,7 @@
   ],
   [
     "AFD_MaxTilesLabel",
-    "Casillas máx."
+    "Número máximo de designaciones"
   ],
   [
     "AFD_MaxTilesTip",
@@ -89,7 +89,7 @@
   ],
   [
     "AFD_KpiTreesTip",
-    "Árboles gestionados actualmente dentro del área forestal de esta torre. El primer número son los árboles actuales; el segundo es el máximo estimado según las posiciones de plantación válidas actualmente."
+    "Recuento en vivo de los árboles gestionados actuales dentro del área forestal de esta torre. El primer número son los árboles ahora mismo; el segundo es el máximo estimado según las posiciones de plantación válidas actualmente."
   ],
   [
     "AFD_KpiMaturityTipFmt",

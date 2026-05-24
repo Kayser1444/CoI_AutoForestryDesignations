@@ -1,15 +1,15 @@
 [
   [
     "AFD_ForestryDesignationsTitle",
-    "Forestry Designations"
+    "Forestry designations"
   ],
   [
     "AFD_ForestryInformationTitle",
-    "Forestry Information"
+    "Forestry information"
   ],
   [
     "AFD_CreateDesignationsBtn",
-    "Create Designations"
+    "Create designations"
   ],
   [
     "AFD_CreateDesignationsBtnTip",
@@ -25,11 +25,11 @@
   ],
   [
     "AFD_BoolYes",
-    "YES"
+    "Yes"
   ],
   [
     "AFD_BoolNo",
-    "NO"
+    "No"
   ],
   [
     "AFD_OnlyFertileTilesLabel",
@@ -57,7 +57,7 @@
   ],
   [
     "AFD_MaxTilesLabel",
-    "Max tiles"
+    "Maximum number of designations"
   ],
   [
     "AFD_MaxTilesTip",
@@ -85,11 +85,11 @@
   ],
   [
     "AFD_KpiSustainableYieldLabel",
-    "Sustainable Yield"
+    "Sustainable yield"
   ],
   [
     "AFD_KpiTreesTip",
-    "Managed trees currently inside this tower's forestry area. First number is current trees; second number is estimated max trees based on currently valid planting positions."
+    "Live count of current managed trees inside this tower's forestry area. First number is trees right now; second number is estimated max trees based on currently valid planting positions."
   ],
   [
     "AFD_KpiMaturityTipFmt",
@@ -101,7 +101,7 @@
   ],
   [
     "AFD_GrowthBreakdownHeader",
-    "Growth Breakdown"
+    "Growth breakdown"
   ],
   [
     "AFD_GrowthBreakdownTipFmt",
