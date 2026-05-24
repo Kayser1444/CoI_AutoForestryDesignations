@@ -1,15 +1,13 @@
 v0.1.5 | 2026-05-24
-* Forestry information panel cards now use a speckled panel background texture with a semi-transparent tint, matching the visual style of other game panels
-* Improved visual alignment of the growth breakdown bar and bottom spacing of the Growth breakdown card
-* Added vanilla save-backed persistence for per-tower Forestry designations settings, including panel collapsed states, using CoI AutoHelpers JSON state storage.
-* Per-tower options now survive quit/reload and remain preserved in the save even if the mod is temporarily removed.
-* Tower settings persistence now saves only per-tower values that differ from the current defaults, keeping the saved state compact.
-* Improved the Forestry information growth distribution bar with a clearer bordered style, 24 px height, hover feedback, and tooltips that explain the hover/click interactions.
-* Growth-stage tooltips now use named brackets, cleaner multi-line formatting, and simpler harvest-threshold wording.
-* Hovering a growth-stage segment now highlights the corresponding trees with a brighter tint of that segment's colour.
-* Clicking a growth-stage segment now marks or unmarks the highlighted trees for harvest and opens the Tree harvesting overlay; the overlay is hidden again when the inspector closes.
-* The Trees KPI now uses a live green display box for the current managed-tree count and refreshes while the inspector is open.
+* Added save-backed per-tower settings persistence using CoI AutoHelpers JSON state storage. Tower options and panel collapsed states now survive quit/reload and remain preserved in the save even if the mod is temporarily removed.
+* Kept saved tower settings compact by storing only per-tower values that differ from the current global defaults.
+* Improved the Forestry information panel visuals with speckled panel card backgrounds, better growth breakdown alignment, a clearer bordered growth bar, and more consistent bottom spacing.
+* Made the Trees KPI a live green display box that refreshes the current managed-tree count while the inspector is open.
+* Made growth-stage segments interactive: hover highlights the corresponding trees with a brighter tint of the segment colour, and click marks or unmarks those trees for harvest.
+* Opening a growth-stage segment now activates the Tree harvesting overlay so marked trees are visible; the overlay is hidden again when the inspector closes.
+* Cleaned up growth-stage tooltips with named maturity brackets, multi-line formatting, simpler harvest-threshold wording, and localized hover/click instructions.
 * Refined English UI labels for vanilla-style sentence case, including **Fertile tiles only**, **Reachable tiles only**, and **Maximum number of designations**.
+* Added Portuguese translation.
 * Updated localized UI strings and tooltips to match the revised labels and clarify that the Trees KPI is a live count of current managed trees.
 
 v0.1.4 | 2026-05-14
