@@ -1,3 +1,6 @@
+v0.1.5a | 2026-05-24
+* Updated latest verified in manifest.json to 0.8.5.
+
 v0.1.5 | 2026-05-24
 * Added save-backed per-tower settings persistence using CoI AutoHelpers JSON state storage. Tower options and panel collapsed states now survive quit/reload and remain preserved in the save even if the mod is temporarily removed.
 * Kept saved tower settings compact by storing only per-tower values that differ from the current global defaults.
