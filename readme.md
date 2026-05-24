@@ -11,9 +11,9 @@ The mod also adds a live **Forestry Information** panel to the tower inspector, 
 ## ⚙️ Features
 - 🌱 **Create Designations** - scan the tower area and place forestry designations automatically.
 - 🗑️ **Clear Designations** - remove forestry designations in the selected tower area without touching other designation types.
-- 🚚 **Only reachable tiles** - skip candidate tiles not reachable by vehicle pathfinding.
+- 🚚 **Reachable tiles only** - skip candidate tiles not reachable by vehicle pathfinding.
 - 📐 **Avoid terrain designations** - skip tiles that already have mining, dumping, or leveling designations.
-- 🍃 **Only fertile tiles** - place designations only where the ground supports tree growth.
+- 🍃 **Fertile tiles only** - place designations only where the ground supports tree growth.
 - 📍 **Closest tiles first** - fill reachable candidates by driving distance from the selected tower.
 - 🔢 **Max tiles** - cap the number of designations placed per run, with Shift/Ctrl step controls.
 - 📊 **Forestry Information panel** - inspect tree count, estimated capacity, maturity, sustainable yield, and growth buckets.

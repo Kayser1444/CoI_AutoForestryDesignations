@@ -163,7 +163,7 @@ namespace AutoForestryDesignations
             });
             panel.BodyAdd(contentRow);
 
-            // --- Only fertile tiles ---
+            // --- Fertile tiles only ---
             bool initOnlyFertile = initialTower != null
                 ? AutoForestryDesignation.GetTowerOnlyFertileTiles(initialTower)
                 : AutoForestryDesignationsMod.OnlyFertileTiles;
@@ -193,7 +193,7 @@ namespace AutoForestryDesignations
             var avoidWithTreesDisplay = new Mafi.Unity.Ui.Library.Display(BoolText(initAvoidTrees))
                 .MinDigits(3).AlignSelfStretch().MarginTopBottom(2.px());
 
-            // --- Only reachable tiles ---
+            // --- Reachable tiles only ---
             bool initOnlyReachable = initialTower != null
                 ? AutoForestryDesignation.GetTowerOnlyReachableTiles(initialTower)
                 : AutoForestryDesignationsMod.OnlyReachableTiles;

@@ -50,23 +50,23 @@ namespace AutoForestryDesignations
         // --- Setting labels and tooltips ---
         public static LocStr OnlyFertileTilesLabel = Loc.Str(
             "AFD_OnlyFertileTilesLabel",
-            "Only fertile tiles",
-            "Label for the Only Fertile Tiles toggle setting.");
+            "Fertile tiles only",
+            "Label for the Fertile Tiles Only toggle setting.");
 
         public static LocStr OnlyFertileTilesTip = Loc.Str(
             "AFD_OnlyFertileTilesTip",
             "Place designations only where the ground is valid for tree planting: fertile terrain (not rock, sand, or ocean) and not occupied by a building or other entity.",
-            "Tooltip for the Only Fertile Tiles toggle setting.");
+            "Tooltip for the Fertile Tiles Only toggle setting.");
 
         public static LocStr OnlyReachableTilesLabel = Loc.Str(
             "AFD_OnlyReachableTilesLabel",
-            "Only reachable tiles",
-            "Label for the Only Reachable Tiles toggle setting.");
+            "Reachable tiles only",
+            "Label for the Reachable Tiles Only toggle setting.");
 
         public static LocStr OnlyReachableTilesTip = Loc.Str(
             "AFD_OnlyReachableTilesTip",
             "When enabled, skip designation tiles that are not reachable by vehicle pathability from the tower area.",
-            "Tooltip for the Only Reachable Tiles toggle setting.");
+            "Tooltip for the Reachable Tiles Only toggle setting.");
 
         public static LocStr AvoidTerrainDesignationsLabel = Loc.Str(
             "AFD_AvoidTerrainDesignationsLabel",

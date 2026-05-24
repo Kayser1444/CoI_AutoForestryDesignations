@@ -24,7 +24,7 @@ void CreateDesignationsForTower(IAreaManagingTower tower)
 ```
 
 Scans the tower's area and creates forestry designations according to the tower's
-current per-tower settings (only fertile tiles, avoid mining designations, max
+current per-tower settings (fertile tiles only, avoid terrain designations, max
 tiles, etc.). The scan runs as a coroutine and may span multiple frames.
 
 ```csharp

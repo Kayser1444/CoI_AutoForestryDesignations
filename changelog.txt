@@ -3,6 +3,7 @@ Unreleased
 * Per-tower options now survive quit/reload and are preserved in the save even if the mod is temporarily removed
 * Forestry Designations and Forestry Information panel collapsed states are now remembered per tower
 * Tower settings persistence now uses a slim override schema, saving only per-tower values that differ from the current defaults
+* Renamed the English labels **Only fertile tiles** and **Only reachable tiles** to **Fertile tiles only** and **Reachable tiles only**
 * Added a CoI v0.8.5 regression test plan covering inspector injection, area editing, scanning, harvest refresh, and cleanup
 
 v0.1.4 | 2026-05-14
@@ -11,7 +12,7 @@ v0.1.4 | 2026-05-14
 
 v0.1.3 | 2026-05-13
 * Renamed the Forestry Information KPI label from **Tree Maturity** to **Maturity** to fit translations
-* Fixed: The **Only fertile tiles** filter now also excludes tiles blocked by buildings or other entities
+* Fixed: The **Fertile tiles only** filter now also excludes tiles blocked by buildings or other entities
 * Added experimental translation framework, including Swedish, Russian, and German translations
 * Minor cosmetic corrections
 

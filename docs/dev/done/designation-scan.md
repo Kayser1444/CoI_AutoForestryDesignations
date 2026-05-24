@@ -92,7 +92,7 @@ Each scanned tile is checked in order:
 2. **Designation grid alignment**: only origins that align to the 4×4 designation
    grid are considered.
 3. **Existing designation**: tiles that already have any designation are skipped.
-4. **Only fertile tiles** (if enabled): `TerrainManager.IsFertile(origin)`.
+4. **Fertile tiles only** (if enabled): `TerrainManager.IsFertile(origin)`.
 5. **Avoid tiles with trees** (if enabled): `TreesManager` is queried.
 6. **Avoid mining designations** (if enabled): checks all four corners of the
    tile for non-forestry terrain designations.

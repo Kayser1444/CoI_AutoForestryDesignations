@@ -33,7 +33,7 @@
   ],
   [
     "AFD_OnlyFertileTilesLabel",
-    "Only fertile tiles"
+    "Fertile tiles only"
   ],
   [
     "AFD_OnlyFertileTilesTip",
@@ -41,7 +41,7 @@
   ],
   [
     "AFD_OnlyReachableTilesLabel",
-    "Only reachable tiles"
+    "Reachable tiles only"
   ],
   [
     "AFD_OnlyReachableTilesTip",

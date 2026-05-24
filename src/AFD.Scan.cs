@@ -151,7 +151,7 @@ namespace AutoForestryDesignations
                     (filterUnreachableCandidates && maxTiles == 0) ? new List<DesignationCandidate>() : null;
 
                 if (onlyReachableTiles && !canEvaluateReachability)
-                    Log.Warning("[AFD] Only reachable tiles is enabled, but pathfinding is unavailable; skipping reachability filter for this run.");
+                    Log.Warning("[AFD] Reachable tiles only is enabled, but pathfinding is unavailable; skipping reachability filter for this run.");
 
                 foreach (DesignationCandidate candidate in candidates)
                 {
