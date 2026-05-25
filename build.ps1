@@ -63,6 +63,7 @@ New-Item -ItemType Directory -Path $packageRootDir -Force | Out-Null
 
 $filesToInclude = @(
     'manifest.json',
+    'config.json',
     'AutoForestryDesignations.dll',
     '0Harmony.dll',
     'Thumbnail.png',

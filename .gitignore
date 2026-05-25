@@ -22,6 +22,7 @@ AFDsettings.json
 *.suo
 *.userosscache
 *.sln.docstates
+*.lscache
 
 # OS noise
 Thumbs.db
