@@ -13,7 +13,7 @@ rebound from translation JSON files at renderer-init time via
 |---|---|
 | `AFD.Localization.cs` | `AfdLocalization` static class; all `LocStr` field declarations |
 | `AFD.Mod.cs` | Registers late-apply callback in `Initialize`; calls `RegisterLocalizationLateApply` |
-| `translations/` | Per-locale JSON translation files (e.g. `en.json`, `de.json`) |
+| `translations/` | Per-locale JSON translation files (e.g. `en.json`, `de.json`, `zh.json`) |
 
 ---
 
@@ -86,6 +86,9 @@ Do not use the third item for translator notes or context; the loader treats it
 as plural UI text. Files are loaded in alphabetical order; later files override
 earlier ones for duplicate keys (controlled by
 `DuplicateTranslationKeyBehavior.LastWins`).
+
+Included locale bundles currently cover English, German, Spanish, Italian,
+Portuguese, Russian, Swedish, and Chinese.
 
 ### Format placeholders
 
