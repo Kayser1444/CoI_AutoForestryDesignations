@@ -1,11 +1,8 @@
-Unreleased
-* Added Chinese translation.
-
-v0.1.5b | 2026-05-25
-* Fixed the release package to include config.json, which is required for save-backed per-tower settings storage.
-
-v0.1.5a | 2026-05-24
-* Updated latest verified in manifest.json to 0.8.5.
+v0.1.6 | 2026-06-06
+* Added AutoHelpers shared **Mod Settings** tabs for AFD defaults, game settings, scan performance, and panel defaults, with localized labels and tooltips
+* Added Chinese translation
+* Fixed: release package now includes `config.json`, which is required for save-backed per-tower settings storage
+* Updated latest verified game version to 0.8.5
 
 v0.1.5 | 2026-05-24
 * Added save-backed per-tower settings persistence using CoI AutoHelpers JSON state storage. Tower options and panel collapsed states now survive quit/reload and remain preserved in the save even if the mod is temporarily removed.

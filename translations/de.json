@@ -140,6 +140,102 @@
     "Darüberfahren, um Bäume in diesem Stadium hervorzuheben.\nKlicken, um sie zur Ernte zu markieren oder die Markierung zu entfernen."
   ],
   [
+    "AFD_SettingsModName",
+    "Automatische Forstmarkierungen"
+  ],
+  [
+    "AFD_SettingsTabDefaults",
+    "Standardwerte"
+  ],
+  [
+    "AFD_SettingsTabGameSettings",
+    "Spieleinstellungen"
+  ],
+  [
+    "AFD_SettingsHeadingForestryTowerDefaults",
+    "Forstturm-Standardwerte"
+  ],
+  [
+    "AFD_SettingsHeadingDesignationDefaults",
+    "Markierungs-Standardwerte"
+  ],
+  [
+    "AFD_SettingsHeadingScanPerformance",
+    "Scanleistung"
+  ],
+  [
+    "AFD_SettingsHeadingPanelDefaults",
+    "Panel-Standardwerte"
+  ],
+  [
+    "AFD_SettingsAvoidTilesWithTreesLabel",
+    "Felder mit Bäumen vermeiden"
+  ],
+  [
+    "AFD_SettingsAvoidTilesWithTreesTip",
+    "Standard: Beim Erstellen von Markierungen Felder überspringen, die bereits einen Baum enthalten."
+  ],
+  [
+    "AFD_SettingsMarkHarvestReadyLabel",
+    "Erntereife Bäume markieren"
+  ],
+  [
+    "AFD_SettingsMarkHarvestReadyTip",
+    "Standard: Nach dem Erstellen von Markierungen Bäume automatisch zur Ernte markieren, die den Ernteschwellenwert des Turms erfüllen."
+  ],
+  [
+    "AFD_SettingsBatchSizeLabel",
+    "Stapelgröße"
+  ],
+  [
+    "AFD_SettingsBatchSizeTip",
+    "Anzahl der Markierungen pro Frame. Niedriger = reaktionsschneller; höher = schnellere Scans. Begrenzt auf 1-200."
+  ],
+  [
+    "AFD_SettingsForestryPanelCollapsedLabel",
+    "Forstpanel eingeklappt"
+  ],
+  [
+    "AFD_SettingsForestryPanelCollapsedTip",
+    "Standard-Einklappzustand des Forstmarkierungs-Panels beim Öffnen eines Turminspektors."
+  ],
+  [
+    "AFD_SettingsInfoPanelCollapsedLabel",
+    "Infopanel eingeklappt"
+  ],
+  [
+    "AFD_SettingsInfoPanelCollapsedTip",
+    "Standard-Einklappzustand des Forstinfo-Panels beim Öffnen eines Turminspektors."
+  ],
+  [
+    "AFD_SettingsSaveAsGlobal",
+    "Als Konfig speichern"
+  ],
+  [
+    "AFD_SettingsSaveAsGlobalTooltip",
+    "Speichert diese Einstellungen in AFDsettings.json. Sie werden als Standardwerte für alle neuen Spiele verwendet."
+  ],
+  [
+    "AFD_SettingsSavedToFile",
+    "In AFDsettings.json gespeichert."
+  ],
+  [
+    "AFD_SettingsSaveFailed",
+    "Speichern fehlgeschlagen - Log prüfen"
+  ],
+  [
+    "AFD_SettingsRestoreDefaults",
+    "Standardwerte zurücksetzen"
+  ],
+  [
+    "AFD_SettingsRestoreDefaultsTooltip",
+    "Setzt alle Markierungs- und Panel-Standardwerte auf die eingebauten Werte zurück. Speichert nicht in die Datei."
+  ],
+  [
+    "AFD_SettingsRestoredDefaults",
+    "Standardwerte wiederhergestellt"
+  ],
+  [
     "AFD_NewlyPlantedTip",
     "Neu gepflanzt / niedrigstes Wachstum"
   ],

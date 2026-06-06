@@ -140,6 +140,102 @@
     "Passe o cursor para destacar as árvores neste estágio.\nClique para marcá-las ou desmarcá-las para colheita."
   ],
   [
+    "AFD_SettingsModName",
+    "Designações florestais automáticas"
+  ],
+  [
+    "AFD_SettingsTabDefaults",
+    "Padrões"
+  ],
+  [
+    "AFD_SettingsTabGameSettings",
+    "Configurações do jogo"
+  ],
+  [
+    "AFD_SettingsHeadingForestryTowerDefaults",
+    "Padrões da torre florestal"
+  ],
+  [
+    "AFD_SettingsHeadingDesignationDefaults",
+    "Padrões de designação"
+  ],
+  [
+    "AFD_SettingsHeadingScanPerformance",
+    "Desempenho da varredura"
+  ],
+  [
+    "AFD_SettingsHeadingPanelDefaults",
+    "Padrões dos painéis"
+  ],
+  [
+    "AFD_SettingsAvoidTilesWithTreesLabel",
+    "Evitar blocos com árvores"
+  ],
+  [
+    "AFD_SettingsAvoidTilesWithTreesTip",
+    "Padrão: pula blocos que já contêm uma árvore ao criar designações."
+  ],
+  [
+    "AFD_SettingsMarkHarvestReadyLabel",
+    "Marcar árvores prontas para corte"
+  ],
+  [
+    "AFD_SettingsMarkHarvestReadyTip",
+    "Padrão: depois de criar designações, marca automaticamente para corte as árvores que atingem o limite da torre."
+  ],
+  [
+    "AFD_SettingsBatchSizeLabel",
+    "Tamanho do lote"
+  ],
+  [
+    "AFD_SettingsBatchSizeTip",
+    "Número de designações colocadas por quadro. Menor = mais responsivo; maior = varreduras mais rápidas. Limitado a 1-200."
+  ],
+  [
+    "AFD_SettingsForestryPanelCollapsedLabel",
+    "Painel florestal recolhido"
+  ],
+  [
+    "AFD_SettingsForestryPanelCollapsedTip",
+    "Estado recolhido padrão do painel de designações florestais ao abrir o inspetor de uma torre."
+  ],
+  [
+    "AFD_SettingsInfoPanelCollapsedLabel",
+    "Painel de informações recolhido"
+  ],
+  [
+    "AFD_SettingsInfoPanelCollapsedTip",
+    "Estado recolhido padrão do painel de informações florestais ao abrir o inspetor de uma torre."
+  ],
+  [
+    "AFD_SettingsSaveAsGlobal",
+    "Salvar como config"
+  ],
+  [
+    "AFD_SettingsSaveAsGlobalTooltip",
+    "Salva estas configurações em AFDsettings.json. Elas serão usadas como padrões para todos os novos jogos."
+  ],
+  [
+    "AFD_SettingsSavedToFile",
+    "Salvo em AFDsettings.json."
+  ],
+  [
+    "AFD_SettingsSaveFailed",
+    "Falha ao salvar - verifique o log"
+  ],
+  [
+    "AFD_SettingsRestoreDefaults",
+    "Redefinir padrões"
+  ],
+  [
+    "AFD_SettingsRestoreDefaultsTooltip",
+    "Redefine todos os padrões de designação e painel para os valores integrados. Não salva no arquivo."
+  ],
+  [
+    "AFD_SettingsRestoredDefaults",
+    "Padrões restaurados"
+  ],
+  [
     "AFD_NewlyPlantedTip",
     "Recém-plantado / maturidade mais baixa"
   ],

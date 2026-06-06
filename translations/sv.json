@@ -140,6 +140,102 @@
     "Hovra för att markera träd i det här stadiet.\nKlicka för att markera eller avmarkera dem för avverkning."
   ],
   [
+    "AFD_SettingsModName",
+    "Automatiska skogsbruksmarkeringar"
+  ],
+  [
+    "AFD_SettingsTabDefaults",
+    "Standardvärden"
+  ],
+  [
+    "AFD_SettingsTabGameSettings",
+    "Spelinställningar"
+  ],
+  [
+    "AFD_SettingsHeadingForestryTowerDefaults",
+    "Standard för skogstorn"
+  ],
+  [
+    "AFD_SettingsHeadingDesignationDefaults",
+    "Standard för markeringar"
+  ],
+  [
+    "AFD_SettingsHeadingScanPerformance",
+    "Skanningsprestanda"
+  ],
+  [
+    "AFD_SettingsHeadingPanelDefaults",
+    "Panelstandard"
+  ],
+  [
+    "AFD_SettingsAvoidTilesWithTreesLabel",
+    "Undvik rutor med träd"
+  ],
+  [
+    "AFD_SettingsAvoidTilesWithTreesTip",
+    "Standard: hoppa över rutor som redan innehåller träd när markeringar skapas."
+  ],
+  [
+    "AFD_SettingsMarkHarvestReadyLabel",
+    "Markera avverkningsklara träd"
+  ],
+  [
+    "AFD_SettingsMarkHarvestReadyTip",
+    "Standard: markera automatiskt träd som uppfyller tornets avverkningströskel efter att markeringar skapats."
+  ],
+  [
+    "AFD_SettingsBatchSizeLabel",
+    "Satsstorlek"
+  ],
+  [
+    "AFD_SettingsBatchSizeTip",
+    "Antal markeringar som placeras per bildruta. Lägre = bättre respons; högre = snabbare skanning. Begränsat till 1-200."
+  ],
+  [
+    "AFD_SettingsForestryPanelCollapsedLabel",
+    "Skogsbrukspanel infälld"
+  ],
+  [
+    "AFD_SettingsForestryPanelCollapsedTip",
+    "Standardläge för skogsbruksmarkeringspanelen när ett tornfönster öppnas."
+  ],
+  [
+    "AFD_SettingsInfoPanelCollapsedLabel",
+    "Informationspanel infälld"
+  ],
+  [
+    "AFD_SettingsInfoPanelCollapsedTip",
+    "Standardläge för skogsbruksinformationspanelen när ett tornfönster öppnas."
+  ],
+  [
+    "AFD_SettingsSaveAsGlobal",
+    "Spara som konfig"
+  ],
+  [
+    "AFD_SettingsSaveAsGlobalTooltip",
+    "Spara dessa inställningar till AFDsettings.json. De används som standardvärden för alla nya spel."
+  ],
+  [
+    "AFD_SettingsSavedToFile",
+    "Sparat till AFDsettings.json."
+  ],
+  [
+    "AFD_SettingsSaveFailed",
+    "Sparning misslyckades - kontrollera loggen"
+  ],
+  [
+    "AFD_SettingsRestoreDefaults",
+    "Återställ standardvärden"
+  ],
+  [
+    "AFD_SettingsRestoreDefaultsTooltip",
+    "Återställ alla markerings- och panelstandarder till sina inbyggda värden. Sparas inte till fil."
+  ],
+  [
+    "AFD_SettingsRestoredDefaults",
+    "Standardvärden återställda"
+  ],
+  [
     "AFD_NewlyPlantedTip",
     "Nyplanterade / lägsta tillväxt"
   ],

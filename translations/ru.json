@@ -140,6 +140,102 @@
     "Наведите, чтобы подсветить деревья на этой стадии.\nНажмите, чтобы пометить или снять пометку для рубки."
   ],
   [
+    "AFD_SettingsModName",
+    "Автоматические лесные зоны"
+  ],
+  [
+    "AFD_SettingsTabDefaults",
+    "По умолчанию"
+  ],
+  [
+    "AFD_SettingsTabGameSettings",
+    "Игровые настройки"
+  ],
+  [
+    "AFD_SettingsHeadingForestryTowerDefaults",
+    "Настройки лесной башни по умолчанию"
+  ],
+  [
+    "AFD_SettingsHeadingDesignationDefaults",
+    "Настройки зон по умолчанию"
+  ],
+  [
+    "AFD_SettingsHeadingScanPerformance",
+    "Производительность сканирования"
+  ],
+  [
+    "AFD_SettingsHeadingPanelDefaults",
+    "Настройки панелей по умолчанию"
+  ],
+  [
+    "AFD_SettingsAvoidTilesWithTreesLabel",
+    "Избегать клеток с деревьями"
+  ],
+  [
+    "AFD_SettingsAvoidTilesWithTreesTip",
+    "По умолчанию: при создании зон пропускать клетки, где уже есть дерево."
+  ],
+  [
+    "AFD_SettingsMarkHarvestReadyLabel",
+    "Помечать деревья для рубки"
+  ],
+  [
+    "AFD_SettingsMarkHarvestReadyTip",
+    "По умолчанию: после создания зон автоматически помечать для рубки деревья, достигшие порога башни."
+  ],
+  [
+    "AFD_SettingsBatchSizeLabel",
+    "Размер пакета"
+  ],
+  [
+    "AFD_SettingsBatchSizeTip",
+    "Количество зон, размещаемых за кадр. Меньше = отзывчивее; больше = быстрее сканирование. Ограничено 1-200."
+  ],
+  [
+    "AFD_SettingsForestryPanelCollapsedLabel",
+    "Панель лесных зон свернута"
+  ],
+  [
+    "AFD_SettingsForestryPanelCollapsedTip",
+    "Состояние свертывания панели лесных зон по умолчанию при открытии инспектора башни."
+  ],
+  [
+    "AFD_SettingsInfoPanelCollapsedLabel",
+    "Информационная панель свернута"
+  ],
+  [
+    "AFD_SettingsInfoPanelCollapsedTip",
+    "Состояние свертывания панели информации о лесе по умолчанию при открытии инспектора башни."
+  ],
+  [
+    "AFD_SettingsSaveAsGlobal",
+    "Сохранить как конфиг"
+  ],
+  [
+    "AFD_SettingsSaveAsGlobalTooltip",
+    "Сохраняет эти настройки в AFDsettings.json. Они будут использоваться как значения по умолчанию для всех новых игр."
+  ],
+  [
+    "AFD_SettingsSavedToFile",
+    "Сохранено в AFDsettings.json."
+  ],
+  [
+    "AFD_SettingsSaveFailed",
+    "Не удалось сохранить - проверьте журнал"
+  ],
+  [
+    "AFD_SettingsRestoreDefaults",
+    "Сбросить по умолчанию"
+  ],
+  [
+    "AFD_SettingsRestoreDefaultsTooltip",
+    "Сбрасывает все значения зон и панелей к встроенным значениям. Не сохраняет в файл."
+  ],
+  [
+    "AFD_SettingsRestoredDefaults",
+    "Значения по умолчанию восстановлены"
+  ],
+  [
     "AFD_NewlyPlantedTip",
     "Недавно посаженные / самая низкая зрелость"
   ],

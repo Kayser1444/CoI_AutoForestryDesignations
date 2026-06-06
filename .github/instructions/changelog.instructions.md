@@ -1,12 +1,16 @@
 ---
-description: Instructions for maintaining the AutoForestryDesignations change log.
-applyTo: "change log.md"
+description: Instructions for maintaining the AutoForestryDesignations changelog.
+applyTo: "changelog.txt"
 ---
 
-# Change Log Maintenance Rules
+# AFD changelog instructions
+
+Read the shared workspace instructions first:
+
+- `../../../.github/instructions/coi-maintained-mods.instructions.md`
 
 ## File location
-`change log.md` in the workspace root.
+`changelog.txt` in the workspace root.
 
 ## Format
 - Top-level heading: `# CHANGE LOG`

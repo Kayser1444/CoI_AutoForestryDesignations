@@ -96,6 +96,8 @@ is included by mistake, I intend to correct it promptly upon discovery or notice
              Link="CoI.AutoHelpers\Runtime\%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="external\CoI_AutoHelpers\src\CoI.AutoHelpers\VanillaAttachments\**\*.cs"
              Link="CoI.AutoHelpers\VanillaAttachments\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="external\CoI_AutoHelpers\src\CoI.AutoHelpers\Settings\**\*.cs"
+             Link="CoI.AutoHelpers\Settings\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>

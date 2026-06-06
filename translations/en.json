@@ -140,6 +140,102 @@
     "Hover to highlight trees in this stage.\nClick to mark or unmark them for harvest."
   ],
   [
+    "AFD_SettingsModName",
+    "Auto Forestry Designations"
+  ],
+  [
+    "AFD_SettingsTabDefaults",
+    "Defaults"
+  ],
+  [
+    "AFD_SettingsTabGameSettings",
+    "Game settings"
+  ],
+  [
+    "AFD_SettingsHeadingForestryTowerDefaults",
+    "Forestry tower defaults"
+  ],
+  [
+    "AFD_SettingsHeadingDesignationDefaults",
+    "Designation defaults"
+  ],
+  [
+    "AFD_SettingsHeadingScanPerformance",
+    "Scan performance"
+  ],
+  [
+    "AFD_SettingsHeadingPanelDefaults",
+    "Panel defaults"
+  ],
+  [
+    "AFD_SettingsAvoidTilesWithTreesLabel",
+    "Avoid tiles with trees"
+  ],
+  [
+    "AFD_SettingsAvoidTilesWithTreesTip",
+    "Default: skip tiles that already contain a tree when creating designations."
+  ],
+  [
+    "AFD_SettingsMarkHarvestReadyLabel",
+    "Mark harvest-ready trees"
+  ],
+  [
+    "AFD_SettingsMarkHarvestReadyTip",
+    "Default: after creating designations, automatically mark trees that meet the tower's harvest threshold for harvesting."
+  ],
+  [
+    "AFD_SettingsBatchSizeLabel",
+    "Batch size"
+  ],
+  [
+    "AFD_SettingsBatchSizeTip",
+    "Number of designations placed per frame. Lower = more responsive; higher = faster scans. Clamped 1-200."
+  ],
+  [
+    "AFD_SettingsForestryPanelCollapsedLabel",
+    "Forestry panel collapsed"
+  ],
+  [
+    "AFD_SettingsForestryPanelCollapsedTip",
+    "Default collapsed state for the Forestry designations panel when a tower inspector is opened."
+  ],
+  [
+    "AFD_SettingsInfoPanelCollapsedLabel",
+    "Info panel collapsed"
+  ],
+  [
+    "AFD_SettingsInfoPanelCollapsedTip",
+    "Default collapsed state for the Forestry information panel when a tower inspector is opened."
+  ],
+  [
+    "AFD_SettingsSaveAsGlobal",
+    "Save as config"
+  ],
+  [
+    "AFD_SettingsSaveAsGlobalTooltip",
+    "Save these settings to AFDsettings.json. They will be used as the defaults for all new games."
+  ],
+  [
+    "AFD_SettingsSavedToFile",
+    "Saved to AFDsettings.json."
+  ],
+  [
+    "AFD_SettingsSaveFailed",
+    "Save failed - check the log"
+  ],
+  [
+    "AFD_SettingsRestoreDefaults",
+    "Reset to defaults"
+  ],
+  [
+    "AFD_SettingsRestoreDefaultsTooltip",
+    "Reset all designation and panel defaults to their built-in values. Does not save to file."
+  ],
+  [
+    "AFD_SettingsRestoredDefaults",
+    "Defaults restored"
+  ],
+  [
     "AFD_NewlyPlantedTip",
     "Newly planted / lowest maturity"
   ],

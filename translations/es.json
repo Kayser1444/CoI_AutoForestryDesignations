@@ -140,6 +140,102 @@
     "Pasa el cursor para resaltar los árboles de esta etapa.\nHaz clic para marcarlos o desmarcarlos para cosecha."
   ],
   [
+    "AFD_SettingsModName",
+    "Designaciones forestales automáticas"
+  ],
+  [
+    "AFD_SettingsTabDefaults",
+    "Valores predeterminados"
+  ],
+  [
+    "AFD_SettingsTabGameSettings",
+    "Ajustes del juego"
+  ],
+  [
+    "AFD_SettingsHeadingForestryTowerDefaults",
+    "Predeterminados de torre forestal"
+  ],
+  [
+    "AFD_SettingsHeadingDesignationDefaults",
+    "Predeterminados de designación"
+  ],
+  [
+    "AFD_SettingsHeadingScanPerformance",
+    "Rendimiento de escaneo"
+  ],
+  [
+    "AFD_SettingsHeadingPanelDefaults",
+    "Predeterminados de paneles"
+  ],
+  [
+    "AFD_SettingsAvoidTilesWithTreesLabel",
+    "Evitar casillas con árboles"
+  ],
+  [
+    "AFD_SettingsAvoidTilesWithTreesTip",
+    "Predeterminado: omitir casillas que ya contienen un árbol al crear designaciones."
+  ],
+  [
+    "AFD_SettingsMarkHarvestReadyLabel",
+    "Marcar árboles listos para cosecha"
+  ],
+  [
+    "AFD_SettingsMarkHarvestReadyTip",
+    "Predeterminado: después de crear designaciones, marcar automáticamente para cosecha los árboles que alcancen el umbral de la torre."
+  ],
+  [
+    "AFD_SettingsBatchSizeLabel",
+    "Tamaño de lote"
+  ],
+  [
+    "AFD_SettingsBatchSizeTip",
+    "Número de designaciones colocadas por fotograma. Menor = más respuesta; mayor = escaneos más rápidos. Limitado a 1-200."
+  ],
+  [
+    "AFD_SettingsForestryPanelCollapsedLabel",
+    "Panel forestal contraído"
+  ],
+  [
+    "AFD_SettingsForestryPanelCollapsedTip",
+    "Estado contraído predeterminado del panel de designaciones forestales al abrir el inspector de una torre."
+  ],
+  [
+    "AFD_SettingsInfoPanelCollapsedLabel",
+    "Panel de información contraído"
+  ],
+  [
+    "AFD_SettingsInfoPanelCollapsedTip",
+    "Estado contraído predeterminado del panel de información forestal al abrir el inspector de una torre."
+  ],
+  [
+    "AFD_SettingsSaveAsGlobal",
+    "Guardar como config"
+  ],
+  [
+    "AFD_SettingsSaveAsGlobalTooltip",
+    "Guarda estos ajustes en AFDsettings.json. Se usarán como valores predeterminados para todas las partidas nuevas."
+  ],
+  [
+    "AFD_SettingsSavedToFile",
+    "Guardado en AFDsettings.json."
+  ],
+  [
+    "AFD_SettingsSaveFailed",
+    "Error al guardar - revisa el registro"
+  ],
+  [
+    "AFD_SettingsRestoreDefaults",
+    "Restablecer predeterminados"
+  ],
+  [
+    "AFD_SettingsRestoreDefaultsTooltip",
+    "Restablece todos los valores predeterminados de designación y panel a sus valores integrados. No guarda en el archivo."
+  ],
+  [
+    "AFD_SettingsRestoredDefaults",
+    "Predeterminados restaurados"
+  ],
+  [
     "AFD_NewlyPlantedTip",
     "Recién plantado / madurez más baja"
   ],

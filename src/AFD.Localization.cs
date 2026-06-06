@@ -187,6 +187,127 @@ namespace AutoForestryDesignations
             "Hover to highlight trees in this stage.\nClick to mark or unmark them for harvest.",
             "Interaction hint appended to growth bar segment tooltips.");
 
+        // --- Settings window ---
+        public static LocStr SettingsModName = Loc.Str(
+            "AFD_SettingsModName",
+            "Auto Forestry Designations",
+            "Mod name shown in the shared mod settings window.");
+
+        public static LocStr SettingsTabDefaults = Loc.Str(
+            "AFD_SettingsTabDefaults",
+            "Defaults",
+            "Title of the Defaults tab in the AFD mod settings window.");
+
+        public static LocStr SettingsTabGameSettings = Loc.Str(
+            "AFD_SettingsTabGameSettings",
+            "Game settings",
+            "Title of the Game settings tab in the AFD mod settings window.");
+
+        public static LocStr SettingsHeadingForestryTowerDefaults = Loc.Str(
+            "AFD_SettingsHeadingForestryTowerDefaults",
+            "Forestry tower defaults",
+            "Section heading for forestry tower default settings.");
+
+        public static LocStr SettingsHeadingDesignationDefaults = Loc.Str(
+            "AFD_SettingsHeadingDesignationDefaults",
+            "Designation defaults",
+            "Section heading for game-level designation settings (harvest, avoid-trees).");
+
+        public static LocStr SettingsHeadingScanPerformance = Loc.Str(
+            "AFD_SettingsHeadingScanPerformance",
+            "Scan performance",
+            "Section heading for scan performance settings.");
+
+        public static LocStr SettingsHeadingPanelDefaults = Loc.Str(
+            "AFD_SettingsHeadingPanelDefaults",
+            "Panel defaults",
+            "Section heading for panel collapsed-state defaults.");
+
+        public static LocStr SettingsAvoidTilesWithTreesLabel = Loc.Str(
+            "AFD_SettingsAvoidTilesWithTreesLabel",
+            "Avoid tiles with trees",
+            "Label for the Avoid Tiles With Trees toggle in the settings tab.");
+
+        public static LocStr SettingsAvoidTilesWithTreesTip = Loc.Str(
+            "AFD_SettingsAvoidTilesWithTreesTip",
+            "Default: skip tiles that already contain a tree when creating designations.",
+            "Tooltip for the Avoid Tiles With Trees toggle in the settings tab.");
+
+        public static LocStr SettingsMarkHarvestReadyLabel = Loc.Str(
+            "AFD_SettingsMarkHarvestReadyLabel",
+            "Mark harvest-ready trees",
+            "Label for the Mark Harvest Ready toggle in the settings tab.");
+
+        public static LocStr SettingsMarkHarvestReadyTip = Loc.Str(
+            "AFD_SettingsMarkHarvestReadyTip",
+            "Default: after creating designations, automatically mark trees that meet the tower's harvest threshold for harvesting.",
+            "Tooltip for the Mark Harvest Ready toggle in the settings tab.");
+
+        public static LocStr SettingsBatchSizeLabel = Loc.Str(
+            "AFD_SettingsBatchSizeLabel",
+            "Batch size",
+            "Label for the Batch Size step control in the settings tab.");
+
+        public static LocStr SettingsBatchSizeTip = Loc.Str(
+            "AFD_SettingsBatchSizeTip",
+            "Number of designations placed per frame. Lower = more responsive; higher = faster scans. Clamped 1\u2013200.",
+            "Tooltip for the Batch Size step control in the settings tab.");
+
+        public static LocStr SettingsForestryPanelCollapsedLabel = Loc.Str(
+            "AFD_SettingsForestryPanelCollapsedLabel",
+            "Forestry panel collapsed",
+            "Label for the Forestry designations panel default collapsed state toggle.");
+
+        public static LocStr SettingsForestryPanelCollapsedTip = Loc.Str(
+            "AFD_SettingsForestryPanelCollapsedTip",
+            "Default collapsed state for the Forestry designations panel when a tower inspector is opened.",
+            "Tooltip for the Forestry panel collapsed toggle.");
+
+        public static LocStr SettingsInfoPanelCollapsedLabel = Loc.Str(
+            "AFD_SettingsInfoPanelCollapsedLabel",
+            "Info panel collapsed",
+            "Label for the Forestry information panel default collapsed state toggle.");
+
+        public static LocStr SettingsInfoPanelCollapsedTip = Loc.Str(
+            "AFD_SettingsInfoPanelCollapsedTip",
+            "Default collapsed state for the Forestry information panel when a tower inspector is opened.",
+            "Tooltip for the Forestry info panel collapsed toggle.");
+
+        public static LocStr SettingsSaveAsGlobal = Loc.Str(
+            "AFD_SettingsSaveAsGlobal",
+            "Save as config",
+            "Button label to save AFD settings as config default.");
+
+        public static LocStr SettingsSaveAsGlobalTooltip = Loc.Str(
+            "AFD_SettingsSaveAsGlobalTooltip",
+            "Save these settings to AFDsettings.json. They will be used as the defaults for all new games.",
+            "Tooltip for the Save as config button in the AFD settings tab.");
+
+        public static LocStr SettingsSavedToFile = Loc.Str(
+            "AFD_SettingsSavedToFile",
+            "Saved to AFDsettings.json.",
+            "Status message shown after settings are successfully saved.");
+
+        public static LocStr SettingsSaveFailed = Loc.Str(
+            "AFD_SettingsSaveFailed",
+            "Save failed \u2014 check the log",
+            "Status message shown when settings save fails.");
+
+        public static LocStr SettingsRestoreDefaults = Loc.Str(
+            "AFD_SettingsRestoreDefaults",
+            "Reset to defaults",
+            "Button label to reset AFD settings to built-in defaults.");
+
+        public static LocStr SettingsRestoreDefaultsTooltip = Loc.Str(
+            "AFD_SettingsRestoreDefaultsTooltip",
+            "Reset all designation and panel defaults to their built-in values. Does not save to file.",
+            "Tooltip for the Reset to defaults button in the AFD settings tab.");
+
+        public static LocStr SettingsRestoredDefaults = Loc.Str(
+            "AFD_SettingsRestoredDefaults",
+            "Defaults restored",
+            "Status message shown after defaults have been reset.");
+
         public static LocStr NewlyPlantedTip = Loc.Str(
             "AFD_NewlyPlantedTip",
             "Newly planted / lowest maturity",

@@ -52,6 +52,11 @@ namespace AutoForestryDesignations
         private const int PAUSED_BATCH_MULTIPLIER = 4;
         private static int s_batchSize = BATCH_SIZE;
 
+        /// <summary>Number of designations placed per coroutine frame. Clamped 1..200.</summary>
+        public static int BatchSize => ClampBatchSize(s_batchSize);
+
+        public static void SetBatchSize(int value) => s_batchSize = ClampBatchSize(value);
+
         private sealed class AFDTowerSettings
         {
             public bool OnlyFertileTiles { get; private set; }

@@ -28,6 +28,10 @@ using UnityEngine;
 using CoI.AutoHelpers.Localization;
 using CoI.AutoHelpers.Logging;
 using CoI.AutoHelpers.Persistence;
+using CoI.AutoHelpers.Settings;
+using Mafi.Unity;
+using Mafi.Unity.Ui.Hud;
+using Mafi.Unity.UiToolkit;
 
 namespace AutoForestryDesignations;
 
@@ -112,6 +116,20 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
     /// <summary>Default collapsed state for the Forestry information inspector panel.</summary>
     public static bool ForestryInformationPanelCollapsed { get; private set; } = false;
     public static void SetForestryInformationPanelCollapsed(bool value) => ForestryInformationPanelCollapsed = value;
+
+    /// <summary>Resets all global defaults to their built-in values.</summary>
+    public static void ResetGlobalDefaults()
+    {
+        SetOnlyFertileTiles(true);
+        SetAvoidTilesWithTrees(false);
+        SetAvoidMiningDesignations(true);
+        SetOnlyReachableTiles(true);
+        SetMaxTiles(0);
+        SetMarkHarvestReadyForHarvest(false);
+        SetForestryDesignationsPanelCollapsed(false);
+        SetForestryInformationPanelCollapsed(false);
+        AutoForestryDesignation.SetBatchSize(30);
+    }
 
     public void Initialize(DependencyResolver resolver, bool gameWasLoaded)
     {
@@ -200,6 +218,7 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
             AutoForestryDesignation.s_log.Info($"AutoForestryDesignations v{ModVersion} | dll: {ModLogger.GetDllBuildTimestamp(typeof(AutoForestryDesignationsMod).Assembly)}");
             AutoForestryDesignation.s_log.Info("Localization: late apply at renderer init state.");
             ApplyLocalizedTextIfPresent();
+            RegisterSettingsTabs(resolver);
             try
             {
                 AutoForestryDesignation.SetTreesRenderer(resolver.Resolve<TreesRenderer>());
@@ -219,6 +238,24 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
                 AutoForestryDesignation.s_log.Warning($"TreeHarvestingHighlightManager not available at renderer init: {ex.Message}");
             }
         });
+    }
+
+    private static void RegisterSettingsTabs(DependencyResolver resolver)
+    {
+        try
+        {
+            ModSettings.EnsureInitialized(
+                resolver.Resolve<HudController>(),
+                resolver.Resolve<UiRoot>(),
+                resolver.Resolve<IRootEscapeManager>());
+
+            ModSettings.RegisterTab(AfdModSettingsTab.BuildDefaultsTab());
+            ModSettings.RegisterTab(AfdModSettingsTab.BuildGameSettingsTab());
+        }
+        catch (Exception ex)
+        {
+            AutoForestryDesignation.s_log.Exception(ex, "AFD settings tab registration");
+        }
     }
 
     private void ApplyLocalizedTextIfPresent()

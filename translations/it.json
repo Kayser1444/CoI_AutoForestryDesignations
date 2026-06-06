@@ -140,6 +140,102 @@
     "Passa sopra per evidenziare gli alberi in questa fase.\nFai clic per marcarli o deselezionarli per la raccolta."
   ],
   [
+    "AFD_SettingsModName",
+    "Designazioni forestali automatiche"
+  ],
+  [
+    "AFD_SettingsTabDefaults",
+    "Predefiniti"
+  ],
+  [
+    "AFD_SettingsTabGameSettings",
+    "Impostazioni di gioco"
+  ],
+  [
+    "AFD_SettingsHeadingForestryTowerDefaults",
+    "Predefiniti torre forestale"
+  ],
+  [
+    "AFD_SettingsHeadingDesignationDefaults",
+    "Predefiniti designazioni"
+  ],
+  [
+    "AFD_SettingsHeadingScanPerformance",
+    "Prestazioni scansione"
+  ],
+  [
+    "AFD_SettingsHeadingPanelDefaults",
+    "Predefiniti pannelli"
+  ],
+  [
+    "AFD_SettingsAvoidTilesWithTreesLabel",
+    "Evita caselle con alberi"
+  ],
+  [
+    "AFD_SettingsAvoidTilesWithTreesTip",
+    "Predefinito: salta le caselle che contengono già un albero durante la creazione delle designazioni."
+  ],
+  [
+    "AFD_SettingsMarkHarvestReadyLabel",
+    "Marca alberi pronti al raccolto"
+  ],
+  [
+    "AFD_SettingsMarkHarvestReadyTip",
+    "Predefinito: dopo aver creato le designazioni, marca automaticamente per il raccolto gli alberi che raggiungono la soglia della torre."
+  ],
+  [
+    "AFD_SettingsBatchSizeLabel",
+    "Dimensione batch"
+  ],
+  [
+    "AFD_SettingsBatchSizeTip",
+    "Numero di designazioni piazzate per frame. Più basso = maggiore reattività; più alto = scansioni più rapide. Limitato a 1-200."
+  ],
+  [
+    "AFD_SettingsForestryPanelCollapsedLabel",
+    "Pannello forestale compresso"
+  ],
+  [
+    "AFD_SettingsForestryPanelCollapsedTip",
+    "Stato compresso predefinito del pannello delle designazioni forestali quando si apre l'ispettore di una torre."
+  ],
+  [
+    "AFD_SettingsInfoPanelCollapsedLabel",
+    "Pannello info compresso"
+  ],
+  [
+    "AFD_SettingsInfoPanelCollapsedTip",
+    "Stato compresso predefinito del pannello informazioni forestali quando si apre l'ispettore di una torre."
+  ],
+  [
+    "AFD_SettingsSaveAsGlobal",
+    "Salva come config"
+  ],
+  [
+    "AFD_SettingsSaveAsGlobalTooltip",
+    "Salva queste impostazioni in AFDsettings.json. Verranno usate come predefiniti per tutte le nuove partite."
+  ],
+  [
+    "AFD_SettingsSavedToFile",
+    "Salvato in AFDsettings.json."
+  ],
+  [
+    "AFD_SettingsSaveFailed",
+    "Salvataggio non riuscito - controlla il log"
+  ],
+  [
+    "AFD_SettingsRestoreDefaults",
+    "Ripristina predefiniti"
+  ],
+  [
+    "AFD_SettingsRestoreDefaultsTooltip",
+    "Ripristina tutti i predefiniti di designazioni e pannelli ai valori integrati. Non salva su file."
+  ],
+  [
+    "AFD_SettingsRestoredDefaults",
+    "Predefiniti ripristinati"
+  ],
+  [
     "AFD_NewlyPlantedTip",
     "Appena piantato / maturazione minima"
   ],
