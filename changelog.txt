@@ -1,4 +1,5 @@
-v0.1.7a | 2026-06-06 [unreleased]
+v0.1.7b | 2026-06-08 [unreleased]
+* Fixed: Optimized tree designation checks (using `HashSet` lookup instead of linear nested loops) to eliminate tower inspector UI lag
 
 v0.1.6 | 2026-06-06
 * Added AutoHelpers shared **Mod Settings** tabs for AFD defaults, game settings, scan performance, and panel defaults, with localized labels and tooltips

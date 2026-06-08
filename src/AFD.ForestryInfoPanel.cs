@@ -84,9 +84,11 @@ namespace AutoForestryDesignations
                 var display = s_treeCountDisplay;
                 var treesManager = AutoForestryDesignation.GetTreesManager();
                 if (display == null || treesManager == null) yield break;
+
+                var managedTiles = GetManagedDesignationTiles(tower);
                 int count = 0;
                 foreach (TreeId treeId in tower.Trees)
-                    if (IsTreeInManagedDesignation(tower, treeId) && treesManager.Trees.ContainsKey(treeId))
+                    if (managedTiles.Contains(treeId.Position) && treesManager.Trees.ContainsKey(treeId))
                         count++;
                 display.SetValue(new LocStrFormatted(count.ToString()));
             }
@@ -233,9 +235,11 @@ namespace AutoForestryDesignations
             float ageYearsSum = 0f;
             float maxAgeYearsSum = 0f;
 
+            var managedTiles = GetManagedDesignationTiles(tower);
+
             foreach (TreeId treeId in tower.Trees)
             {
-                if (!IsTreeInManagedDesignation(tower, treeId))
+                if (!managedTiles.Contains(treeId.Position))
                     continue;
 
                 if (!treesManager.Trees.TryGetValue(treeId, out TreeData treeData))
@@ -355,9 +359,11 @@ namespace AutoForestryDesignations
 
             int currentSpacingSum = 0;
             int currentTreeCount = 0;
+
+            var managedTiles = GetManagedDesignationTiles(tower);
             foreach (TreeId treeId in tower.Trees)
             {
-                if (!IsTreeInManagedDesignation(tower, treeId))
+                if (!managedTiles.Contains(treeId.Position))
                     continue;
 
                 if (!treesManager.Trees.TryGetValue(treeId, out TreeData treeData))
@@ -447,9 +453,11 @@ namespace AutoForestryDesignations
             var harvestPercent = Percent.FromFloat(harvestGrowth01);
             float sum = 0f;
             int count = 0;
+
+            var managedTiles = GetManagedDesignationTiles(tower);
             foreach (TreeId treeId in tower.Trees)
             {
-                if (!IsTreeInManagedDesignation(tower, treeId))
+                if (!managedTiles.Contains(treeId.Position))
                     continue;
 
                 if (!treesManager.Trees.TryGetValue(treeId, out TreeData treeData))
@@ -688,14 +696,24 @@ namespace AutoForestryDesignations
             return section;
         }
 
-        private static bool IsTreeInManagedDesignation(ForestryTower tower, TreeId treeId)
+        private static HashSet<Tile2i> GetManagedDesignationTiles(ForestryTower tower)
         {
+            var set = new HashSet<Tile2i>();
             foreach (TerrainDesignation designation in tower.ManagedDesignations)
             {
-                if (designation.Area.ContainsTile(treeId.Position))
-                    return true;
+                if (designation.IsForestry)
+                {
+                    Tile2i origin = designation.OriginTileCoord;
+                    for (int y = 0; y < TerrainDesignation.SIZE_TILES; y++)
+                    {
+                        for (int x = 0; x < TerrainDesignation.SIZE_TILES; x++)
+                        {
+                            set.Add(origin + new RelTile2i(x, y));
+                        }
+                    }
+                }
             }
-            return false;
+            return set;
         }
 
         private static int GetGrowthBucketIndex(float growth01)
