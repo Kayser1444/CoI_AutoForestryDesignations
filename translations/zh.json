@@ -229,7 +229,7 @@
   ],
   [
     "AFD_SettingsRestoreDefaultsTooltip",
-    "将所有规划和面板默认值重置为内置值。不会保存到文件。"
+    "将所有规划和面板默认值重置为内置值。（不会自动保存到文件。）"
   ],
   [
     "AFD_SettingsRestoredDefaults",

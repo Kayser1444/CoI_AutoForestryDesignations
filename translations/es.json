@@ -229,7 +229,7 @@
   ],
   [
     "AFD_SettingsRestoreDefaultsTooltip",
-    "Restablece todos los valores predeterminados de designación y panel a sus valores integrados. No guarda en el archivo."
+    "Restablece todos los valores predeterminados de designación y panel a sus valores integrados. (No los guarda automáticamente como config.)"
   ],
   [
     "AFD_SettingsRestoredDefaults",

@@ -229,7 +229,7 @@
   ],
   [
     "AFD_SettingsRestoreDefaultsTooltip",
-    "Reset all designation and panel defaults to their built-in values. Does not save to file."
+    "Reset all designation and panel defaults to their built-in values. (Does not automatically save them as config.)"
   ],
   [
     "AFD_SettingsRestoredDefaults",

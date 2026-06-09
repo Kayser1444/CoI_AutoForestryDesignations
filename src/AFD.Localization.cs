@@ -300,7 +300,7 @@ namespace AutoForestryDesignations
 
         public static LocStr SettingsRestoreDefaultsTooltip = Loc.Str(
             "AFD_SettingsRestoreDefaultsTooltip",
-            "Reset all designation and panel defaults to their built-in values. Does not save to file.",
+            "Reset all designation and panel defaults to their built-in values. (Does not automatically save them as config.)",
             "Tooltip for the Reset to defaults button in the AFD settings tab.");
 
         public static LocStr SettingsRestoredDefaults = Loc.Str(

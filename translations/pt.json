@@ -229,7 +229,7 @@
   ],
   [
     "AFD_SettingsRestoreDefaultsTooltip",
-    "Redefine todos os padrões de designação e painel para os valores integrados. Não salva no arquivo."
+    "Redefine todos os padrões de designação e painel para os valores integrados. (Não as salva automaticamente como config.)"
   ],
   [
     "AFD_SettingsRestoredDefaults",

@@ -229,7 +229,7 @@
   ],
   [
     "AFD_SettingsRestoreDefaultsTooltip",
-    "Återställ alla markerings- och panelstandarder till sina inbyggda värden. Sparas inte till fil."
+    "Återställ alla markerings- och panelstandarder till sina inbyggda värden. (Sparar dem inte automatiskt som konfig.)"
   ],
   [
     "AFD_SettingsRestoredDefaults",

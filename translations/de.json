@@ -229,7 +229,7 @@
   ],
   [
     "AFD_SettingsRestoreDefaultsTooltip",
-    "Setzt alle Markierungs- und Panel-Standardwerte auf die eingebauten Werte zurück. Speichert nicht in die Datei."
+    "Setzt alle Markierungs- und Panel-Standardwerte auf die eingebauten Werte zurück. (Speichert sie nicht automatisch als Konfig.)"
   ],
   [
     "AFD_SettingsRestoredDefaults",

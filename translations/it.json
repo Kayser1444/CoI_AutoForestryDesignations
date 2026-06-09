@@ -229,7 +229,7 @@
   ],
   [
     "AFD_SettingsRestoreDefaultsTooltip",
-    "Ripristina tutti i predefiniti di designazioni e pannelli ai valori integrati. Non salva su file."
+    "Ripristina tutti i predefiniti di designazioni e pannelli ai valori integrati. (Non le salva automaticamente come config.)"
   ],
   [
     "AFD_SettingsRestoredDefaults",

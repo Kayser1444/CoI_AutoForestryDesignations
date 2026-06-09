@@ -1,4 +1,4 @@
-v0.1.7 | 2026-06-08 [packaged]
+v0.1.7 | 2026-06-08 [released]
 * Fixed: Optimized tree designation checks (using `HashSet` lookup instead of linear nested loops) to eliminate tower inspector UI lag
 
 v0.1.6 | 2026-06-06
