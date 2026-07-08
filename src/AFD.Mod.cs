@@ -230,6 +230,17 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
             }
             try
             {
+                var audioDb = resolver.Resolve<Mafi.Unity.Audio.AudioDb>();
+                var clickSound = audioDb.GetSharedAudioUi("Assets/Unity/UserInterface/Audio/ButtonClick.prefab");
+                AutoForestryDesignation.SetClickSound(clickSound);
+                AutoForestryDesignation.s_log.Info("ButtonClick audio source resolved successfully.");
+            }
+            catch (Exception ex)
+            {
+                AutoForestryDesignation.s_log.Warning($"ButtonClick audio source not available at renderer init: {ex.Message}");
+            }
+            try
+            {
                 AutoForestryDesignation.SetHarvestHighlightManager(resolver.Resolve<TreeHarvestingHighlightManager>());
                 AutoForestryDesignation.s_log.Info("TreeHarvestingHighlightManager resolved successfully.");
             }

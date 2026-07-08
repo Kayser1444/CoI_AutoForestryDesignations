@@ -57,6 +57,10 @@ is included by mistake, I intend to correct it promptly upon discovery or notice
       <HintPath>$(CaptainIndustryManagedPath)\UnityEngine.CoreModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="UnityEngine.AudioModule">
+      <HintPath>$(CaptainIndustryManagedPath)\UnityEngine.AudioModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <Reference Include="UnityEngine.UIElementsModule">
       <HintPath>$(CaptainIndustryManagedPath)\UnityEngine.UIElementsModule.dll</HintPath>
       <Private>false</Private>

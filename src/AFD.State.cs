@@ -237,6 +237,16 @@ namespace AutoForestryDesignations
         internal static void SetTreesRenderer(TreesRenderer? renderer) => s_treesRenderer = renderer;
         internal static TreesRenderer? GetTreesRenderer() => s_treesRenderer;
 
+        private static AudioSource? s_clickSound;
+        internal static void SetClickSound(AudioSource? clickSound) => s_clickSound = clickSound;
+        internal static void PlayClickSound()
+        {
+            if (s_clickSound != null)
+            {
+                try { s_clickSound.Play(); } catch { }
+            }
+        }
+
         internal static TreesManager? GetTreesManager() => s_desigManager?.TreesManager;
 
         private static IActivator? s_harvestOverlayActivator;

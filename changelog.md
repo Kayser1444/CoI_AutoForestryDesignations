@@ -1,3 +1,6 @@
+v0.1.8 [unreleased]
+* Added button click sound when interactive growth-stage segments are clicked in the Forestry information panel
+
 v0.1.7 | 2026-06-08 [released]
 * Fixed: Optimized tree designation checks (using `HashSet` lookup instead of linear nested loops) to eliminate tower inspector UI lag
 

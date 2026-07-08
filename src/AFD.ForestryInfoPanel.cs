@@ -653,6 +653,7 @@ namespace AutoForestryDesignations
                 segment.OnClick((ClickEvent evt) =>
                 {
                     evt.StopPropagation();
+                    AutoForestryDesignation.PlayClickSound();
                     var treesManager = AutoForestryDesignation.GetTreesManager();
                     if (treesManager == null || capturedBucketTrees.Length == 0) return;
                     bool allSelected = true;
