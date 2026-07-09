@@ -1,4 +1,4 @@
-v0.1.8 [unreleased]
+v0.1.8 [packaged]
 * Added vehicle construction enqueueing for forestry tower assignments, including closest-depot by driving distance ordering, gold border highlighting on enqueued cards, and pre-assignment tooltips in the vehicle depot UI
 * Added confirmation dialog when enqueuing vehicles with camera panning to the target depot and bold entity highlights
 * Added click sound on confirmation popup buttons and support for canceling enqueued orders at the closest depot via the minus button when active vehicle allocation is zero
