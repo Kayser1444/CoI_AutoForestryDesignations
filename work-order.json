@@ -1,0 +1,59 @@
+{
+  "mod": "AutoForestryDesignations",
+  "source_file": "src\\AFD.Localization.cs",
+  "total_keys": 74,
+  "skip_keys": [
+    "dtk.mod.name",
+    "dtk.rate_limit.items_per_min",
+    "dtk.settings.language.hybrid",
+    "dtk.settings.language.local",
+    "dtk.settings.number_format.auto"
+  ],
+  "keys": {
+    "AFD_BoolNo": {
+      "en": "No",
+      "context": "Displayed in a toggle control when the option is disabled.",
+      "es": "No",
+      "de": "NEIN",
+      "it": "NO",
+      "pt": "Não",
+      "ru": "Нет",
+      "sv": "Inga",
+      "zh": "不"
+    },
+    "AFD_BucketRangeFmt": {
+      "en": "{0} ({1}-{2}, {3:P0}-{4:P0})",
+      "context": "Label template for non-full growth buckets. {0}=bucket name, {1}=start age, {2}=end age, {3}=start maturity percent, {4}=end maturity percent.",
+      "de": "{0} ({1}-{2}, {3:P0}-{4:P0})",
+      "es": "{0} ({1}-{2}, {3:P0}-{4:P0})",
+      "it": "{0} ({1}-{2}, {3:P0}-{4:P0})",
+      "pt": "{0} ({1}-{2}, {3:P0}-{4:P0})",
+      "ru": "{0} ({1}-{2}, {3:P0}-{4:P0})",
+      "sv": "{0} ({1}-{2}, {3:P0}-{4:P0})",
+      "zh": "{0}（{1}-{2}、{3:P0}-{4:P0}）"
+    },
+    "AFD_EnqueueConfirmPromptSingular": {
+      "en": "Enqueue a {0} at {1} and pre-assign it to {2}?",
+      "context": "Prompt shown when enqueuing 1 vehicle. {0} = vehicle description, {1} = depot description, {2} = tower description.",
+      "de": "Ein {0} bei {1} in die Warteschlange stellen und es {2} vorab zuweisen?",
+      "es": "¿Poner en cola un {0} en {1} y asignarlo previamente a {2}?",
+      "it": "Accodare un {0} a {1} e preassegnarlo a {2}?",
+      "pt": "Enfileirar um {0} em {1} e pré-atribuí-lo a {2}?",
+      "ru": "Поставить {0} в очередь {1} и предварительно назначить его {2}?",
+      "sv": "Ställ en {0} i kö vid {1} och förtilldela den till {2}?",
+      "zh": "将 {0} 在 {1} 处排队并将其预分配给 {2}？"
+    },
+    "AFD_EnqueueConfirmPromptPlural": {
+      "en": "Enqueue {0} {1}s at {2} and pre-assign them to {3}?",
+      "context": "Prompt shown when enqueuing multiple vehicles. {0} = count, {1} = vehicle description, {2} = depot description, {3} = tower description.",
+      "de": "{0} {1}s bei {2} in die Warteschlange stellen und sie {3} vorab zuweisen?",
+      "es": "¿Poner en cola {0} {1} en {2} y asignarlos previamente a {3}?",
+      "it": "Accodare {0} {1} a {2} e preassegnarli a {3}?",
+      "pt": "Enfileirar {0} {1}s em {2} e pré-atribuí-los a {3}?",
+      "ru": "Поставить в очередь {0} {1} в {2} и предварительно назначить их {3}?",
+      "sv": "Ställa {0} {1} i kö vid {2} och förtilldela dem till {3}?",
+      "zh": "将 {0} 个 {1} 在 {2} 处排队并将它们预先分配给 {3}？"
+    }
+  },
+  "keys_needing_translation": 4
+}
