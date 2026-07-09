@@ -273,7 +273,7 @@
   ],
   [
     "AFD_OrderConstructionTooltip",
-    "Stellen Sie ein {0} bei {1} in die Warteschlange und weisen Sie es {2} vorab zu."
+    "Stellen Sie ein {0} für {2} bei {1} in die Warteschlange"
   ],
   [
     "AFD_PreAssignedTooltipFmt",
@@ -281,11 +281,11 @@
   ],
   [
     "AFD_EnqueueConfirmPromptSingular",
-    "Ein {0} bei {1} in die Warteschlange stellen und es {2} vorab zuweisen?"
+    "Ein {0} für {2} bei {1} in die Warteschlange stellen?"
   ],
   [
     "AFD_EnqueueConfirmPromptPlural",
-    "{0} {1}s bei {2} in die Warteschlange stellen und sie {3} vorab zuweisen?"
+    "{0} {1}s für {3} bei {2} in die Warteschlange stellen?"
   ],
   [
     "AFD_EnqueueConfirmBtnText",

@@ -273,7 +273,7 @@
   ],
   [
     "AFD_OrderConstructionTooltip",
-    "Ställ en {0} i kö vid {1} och förtilldela den till {2}"
+    "Ställ en {0} i kö för {2} vid {1}"
   ],
   [
     "AFD_PreAssignedTooltipFmt",
@@ -281,15 +281,15 @@
   ],
   [
     "AFD_EnqueueConfirmPromptSingular",
-    "Ställ en {0} i kö vid {1} och förtilldela den till {2}?"
+    "Ställ en {0} i kö för {2} vid {1}?"
   ],
   [
     "AFD_EnqueueConfirmPromptPlural",
-    "Ställa {0} {1} i kö vid {2} och förtilldela dem till {3}?"
+    "Ställ {0} {1} i kö för {3} vid {2}?"
   ],
   [
     "AFD_EnqueueConfirmBtnText",
-    "Kö"
+    "Köa"
   ],
   [
     "AFD_ZoomToDepotTooltip",

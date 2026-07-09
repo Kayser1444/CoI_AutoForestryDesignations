@@ -273,7 +273,7 @@
   ],
   [
     "AFD_OrderConstructionTooltip",
-    "Enqueue a {0} at {1} and pre-assign it to {2}"
+    "Enqueue a {0} for {2} at {1}"
   ],
   [
     "AFD_PreAssignedTooltipFmt",
@@ -281,11 +281,11 @@
   ],
   [
     "AFD_EnqueueConfirmPromptSingular",
-    "Enqueue a {0} at {1} and pre-assign it to {2}?"
+    "Enqueue a {0} for {2} at {1}?"
   ],
   [
     "AFD_EnqueueConfirmPromptPlural",
-    "Enqueue {0} {1}s at {2} and pre-assign them to {3}?"
+    "Enqueue {0} {1}s for {3} at {2}?"
   ],
   [
     "AFD_EnqueueConfirmBtnText",
