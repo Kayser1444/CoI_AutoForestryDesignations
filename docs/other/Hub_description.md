@@ -8,7 +8,7 @@ Use **Clear Designations** to remove all forestry designations in the tower's ar
 
 The mod also adds a live **Forestry Information** panel to the tower inspector, giving you a quick read on tree count, maturity, sustainable yield, and growth distribution. The Growth distribution chart is interactive and allows highlighting and toggling harvesting designations for each bracket.
 
-Order vehicle construction directly from the forestry tower's vehicle assignment UI, automatically routed to the closest eligible depot by driving distance.
+Order vehicle construction directly from the forestry tower's vehicle assignment UI, automatically routed to the closest eligible depot by driving distance. Vehicles ordered this way are pre-assigned to the tower and will automatically assign themselves once construction completes.
 
 All tower settings are persisted in the vanilla save file. The mod can be added and removed from games at any time. 100% open source.
 
@@ -30,7 +30,7 @@ All tower settings are persisted in the vanilla save file. The mod can be added 
 
 📊 **Forestry Information panel** - inspect tree count, estimated capacity, maturity, sustainable yield, and an interactive growth distribution chart.
 
-🏗️ **Vehicle Enqueueing** - order vehicle construction directly from the forestry tower's assignment UI, automatically routed to the closest depot by driving distance.
+🏗️ **Vehicle Enqueueing** - order vehicle construction directly from the forestry tower's assignment UI, automatically routed to the closest depot by driving distance. Ordered vehicles are pre-assigned and will automatically join the tower once completed.
 
 🔧 **Configurable defaults** - edit `AFDsettings.json` for startup defaults; most options are also adjustable per tower in the inspector.
 
