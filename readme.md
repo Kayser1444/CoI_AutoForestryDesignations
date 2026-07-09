@@ -17,6 +17,7 @@ The mod also adds a live **Forestry information** panel to the tower inspector, 
 - 📍 **Closest tiles first** - fill reachable candidates by driving distance from the selected tower.
 - 🔢 **Maximum number of designations** - cap the number of designations placed per run, with Shift/Ctrl step controls.
 - 📊 **Forestry information panel** - inspect tree count, estimated capacity, maturity, sustainable yield, and growth buckets.
+- 🏗️ **Vehicle enqueueing** - order vehicle construction directly from the forestry tower's assignment UI, automatically routed to the closest depot by driving distance.
 - 🔧 **Configurable defaults** - edit `AFDsettings.json` for startup defaults; most options are also adjustable per tower in the inspector.
 
 ## 📋 Notes
