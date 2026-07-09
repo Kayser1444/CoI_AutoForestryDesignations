@@ -70,7 +70,6 @@ namespace AutoForestryDesignations
             var content = BuildSettingsColumn();
 
             AddHarvestSection(content, refreshers);
-            AddScanPerformanceSection(content, refreshers);
 
             content.Add(BuildFooter(refreshers));
 
@@ -146,18 +145,6 @@ namespace AutoForestryDesignations
                 refreshers));
         }
 
-        private static void AddScanPerformanceSection(Column content, List<Action> refreshers)
-        {
-            content.Add(BuildSectionHeading(AfdLocalization.SettingsHeadingScanPerformance.AsFormatted));
-
-            content.Add(BuildIntStepRow(
-                AfdLocalization.SettingsBatchSizeLabel.AsFormatted,
-                AfdLocalization.SettingsBatchSizeTip.AsFormatted,
-                () => AutoForestryDesignation.BatchSize,
-                value => AutoForestryDesignation.SetBatchSize(value),
-                value => value.ToString(System.Globalization.CultureInfo.InvariantCulture),
-                refreshers));
-        }
 
         private static void AddPanelDefaultsSection(Column content, List<Action> refreshers)
         {

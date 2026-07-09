@@ -43,8 +43,8 @@ namespace AutoForestryDesignations
         private static WorldMapManager? s_worldMapManager;
         private static IEntitiesManager? s_entitiesManager;
         private static ISimLoopEvents? s_simLoopEvents;
-        private static IVehiclePathFindingManager? s_vehiclePathFindingManager;
-        private static VehiclePathFindingParams? s_standardVehiclePathFindingParams;
+        internal static IVehiclePathFindingManager? s_vehiclePathFindingManager;
+        internal static VehiclePathFindingParams? s_standardVehiclePathFindingParams;
         private static string? s_modRootDirectoryPath;
 
         private const int BATCH_SIZE = 30;

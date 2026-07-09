@@ -343,7 +343,7 @@ namespace AutoForestryDesignations
                 && placedOrigins.Contains(origin + new RelTile2i(0, -4));
         }
 
-        private static bool TryFindNearestPathableTile(
+        internal static bool TryFindNearestPathableTile(
             IPathabilityProvider pathabilityProvider,
             VehiclePathFindingParams pfParams,
             Tile2i origin,
@@ -375,7 +375,7 @@ namespace AutoForestryDesignations
             return false;
         }
 
-        private static bool TryUsePathableTile(
+        internal static bool TryUsePathableTile(
             IPathabilityProvider pathabilityProvider,
             VehiclePathFindingParams pfParams,
             Tile2i tile,

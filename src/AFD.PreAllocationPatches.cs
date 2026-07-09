@@ -17,6 +17,7 @@ using Mafi.Core.Vehicles;
 using Mafi.Core.Vehicles.Commands;
 using Mafi.Collections;
 using Mafi.Core.Input;
+using Mafi.Core.PathFinding;
 using Mafi.Core.Syncers;
 using Mafi.Localization;
 using Mafi.Unity;
@@ -158,21 +159,7 @@ namespace AutoForestryDesignations
                     if (evt.button == 0 && evt.shiftKey && evt.altKey)
                     {
                         var entity = entityProvider();
-                        var depots = context.EntitiesManager.GetAllEntitiesOfType<VehicleDepotBase>();
-                        VehicleDepotBase? closestDepot = null;
-                        float minDistanceSqr = float.MaxValue;
-                        foreach (var depot in depots)
-                        {
-                            if (depot.CanWork && depot.Prototype.BuildableEntities.Contains(proto))
-                            {
-                                float distSqr = entity.Position2f.DistanceSqrTo(depot.Position2f).ToFloat();
-                                if (distSqr < minDistanceSqr)
-                                {
-                                    minDistanceSqr = distSqr;
-                                    closestDepot = depot;
-                                }
-                            }
-                        }
+                        var closestDepot = FindClosestDepot(context, proto, entity);
 
                         if (closestDepot != null)
                         {
@@ -257,22 +244,8 @@ namespace AutoForestryDesignations
 
                             if (hasDepot)
                             {
-                                var depots = context.EntitiesManager.GetAllEntitiesOfType<VehicleDepotBase>();
-                                VehicleDepotBase? closestDepot = null;
-                                float minDistanceSqr = float.MaxValue;
                                 var entity = entityProvider();
-                                foreach (var depot in depots)
-                                {
-                                    if (depot.CanWork && depot.Prototype.BuildableEntities.Contains(proto))
-                                    {
-                                        float distSqr = entity.Position2f.DistanceSqrTo(depot.Position2f).ToFloat();
-                                        if (distSqr < minDistanceSqr)
-                                        {
-                                            minDistanceSqr = distSqr;
-                                            closestDepot = depot;
-                                        }
-                                    }
-                                }
+                                var closestDepot = FindClosestDepot(context, proto, entity);
 
                                 string vehicleDesc = $"<b>{proto.Strings.Name}</b>";
                                 string depotDesc = closestDepot != null ? $"<b>{PendingVehicleAllocations.GetEntityDescription(closestDepot)}</b>" : "";
@@ -306,23 +279,107 @@ namespace AutoForestryDesignations
             return false;
         }
 
-        private static void ShowEnqueueConfirmation(UiContext context, DrivingEntityProto proto, IEntityAssignedWithVehicles tower, int count, Button plusBtn)
+        private static VehicleDepotBase? FindClosestDepot(UiContext context, DrivingEntityProto proto, IEntityAssignedWithVehicles tower)
         {
             var depots = context.EntitiesManager.GetAllEntitiesOfType<VehicleDepotBase>();
-            VehicleDepotBase? closestDepot = null;
-            float minDistanceSqr = float.MaxValue;
+            var eligibleDepots = new List<VehicleDepotBase>();
             foreach (var depot in depots)
             {
                 if (depot.CanWork && depot.Prototype.BuildableEntities.Contains(proto))
                 {
-                    float distSqr = tower.Position2f.DistanceSqrTo(depot.Position2f).ToFloat();
-                    if (distSqr < minDistanceSqr)
-                    {
-                        minDistanceSqr = distSqr;
-                        closestDepot = depot;
-                    }
+                    eligibleDepots.Add(depot);
                 }
             }
+
+            if (eligibleDepots.Count == 0) return null;
+            if (eligibleDepots.Count == 1) return eligibleDepots[0];
+
+            var pfManager = AutoForestryDesignation.s_vehiclePathFindingManager;
+            var pfParams = AutoForestryDesignation.s_standardVehiclePathFindingParams;
+            if (pfManager != null && pfParams != null)
+            {
+                try
+                {
+                    IPathabilityProvider pathabilityProvider = pfManager.PathabilityProvider;
+                    pathabilityProvider.UpdateChangedTiles();
+
+                    Tile2i origin = tower.Position2f.Tile2i;
+                    if (AutoForestryDesignation.TryFindNearestPathableTile(pathabilityProvider, pfParams, origin, out Tile2i start))
+                    {
+                        var targetTiles = new HashSet<Tile2i>();
+                        var depotByTile = new Dictionary<Tile2i, VehicleDepotBase>();
+                        foreach (var depot in eligibleDepots)
+                        {
+                            Tile2i depotTile = depot.Position2f.Tile2i;
+                            if (AutoForestryDesignation.TryFindNearestPathableTile(pathabilityProvider, pfParams, depotTile, out Tile2i pathableDepotTile))
+                            {
+                                targetTiles.Add(pathableDepotTile);
+                                depotByTile[pathableDepotTile] = depot;
+                            }
+                        }
+
+                        var distances = new Dictionary<Tile2i, int>();
+                        var queue = new Queue<Tile2i>();
+                        distances[start] = 0;
+                        queue.Enqueue(start);
+
+                        var searchDirections = new[]
+                        {
+                            new RelTile2i(1, 0),
+                            new RelTile2i(-1, 0),
+                            new RelTile2i(0, 1),
+                            new RelTile2i(0, -1)
+                        };
+
+                        const int MAX_SEARCH = 250000;
+                        while (queue.Count > 0 && distances.Count < MAX_SEARCH)
+                        {
+                            Tile2i current = queue.Dequeue();
+                            int distance = distances[current];
+
+                            if (targetTiles.Contains(current))
+                            {
+                                return depotByTile[current];
+                            }
+
+                            foreach (RelTile2i direction in searchDirections)
+                            {
+                                Tile2i next = current + direction;
+                                if (distances.ContainsKey(next))
+                                    continue;
+                                if (!pathabilityProvider.IsPathable(next, pfParams.PathabilityQueryMask))
+                                    continue;
+
+                                distances[next] = distance + 1;
+                                queue.Enqueue(next);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("[AFD] Error calculating closest depot by driving distance: " + ex);
+                }
+            }
+
+            // Fallback to straight-line distance
+            VehicleDepotBase? closestDepot = null;
+            float minDistanceSqr = float.MaxValue;
+            foreach (var depot in eligibleDepots)
+            {
+                float distSqr = tower.Position2f.DistanceSqrTo(depot.Position2f).ToFloat();
+                if (distSqr < minDistanceSqr)
+                {
+                    minDistanceSqr = distSqr;
+                    closestDepot = depot;
+                }
+            }
+            return closestDepot;
+        }
+
+        private static void ShowEnqueueConfirmation(UiContext context, DrivingEntityProto proto, IEntityAssignedWithVehicles tower, int count, Button plusBtn)
+        {
+            var closestDepot = FindClosestDepot(context, proto, tower);
 
             if (closestDepot == null)
             {
