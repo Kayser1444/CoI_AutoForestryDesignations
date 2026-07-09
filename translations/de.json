@@ -29,7 +29,7 @@
   ],
   [
     "AFD_BoolNo",
-    "Nein"
+    "NEIN"
   ],
   [
     "AFD_OnlyFertileTilesLabel",
@@ -270,5 +270,29 @@
   [
     "AFD_BucketRangeFmt",
     "{0} ({1}-{2}, {3:P0}-{4:P0})"
+  ],
+  [
+    "AFD_OrderConstructionTooltip",
+    "Stellen Sie ein {0} bei {1} in die Warteschlange und weisen Sie es {2} vorab zu."
+  ],
+  [
+    "AFD_PreAssignedTooltipFmt",
+    "Vorab zugewiesen an {0}"
+  ],
+  [
+    "AFD_EnqueueConfirmPromptSingular",
+    "Ein {0} bei {1} in die Warteschlange stellen und es {2} vorab zuweisen?"
+  ],
+  [
+    "AFD_EnqueueConfirmPromptPlural",
+    "{0} {1}s bei {2} in die Warteschlange stellen und sie {3} vorab zuweisen?"
+  ],
+  [
+    "AFD_EnqueueConfirmBtnText",
+    "In die Warteschlange stellen"
+  ],
+  [
+    "AFD_ZoomToDepotTooltip",
+    "Auf {0} zoomen"
   ]
 ]

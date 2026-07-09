@@ -1,6 +1,10 @@
 {
   "afdTowerSettingsStateJson": {
     "default": "{\"schemaVersion\":1,\"towerSettings\":[]}",
-    "description": "Internal saved state for Auto Forestry Designations tower settings. This rides along in the vanilla save file. Editing may reset per-tower settings."
+    "description": "Internal saved state for Auto Forestry Designations tower settings."
+  },
+  "afdPendingVehicleAllocations": {
+    "default": "{\"schemaVersion\":1,\"queues\":[],\"tickets\":[]}",
+    "description": "Internal saved state for pending AFD vehicle pre-allocation queues."
   }
 }

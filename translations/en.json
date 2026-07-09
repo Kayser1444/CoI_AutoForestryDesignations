@@ -61,7 +61,7 @@
   ],
   [
     "AFD_MaxTilesTip",
-    "Maximum number of designation tiles to place per run. 0 = no limit (∞)."
+    "Maximum number of designation tiles to place per run. 0 = no limit (u221e)."
   ],
   [
     "AFD_NoForestryTowerSelected",
@@ -73,7 +73,7 @@
   ],
   [
     "AFD_PressToScanComposition",
-    "Press ↺ to scan forestry composition."
+    "Press u21ba to scan forestry composition."
   ],
   [
     "AFD_KpiTreesLabel",
@@ -189,7 +189,7 @@
   ],
   [
     "AFD_SettingsBatchSizeTip",
-    "Number of designations placed per frame. Lower = more responsive; higher = faster scans. Clamped 1-200."
+    "Number of designations placed per frame. Lower = more responsive; higher = faster scans. Clamped 1u2013200."
   ],
   [
     "AFD_SettingsForestryPanelCollapsedLabel",
@@ -221,7 +221,7 @@
   ],
   [
     "AFD_SettingsSaveFailed",
-    "Save failed - check the log"
+    "Save failed u2014 check the log"
   ],
   [
     "AFD_SettingsRestoreDefaults",
@@ -270,5 +270,29 @@
   [
     "AFD_BucketRangeFmt",
     "{0} ({1}-{2}, {3:P0}-{4:P0})"
+  ],
+  [
+    "AFD_OrderConstructionTooltip",
+    "Enqueue a {0} at {1} and pre-assign it to {2}"
+  ],
+  [
+    "AFD_PreAssignedTooltipFmt",
+    "Pre-assigned to {0}"
+  ],
+  [
+    "AFD_EnqueueConfirmPromptSingular",
+    "Enqueue a {0} at {1} and pre-assign it to {2}?"
+  ],
+  [
+    "AFD_EnqueueConfirmPromptPlural",
+    "Enqueue {0} {1}s at {2} and pre-assign them to {3}?"
+  ],
+  [
+    "AFD_EnqueueConfirmBtnText",
+    "Enqueue"
+  ],
+  [
+    "AFD_ZoomToDepotTooltip",
+    "Zoom to {0}"
   ]
 ]

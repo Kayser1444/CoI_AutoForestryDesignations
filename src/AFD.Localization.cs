@@ -352,5 +352,35 @@ namespace AutoForestryDesignations
             "AFD_BucketRangeFmt",
             "{0} ({1}-{2}, {3:P0}-{4:P0})",
             "Label template for non-full growth buckets. {0}=bucket name, {1}=start age, {2}=end age, {3}=start maturity percent, {4}=end maturity percent.");
+
+        public static LocStr OrderConstructionTooltip = Loc.Str(
+            "AFD_OrderConstructionTooltip",
+            "Enqueue a {0} at {1} and pre-assign it to {2}",
+            "Tooltip shown on the assign vehicle button. {0} = vehicle description, {1} = depot description, {2} = tower description.");
+
+        public static LocStr PreAssignedTooltipFmt = Loc.Str(
+            "AFD_PreAssignedTooltipFmt",
+            "Pre-assigned to {0}",
+            "Tooltip shown on enqueued vehicles in depot build queue, with the target tower title.");
+
+        public static LocStr EnqueueConfirmPromptSingular = Loc.Str(
+            "AFD_EnqueueConfirmPromptSingular",
+            "Enqueue a {0} at {1} and pre-assign it to {2}?",
+            "Prompt shown when enqueuing 1 vehicle. {0} = vehicle description, {1} = depot description, {2} = tower description.");
+
+        public static LocStr EnqueueConfirmPromptPlural = Loc.Str(
+            "AFD_EnqueueConfirmPromptPlural",
+            "Enqueue {0} {1}s at {2} and pre-assign them to {3}?",
+            "Prompt shown when enqueuing multiple vehicles. {0} = count, {1} = vehicle description, {2} = depot description, {3} = tower description.");
+
+        public static LocStr EnqueueConfirmBtnText = Loc.Str(
+            "AFD_EnqueueConfirmBtnText",
+            "Enqueue",
+            "Text on the confirmation button for enqueuing construction.");
+
+        public static LocStr ZoomToDepotTooltip = Loc.Str(
+            "AFD_ZoomToDepotTooltip",
+            "Zoom to {0}",
+            "Tooltip on the zoom to depot button in the confirmation popup. {0} = depot description.");
     }
 }

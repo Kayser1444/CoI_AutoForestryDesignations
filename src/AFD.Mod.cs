@@ -11,6 +11,7 @@ using System.IO;
 using HarmonyLib;
 using Mafi;
 using Mafi.Collections;
+using Mafi.Core.Buildings.VehicleDepots;
 using Mafi.Core.Entities;
 using Mafi.Core.Game;
 using Mafi.Core.GameLoop;
@@ -43,6 +44,8 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
     private ISimLoopEvents? m_simLoopEvents;
     private ISaveManager? m_saveManager;
     private IModStateJsonStore? m_towerSettingsStateStore;
+    private IModStateJsonStore? m_preAllocationsStateStore;
+    private IEntitiesManager? m_entitiesManager;
 
     public string Name => "Auto Forestry Designations";
 
@@ -69,6 +72,7 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
     {
         m_harmony = new Harmony("com.auto-forestry-designations.mod");
         AutoForestryDesignation.Apply(m_harmony);
+        PreAllocationPatches.Apply(m_harmony);
     }
 
     public void RegisterDependencies(DependencyResolverBuilder depBuilder, ProtosDb protosDb, bool gameWasLoaded)
@@ -154,10 +158,17 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
             IEntitiesManager entitiesManager = resolver.Resolve<IEntitiesManager>();
             AutoForestryDesignationsTicker ticker = new GameObject("AutoForestryDesignationsTicker").AddComponent<AutoForestryDesignationsTicker>();
             UnityEngine.Object.DontDestroyOnLoad(ticker.gameObject);
+            m_entitiesManager = entitiesManager;
+            m_entitiesManager.EntityRemoved.AddNonSaveable(this, onEntityRemoved);
+
             AutoForestryDesignation.SetModRootDirectoryPath(Manifest.RootDirectoryPath);
             AutoForestryDesignation.Initialize(desigManager, protosDb, worldMapManager, ticker, entitiesManager, m_simLoopEvents, vehiclePathFindingManager);
             m_towerSettingsStateStore = ModStateJsonStores.CreateDefault(JsonConfig, AutoForestryDesignation.TowerSettingsConfigKey);
             AutoForestryDesignation.LoadTowerSettingsFromJsonStore(m_towerSettingsStateStore);
+
+            m_preAllocationsStateStore = ModStateJsonStores.CreateDefault(JsonConfig, "afdPendingVehicleAllocations");
+            PendingVehicleAllocations.LoadFromJsonStore(m_preAllocationsStateStore);
+            PendingVehicleAllocations.ReconcileQueues(entitiesManager);
         }
         catch (Exception ex)
         {
@@ -172,6 +183,12 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
             ?? ModStateJsonStores.CreateDefault(JsonConfig, AutoForestryDesignation.TowerSettingsConfigKey);
         m_towerSettingsStateStore = store;
         AutoForestryDesignation.SaveTowerSettingsToJsonStore(store);
+
+        if (m_preAllocationsStateStore != null)
+        {
+            PendingVehicleAllocations.SaveToJsonStore(m_preAllocationsStateStore);
+        }
+
         m_saveLifecycle.BeforeVanillaSave();
     }
 
@@ -184,6 +201,7 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
     {
         unsubscribeWorldEvents();
         m_saveLifecycle.DisposeRuntime();
+        PendingVehicleAllocations.ClearAll();
     }
 
     private void unsubscribeWorldEvents()
@@ -207,6 +225,25 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
             try { m_saveManager.OnSaveDone -= onSaveDone; }
             catch { }
             m_saveManager = null;
+        }
+
+        if (m_entitiesManager != null)
+        {
+            try { m_entitiesManager.EntityRemoved.RemoveNonSaveable(this, onEntityRemoved); }
+            catch { }
+            m_entitiesManager = null;
+        }
+    }
+
+    private void onEntityRemoved(IEntity entity)
+    {
+        if (entity is IEntityAssignedWithVehicles)
+        {
+            PendingVehicleAllocations.OnTowerDestroyed(entity.Id);
+        }
+        else if (entity is VehicleDepotBase)
+        {
+            PendingVehicleAllocations.OnDepotDestroyed(entity.Id);
         }
     }
 

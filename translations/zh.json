@@ -29,7 +29,7 @@
   ],
   [
     "AFD_BoolNo",
-    "否"
+    "不"
   ],
   [
     "AFD_OnlyFertileTilesLabel",
@@ -269,6 +269,30 @@
   ],
   [
     "AFD_BucketRangeFmt",
-    "{0}（{1}-{2}，{3:P0}-{4:P0}）"
+    "{0}（{1}-{2}、{3:P0}-{4:P0}）"
+  ],
+  [
+    "AFD_OrderConstructionTooltip",
+    "将 {0} 在 {1} 处排队并将其预先分配给 {2}"
+  ],
+  [
+    "AFD_PreAssignedTooltipFmt",
+    "预先分配给{0}"
+  ],
+  [
+    "AFD_EnqueueConfirmPromptSingular",
+    "将 {0} 在 {1} 处排队并将其预分配给 {2}？"
+  ],
+  [
+    "AFD_EnqueueConfirmPromptPlural",
+    "将 {0} 个 {1} 在 {2} 处排队并将它们预先分配给 {3}？"
+  ],
+  [
+    "AFD_EnqueueConfirmBtnText",
+    "入队"
+  ],
+  [
+    "AFD_ZoomToDepotTooltip",
+    "缩放至 {0}"
   ]
 ]

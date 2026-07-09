@@ -270,5 +270,29 @@
   [
     "AFD_BucketRangeFmt",
     "{0} ({1}-{2}, {3:P0}-{4:P0})"
+  ],
+  [
+    "AFD_OrderConstructionTooltip",
+    "Ponga en cola un {0} en {1} y asígnelo previamente a {2}"
+  ],
+  [
+    "AFD_PreAssignedTooltipFmt",
+    "Preasignado a {0}"
+  ],
+  [
+    "AFD_EnqueueConfirmPromptSingular",
+    "¿Poner en cola un {0} en {1} y asignarlo previamente a {2}?"
+  ],
+  [
+    "AFD_EnqueueConfirmPromptPlural",
+    "¿Poner en cola {0} {1} en {2} y asignarlos previamente a {3}?"
+  ],
+  [
+    "AFD_EnqueueConfirmBtnText",
+    "poner en cola"
+  ],
+  [
+    "AFD_ZoomToDepotTooltip",
+    "Ampliar a {0}"
   ]
 ]

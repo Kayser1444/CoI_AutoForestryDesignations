@@ -29,7 +29,7 @@
   ],
   [
     "AFD_BoolNo",
-    "No"
+    "NO"
   ],
   [
     "AFD_OnlyFertileTilesLabel",
@@ -270,5 +270,29 @@
   [
     "AFD_BucketRangeFmt",
     "{0} ({1}-{2}, {3:P0}-{4:P0})"
+  ],
+  [
+    "AFD_OrderConstructionTooltip",
+    "Accoda un {0} a {1} e preassegnalo a {2}"
+  ],
+  [
+    "AFD_PreAssignedTooltipFmt",
+    "Preassegnato a {0}"
+  ],
+  [
+    "AFD_EnqueueConfirmPromptSingular",
+    "Accodare un {0} a {1} e preassegnarlo a {2}?"
+  ],
+  [
+    "AFD_EnqueueConfirmPromptPlural",
+    "Accodare {0} {1} a {2} e preassegnarli a {3}?"
+  ],
+  [
+    "AFD_EnqueueConfirmBtnText",
+    "Accodamento"
+  ],
+  [
+    "AFD_ZoomToDepotTooltip",
+    "Zoom su {0}"
   ]
 ]
