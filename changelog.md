@@ -1,3 +1,11 @@
+v0.1.9 [unreleased]
+* Updated Zoom-to depot button icon to MapPin icon
+* Fixed ticket lifecycle and orphan prevention: added `EnqueuedTickCount` timestamp to `Ticket` (`30_000` ms TTL) for automatic expiration of stale tickets, handled failed vehicle enqueue commands cleanly via `OnVehicleAddFailed`, and updated `-` cancellation to cancel pending tickets first before scheduling depot queue removal
+* Fixed queue completion and desync handling: refactored `TryBuildVehicle` prefix/postfix to track exact `BuildQueue.Count` changes instead of checking `ReplaceQueue.Count == 0`, made `TryDequeueCompleted` self-healing by scanning forward on head prototype mismatches, and added proactive `ReconcileQueues` call before save (`beforeSave`)
+* Fixed enqueue confirmation limit check (`ShowEnqueueConfirmation`) to verify `closestDepot.CanWork` instead of hardcoded `<= 9` total queue count
+* Optimized `VehicleDepotInspector_Ctor_Postfix` by replacing recursive list allocations (`GetAllChildrenRecursive`) with a non-allocating `FindQueueItems` helper
+* Added diagnostic log entries (`s_log.Info` and `s_log.Warning`) when pre-allocated vehicle assignments encounter edge cases (`IsDestroyed`, `CanVehicleBeAssigned`, missing towers, or prototype queue mismatches)
+
 v0.1.8 [packaged]
 * Added vehicle construction enqueueing for forestry tower assignments, including closest-depot by driving distance ordering, gold border highlighting on enqueued cards, and pre-assignment tooltips in the vehicle depot UI
 * Added confirmation dialog when enqueuing vehicles with camera panning to the target depot and bold entity highlights

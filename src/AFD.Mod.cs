@@ -186,6 +186,10 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
 
         if (m_preAllocationsStateStore != null)
         {
+            if (m_entitiesManager != null)
+            {
+                PendingVehicleAllocations.ReconcileQueues(m_entitiesManager);
+            }
             PendingVehicleAllocations.SaveToJsonStore(m_preAllocationsStateStore);
         }
 

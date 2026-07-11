@@ -235,29 +235,6 @@ namespace AutoForestryDesignations
                             
                             bool minusEnabled = assignedCount > 0 || queuedCount > 0;
                             minusBtn.Enabled(minusEnabled);
-
-                            var existing = plusBtn.ExistingTooltip.ValueOrNull;
-                            if (existing != null && !(existing is SimpleTooltipPromise))
-                            {
-                                ((IUiComponent)plusBtn).SetTooltip(Option<ITooltipPromise>.None);
-                            }
-
-                            if (hasDepot)
-                            {
-                                var entity = entityProvider();
-                                var closestDepot = FindClosestDepot(context, proto, entity);
-
-                                string vehicleDesc = $"<b>{proto.Strings.Name}</b>";
-                                string depotDesc = closestDepot != null ? $"<b>{PendingVehicleAllocations.GetEntityDescription(closestDepot)}</b>" : "";
-                                string towerDesc = $"<b>{PendingVehicleAllocations.GetEntityDescription(entity)}</b>";
-                                string tooltipText = string.Format(AfdLocalization.OrderConstructionTooltip.TranslatedString, vehicleDesc, depotDesc, towerDesc);
-
-                                plusBtn.Tooltip(new LocStrFormatted(tooltipText));
-                            }
-                            else
-                            {
-                                plusBtn.Tooltip(LocStrFormatted.Empty);
-                            }
                         });
                 }
             }
@@ -426,7 +403,7 @@ namespace AutoForestryDesignations
                 new LocStrFormatted(AfdLocalization.EnqueueConfirmBtnText.TranslatedString),
                 delegate
                 {
-                    if (closestDepot.ReplaceQueue.Count + closestDepot.BuildQueue.Count + count <= 9)
+                    if (closestDepot.CanWork)
                     {
                         context.InputScheduler.ScheduleInputCmd(new AddVehicleToBuildQueueCmd(proto.Id, closestDepot.Id, count));
                         for (int i = 0; i < count; i++)
@@ -447,7 +424,7 @@ namespace AutoForestryDesignations
 
             var zoomBtn = new ButtonIcon(
                 Mafi.Unity.UiToolkit.Library.Button.General,
-                "Assets/Unity/UserInterface/General/Video.svg",
+                "Assets/Unity/UserInterface/Toolbar/MapPin.svg",
                 delegate
                 {
                     context.CameraController.PanTo(closestDepot.Position2f);
@@ -485,21 +462,23 @@ namespace AutoForestryDesignations
 
         private static void CancelEnqueuedVehicles(UiContext context, DrivingEntityProto proto, IEntityAssignedWithVehicles tower, int cancelCount)
         {
-            var enqueuedItems = PendingVehicleAllocations.GetEnqueuedItemsForTowerAndProto(tower.Id, proto.Id);
-            if (enqueuedItems.Count == 0) return;
+            int cancelled = PendingVehicleAllocations.CancelPendingTickets(tower.Id, proto.Id, cancelCount);
 
-            int cancelled = 0;
-            // Iterate from the last item backwards (LIFO cancel, cancelling the most recently added orders first)
-            for (int i = enqueuedItems.Count - 1; i >= 0 && cancelled < cancelCount; i--)
+            if (cancelled < cancelCount)
             {
-                var itemInfo = enqueuedItems[i];
-                if (context.EntitiesManager.TryGetEntity<VehicleDepotBase>(itemInfo.DepotId, out var depot) && !depot.IsDestroyed)
+                var enqueuedItems = PendingVehicleAllocations.GetEnqueuedItemsForTowerAndProto(tower.Id, proto.Id);
+                for (int i = enqueuedItems.Count - 1; i >= 0 && cancelled < cancelCount; i--)
                 {
-                    if (PendingVehicleAllocations.TryGetBuildIndexForItem(depot.Id, itemInfo.Item, out int buildIndex))
+                    var itemInfo = enqueuedItems[i];
+                    if (context.EntitiesManager.TryGetEntity<VehicleDepotBase>(itemInfo.DepotId, out var depot) && !depot.IsDestroyed)
                     {
-                        context.InputScheduler.ScheduleInputCmd(new RemoveVehicleFromBuildQueueCmd(buildIndex, depot));
-                        cancelled++;
-                        AutoForestryDesignation.PlayClickSound();
+                        if (PendingVehicleAllocations.TryGetBuildIndexForItem(depot.Id, itemInfo.Item, out int buildIndex))
+                        {
+                            context.InputScheduler.ScheduleInputCmd(new RemoveVehicleFromBuildQueueCmd(buildIndex, depot));
+                            itemInfo.Item.TowerId = EntityId.Invalid;
+                            cancelled++;
+                            AutoForestryDesignation.PlayClickSound();
+                        }
                     }
                 }
             }
@@ -521,15 +500,16 @@ namespace AutoForestryDesignations
             invalidOpSound?.Play();
         }
 
-        private static List<UiComponent> GetAllChildrenRecursive(UiComponent parent)
+        private static void FindQueueItems(UiComponent parent, List<UiComponent> results)
         {
-            var result = new List<UiComponent>();
             foreach (var child in parent.AllChildren)
             {
-                result.Add(child);
-                result.AddRange(GetAllChildrenRecursive(child));
+                if (child.GetType().Name == "QueueItemUi")
+                {
+                    results.Add(child);
+                }
+                FindQueueItems(child, results);
             }
-            return result;
         }
 
         // Postfix for VehicleDepotInspector constructor to register tooltip updating observer
@@ -563,7 +543,8 @@ namespace AutoForestryDesignations
                         var depot = (VehicleDepotBase)entityProp.GetValue(__instance);
                         if (depot == null) return;
 
-                        var currentItems = GetAllChildrenRecursive(__instance).Where(c => c.GetType().Name == "QueueItemUi").ToList();
+                        var currentItems = new List<UiComponent>();
+                        FindQueueItems(__instance, currentItems);
 
                         for (int i = 0; i < currentItems.Count; i++)
                         {
@@ -623,7 +604,8 @@ namespace AutoForestryDesignations
                         var depot = (VehicleDepotBase)entityProp.GetValue(__instance);
                         if (depot == null) return;
 
-                        var currentItems = GetAllChildrenRecursive(__instance).Where(c => c.GetType().Name == "QueueItemUi").ToList();
+                        var currentItems = new List<UiComponent>();
+                        FindQueueItems(__instance, currentItems);
                         var replaceCount = depot.ReplaceQueue.Count;
                         if (currentItems.Count > replaceCount)
                         {
@@ -650,6 +632,10 @@ namespace AutoForestryDesignations
                 {
                     PendingVehicleAllocations.OnVehicleAddedToQueue(__instance.Id, vehicleProto.Id);
                 }
+                else if (!__result && vehicleProto != null)
+                {
+                    PendingVehicleAllocations.OnVehicleAddFailed(__instance.Id, vehicleProto.Id);
+                }
             }
             catch (Exception ex)
             {
@@ -657,18 +643,18 @@ namespace AutoForestryDesignations
             }
         }
 
-        // Prefix for VehicleDepotBase.TryBuildVehicle to capture if we are building from the build queue (vs replace queue)
-        public static void VehicleDepotBase_TryBuildVehicle_Prefix(VehicleDepotBase __instance, out bool __state)
+        // Prefix for VehicleDepotBase.TryBuildVehicle to capture BuildQueue count before dequeueing
+        public static void VehicleDepotBase_TryBuildVehicle_Prefix(VehicleDepotBase __instance, out int __state)
         {
-            __state = __instance.ReplaceQueue.Count == 0;
+            __state = __instance.BuildQueue.Count;
         }
 
         // Postfix for VehicleDepotBase.TryBuildVehicle to assign the built vehicle to the pre-allocated tower
-        public static void VehicleDepotBase_TryBuildVehicle_Postfix(VehicleDepotBase __instance, bool __result, ref Vehicle vehicle, bool __state)
+        public static void VehicleDepotBase_TryBuildVehicle_Postfix(VehicleDepotBase __instance, bool __result, ref Vehicle vehicle, int __state)
         {
             try
             {
-                if (__result && vehicle != null && __state)
+                if (__result && vehicle != null && __instance.BuildQueue.Count < __state)
                 {
                     if (PendingVehicleAllocations.TryDequeueCompleted(__instance.Id, vehicle.Prototype.Id, out var towerId))
                     {
@@ -678,7 +664,16 @@ namespace AutoForestryDesignations
                             if (!tower.IsDestroyed && tower.CanVehicleBeAssigned(vehicle.Prototype))
                             {
                                 tower.AssignVehicle(vehicle);
+                                AutoForestryDesignation.s_log.Info($"Assigned newly built vehicle {vehicle.Id.Value} ({vehicle.Prototype.Id.Value}) to tower {tower.Id.Value}.");
                             }
+                            else
+                            {
+                                AutoForestryDesignation.s_log.Warning($"Could not assign newly built vehicle {vehicle.Id.Value} ({vehicle.Prototype.Id.Value}) to tower {tower.Id.Value} (IsDestroyed: {tower.IsDestroyed}, CanBeAssigned: {tower.CanVehicleBeAssigned(vehicle.Prototype)}). Vehicle left unassigned.");
+                            }
+                        }
+                        else
+                        {
+                            AutoForestryDesignation.s_log.Warning($"Could not find target tower {towerId.Value} for newly built vehicle {vehicle.Id.Value} ({vehicle.Prototype.Id.Value}). Vehicle left unassigned.");
                         }
                     }
                 }

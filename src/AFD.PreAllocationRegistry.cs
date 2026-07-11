@@ -39,14 +39,18 @@ namespace AutoForestryDesignations
             public readonly EntityId DepotId;
             public readonly EntityId TowerId;
             public readonly DynamicEntityProto.ID ProtoId;
+            public readonly long EnqueuedTickCount;
 
-            public Ticket(EntityId depotId, EntityId towerId, DynamicEntityProto.ID protoId)
+            public Ticket(EntityId depotId, EntityId towerId, DynamicEntityProto.ID protoId, long enqueuedTickCount = 0)
             {
                 DepotId = depotId;
                 TowerId = towerId;
                 ProtoId = protoId;
+                EnqueuedTickCount = enqueuedTickCount != 0 ? enqueuedTickCount : CurrentTimeMs;
             }
         }
+
+        private static long CurrentTimeMs => DateTime.UtcNow.Ticks / 10000;
 
         // 1. Matched build queue items per depot (aligned 1:1 with actual depot build queue)
         private static readonly Dictionary<EntityId, List<BuildQueueItem>> s_depotBuildQueues =
@@ -64,12 +68,101 @@ namespace AutoForestryDesignations
             }
         }
 
+        private static void ExpireStaleTicketsLocked()
+        {
+            long now = CurrentTimeMs;
+            var temp = new Queue<Ticket>();
+            while (s_pendingTickets.Count > 0)
+            {
+                var ticket = s_pendingTickets.Dequeue();
+                if (now - ticket.EnqueuedTickCount <= 30_000)
+                {
+                    temp.Enqueue(ticket);
+                }
+                else
+                {
+                    AutoForestryDesignation.s_log.Info($"Pending allocations: Expired stale pending ticket for proto {ticket.ProtoId.Value} at depot {ticket.DepotId.Value}.");
+                }
+            }
+            while (temp.Count > 0)
+            {
+                s_pendingTickets.Enqueue(temp.Dequeue());
+            }
+        }
+
+        public static void ExpireStaleTickets()
+        {
+            lock (s_lock)
+            {
+                ExpireStaleTicketsLocked();
+            }
+        }
+
         public static void Enqueue(EntityId depotId, EntityId towerId, DynamicEntityProto.ID protoId)
         {
             lock (s_lock)
             {
-                s_pendingTickets.Enqueue(new Ticket(depotId, towerId, protoId));
+                ExpireStaleTicketsLocked();
+                s_pendingTickets.Enqueue(new Ticket(depotId, towerId, protoId, CurrentTimeMs));
             }
+        }
+
+        public static void OnVehicleAddFailed(EntityId depotId, DynamicEntityProto.ID protoId)
+        {
+            lock (s_lock)
+            {
+                Ticket? matchedTicket = null;
+                var temp = new Queue<Ticket>();
+
+                while (s_pendingTickets.Count > 0)
+                {
+                    var ticket = s_pendingTickets.Dequeue();
+                    if (matchedTicket == null && ticket.DepotId == depotId && ticket.ProtoId == protoId)
+                    {
+                        matchedTicket = ticket;
+                    }
+                    else
+                    {
+                        temp.Enqueue(ticket);
+                    }
+                }
+
+                while (temp.Count > 0)
+                {
+                    s_pendingTickets.Enqueue(temp.Dequeue());
+                }
+
+                if (matchedTicket != null)
+                {
+                    AutoForestryDesignation.s_log.Info($"Pending allocations: Discarded ticket for {protoId.Value} at depot {depotId.Value} due to AddVehicleToBuildQueue failure.");
+                }
+            }
+        }
+
+        public static int CancelPendingTickets(EntityId towerId, DynamicEntityProto.ID protoId, int maxToCancel)
+        {
+            int cancelled = 0;
+            lock (s_lock)
+            {
+                var temp = new Queue<Ticket>();
+                while (s_pendingTickets.Count > 0)
+                {
+                    var ticket = s_pendingTickets.Dequeue();
+                    if (cancelled < maxToCancel && ticket.TowerId == towerId && ticket.ProtoId == protoId)
+                    {
+                        cancelled++;
+                    }
+                    else
+                    {
+                        temp.Enqueue(ticket);
+                    }
+                }
+                while (temp.Count > 0)
+                {
+                    s_pendingTickets.Enqueue(temp.Dequeue());
+                }
+            }
+            return cancelled;
         }
 
         public static void OnVehicleAddedToQueue(EntityId depotId, DynamicEntityProto.ID protoId)
@@ -159,7 +252,27 @@ namespace AutoForestryDesignations
                         }
                         else
                         {
-                            AutoForestryDesignation.s_log.Warning($"TryDequeueCompleted: Proto mismatch at queue head for depot {depotId.Value}. Expected: {protoId.Value}, Found: {queueList[0].ProtoId.Value}");
+                            int matchIndex = -1;
+                            for (int i = 1; i < queueList.Count; i++)
+                            {
+                                if (queueList[i].ProtoId == protoId)
+                                {
+                                    matchIndex = i;
+                                    break;
+                                }
+                            }
+
+                            if (matchIndex >= 0)
+                            {
+                                AutoForestryDesignation.s_log.Warning($"TryDequeueCompleted: Proto mismatch at head for depot {depotId.Value}. Expected: {protoId.Value}, Found: {queueList[0].ProtoId.Value}. Recovering by popping {matchIndex + 1} item(s) up to matching index {matchIndex}.");
+                                towerId = queueList[matchIndex].TowerId;
+                                queueList.RemoveRange(0, matchIndex + 1);
+                                return towerId.IsValid;
+                            }
+                            else
+                            {
+                                AutoForestryDesignation.s_log.Warning($"TryDequeueCompleted: Proto mismatch at queue head for depot {depotId.Value}. Expected: {protoId.Value}, Found: {queueList[0].ProtoId.Value}. No match found in registry queue.");
+                            }
                         }
                     }
                 }
@@ -372,7 +485,12 @@ namespace AutoForestryDesignations
                                         TryGetInt(ticketEntry, "towerId", out int towerIdVal) &&
                                         ticketEntry.TryGetValue("protoId", out object rawProto) && rawProto is string protoStr)
                                     {
-                                        s_pendingTickets.Enqueue(new Ticket(new EntityId(depotIdVal), new EntityId(towerIdVal), new DynamicEntityProto.ID(protoStr)));
+                                        long ticksVal = CurrentTimeMs;
+                                        if (ticketEntry.TryGetValue("enqueuedTickCount", out object rawTicks) && rawTicks is long lVal)
+                                        {
+                                            ticksVal = lVal;
+                                        }
+                                        s_pendingTickets.Enqueue(new Ticket(new EntityId(depotIdVal), new EntityId(towerIdVal), new DynamicEntityProto.ID(protoStr), ticksVal));
                                     }
                                 }
                             }
@@ -422,7 +540,8 @@ namespace AutoForestryDesignations
                         firstTicket = false;
                         sb.Append("{\"depotId\":").Append(ticket.DepotId.Value)
                           .Append(",\"towerId\":").Append(ticket.TowerId.Value)
-                          .Append(",\"protoId\":\"").Append(ticket.ProtoId.Value).Append("\"}");
+                          .Append(",\"protoId\":\"").Append(ticket.ProtoId.Value)
+                          .Append("\",\"enqueuedTickCount\":").Append(ticket.EnqueuedTickCount).Append("}");
                     }
                     sb.Append("]}");
                 }
@@ -464,6 +583,7 @@ namespace AutoForestryDesignations
         {
             lock (s_lock)
             {
+                ExpireStaleTicketsLocked();
                 var depotIdsToRemove = new List<EntityId>();
                 foreach (var kvp in s_depotBuildQueues)
                 {

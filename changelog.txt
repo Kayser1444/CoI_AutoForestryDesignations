@@ -1,3 +1,10 @@
+v0.1.9 | Unreleased
+* Updated Zoom-to depot button icon to MapPin icon
+* Fixed: Enqueued vehicle construction orders no longer fail to assign when vehicle depot replace items or prototype mismatches are present
+* Fixed: Enqueue confirmation popup now allows enqueuing when vehicle depot queue count exceeds 9 items
+* Improved UI performance when inspecting vehicle depots
+* Added diagnostic log entries when pre-allocated vehicle assignments or queue synchronizations encounter edge cases
+
 v0.1.8 | 2026-07-09
 * Added vehicle construction enqueueing for forestry tower assignments, including closest-depot by driving distance ordering, gold border highlighting on enqueued cards, and pre-assignment tooltips in the vehicle depot UI
 * Added confirmation dialog when enqueuing vehicles with camera panning to the target depot and bold entity highlights
