@@ -584,6 +584,18 @@ namespace AutoForestryDesignations
             lock (s_lock)
             {
                 ExpireStaleTicketsLocked();
+                foreach (VehicleDepotBase depot in entitiesManager.GetAllEntitiesOfType<VehicleDepotBase>())
+                {
+                    if (depot.IsDestroyed || s_depotBuildQueues.ContainsKey(depot.Id))
+                        continue;
+                    var seededQueue = new List<BuildQueueItem>();
+                    for (int i = 0; i < depot.BuildQueue.Count; i++)
+                        seededQueue.Add(new BuildQueueItem(
+                            new DynamicEntityProto.ID(depot.BuildQueue[i].Id.Value),
+                            EntityId.Invalid));
+                    s_depotBuildQueues[depot.Id] = seededQueue;
+                }
+
                 var depotIdsToRemove = new List<EntityId>();
                 foreach (var kvp in s_depotBuildQueues)
                 {

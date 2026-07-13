@@ -1,10 +1,16 @@
 v0.1.9 [unreleased]
-* Updated Zoom-to depot button icon to MapPin icon
-* Fixed ticket lifecycle and orphan prevention: added `EnqueuedTickCount` timestamp to `Ticket` (`30_000` ms TTL) for automatic expiration of stale tickets, handled failed vehicle enqueue commands cleanly via `OnVehicleAddFailed`, and updated `-` cancellation to cancel pending tickets first before scheduling depot queue removal
-* Fixed queue completion and desync handling: refactored `TryBuildVehicle` prefix/postfix to track exact `BuildQueue.Count` changes instead of checking `ReplaceQueue.Count == 0`, made `TryDequeueCompleted` self-healing by scanning forward on head prototype mismatches, and added proactive `ReconcileQueues` call before save (`beforeSave`)
-* Fixed enqueue confirmation limit check (`ShowEnqueueConfirmation`) to verify `closestDepot.CanWork` instead of hardcoded `<= 9` total queue count
-* Optimized `VehicleDepotInspector_Ctor_Postfix` by replacing recursive list allocations (`GetAllChildrenRecursive`) with a non-allocating `FindQueueItems` helper
-* Added diagnostic log entries (`s_log.Info` and `s_log.Warning`) when pre-allocated vehicle assignments encounter edge cases (`IsDestroyed`, `CanVehicleBeAssigned`, missing towers, or prototype queue mismatches)
+* Fixed AFD-only patching for vehicle-construction assignment controls so mine towers are no longer affected when ATD is installed; AFD now targets forestry towers only and ATD handles the equivalent mining feature.
+* Fixed overlapping depot-queue decorations between AFD and ATD when both mods are installed; each mod now only clears UI decoration state it owns.
+* Changed nearest-depot selection for tower vehicle orders to use immediate straight-line distance, avoiding the confirmation delay that came from the earlier heavier terrain/path-search approach.
+* Fixed plus-button behavior for tower vehicle orders so supported unlocked forestry vehicles can still be ordered even when no idle vehicle is currently assignable or owned.
+* Tightened assignment-control ownership by matching vehicle proto families instead of the inspector entity-provider runtime type, preserving forestry-only and mining-only handlers without disabling order buttons.
+* Added concise nearest-depot selection diagnostics for vehicle orders, including eligible depot count, chosen depot, and squared straight-line distance.
+* Updated the Zoom-to-depot button icon to the MapPin icon.
+* Added a pending-ticket lifecycle for pre-allocated vehicle orders, including stale-ticket expiry, cleanup after failed enqueue attempts, and cancellation handling before depot queue removal.
+* Improved queue completion and desync recovery by tracking actual build-queue count changes, healing prototype mismatches during completion, and reconciling queues before saving.
+* Fixed enqueue confirmation so it respects `closestDepot.CanWork` instead of relying on an outdated hard-coded queue-count check.
+* Optimized depot inspector queue decoration by replacing recursive child-list allocations with a lighter helper.
+* Added diagnostic logging for edge cases such as destroyed towers, failed assignment eligibility checks, missing tower references, and prototype queue mismatches.
 
 v0.1.8 [packaged]
 * Added vehicle construction enqueueing for forestry tower assignments, including closest-depot by driving distance ordering, gold border highlighting on enqueued cards, and pre-assignment tooltips in the vehicle depot UI

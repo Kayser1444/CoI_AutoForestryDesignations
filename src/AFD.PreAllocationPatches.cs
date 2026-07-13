@@ -13,7 +13,10 @@ using Mafi.Core;
 using Mafi.Core.Entities;
 using Mafi.Core.Entities.Dynamic;
 using Mafi.Core.Buildings.VehicleDepots;
+using Mafi.Core.Buildings.Forestry;
 using Mafi.Core.Vehicles;
+using Mafi.Core.Vehicles.TreeHarvesters;
+using Mafi.Core.Vehicles.TreePlanters;
 using Mafi.Core.Vehicles.Commands;
 using Mafi.Collections;
 using Mafi.Core.Input;
@@ -36,6 +39,18 @@ namespace AutoForestryDesignations
     public static class PreAllocationPatches
     {
         private static FloatingColumn? s_activePopup;
+        private sealed class OwnedQueueDecoration { }
+        private static readonly ConditionalWeakTable<UiComponent, OwnedQueueDecoration> s_ownedQueueDecorations =
+            new ConditionalWeakTable<UiComponent, OwnedQueueDecoration>();
+
+        private static void MarkDecorationOwned(UiComponent component)
+        {
+            s_ownedQueueDecorations.Remove(component);
+            s_ownedQueueDecorations.Add(component, new OwnedQueueDecoration());
+        }
+
+        private static bool ReleaseOwnedDecoration(UiComponent component)
+            => s_ownedQueueDecorations.Remove(component);
 
         public static void Apply(Harmony harmony)
         {
@@ -122,6 +137,7 @@ namespace AutoForestryDesignations
         {
             try
             {
+                if (!(proto is TreeHarvesterProto) && !(proto is TreePlanterProto)) return;
                 // Find the column inside row
                 var col = __instance.AllChildren.OfType<Column>().FirstOrDefault();
                 if (col == null) return;
@@ -159,18 +175,7 @@ namespace AutoForestryDesignations
                     if (evt.button == 0 && evt.shiftKey && evt.altKey)
                     {
                         var entity = entityProvider();
-                        var closestDepot = FindClosestDepot(context, proto, entity);
-
-                        if (closestDepot != null)
-                        {
-                            context.InputScheduler.ScheduleInputCmd(new AddVehicleToBuildQueueCmd(proto, closestDepot, 1));
-                            PendingVehicleAllocations.Enqueue(closestDepot.Id, entity.Id, proto.Id);
-                            AutoForestryDesignation.PlayClickSound();
-                        }
-                        else
-                        {
-                            PlayInvalidOpSound(context);
-                        }
+                        EnqueueAtNearestDepot(context, proto, entity);
                         evt.StopPropagation();
                     }
                 });
@@ -210,7 +215,6 @@ namespace AutoForestryDesignations
                 var assignedDisplay = __instance.AllChildren.OfType<Mafi.Unity.Ui.Library.Display>().FirstOrDefault();
                 if (assignedDisplay != null)
                 {
-                    bool hasDepot = HasEligibleDepot(context, proto);
                     __instance.ObserveIndexable(() => entityProvider().AllVehiclesWithProto(proto))
                         .Observe(() => context.VehiclesManager.GetStats(proto, entityProvider().ZoneMask))
                         .Observe(() => entityProvider().CanVehicleBeAssigned(proto))
@@ -230,8 +234,9 @@ namespace AutoForestryDesignations
                                 assignedDisplay.State((assignedCount <= 0) ? DisplayState.Inactive : DisplayState.Important);
                             }
                             
-                            bool enabled = stats.Assignable > 0 || (canBeAssigned && isUnlocked && hasDepot);
+                            bool enabled = stats.Assignable > 0 || (canBeAssigned && isUnlocked);
                             plusBtn.Enabled(enabled);
+                            __instance.Visible(assignedCount > 0 || queuedCount > 0 || (canBeAssigned && isUnlocked));
                             
                             bool minusEnabled = assignedCount > 0 || queuedCount > 0;
                             minusBtn.Enabled(minusEnabled);
@@ -243,122 +248,48 @@ namespace AutoForestryDesignations
                 Log.Error("[AFD] Error in VehicleProtoAssignerUi constructor postfix: " + ex);
             }
         }
-        private static bool HasEligibleDepot(UiContext context, DrivingEntityProto proto)
-        {
-            var depots = context.EntitiesManager.GetAllEntitiesOfType<VehicleDepotBase>();
-            foreach (var depot in depots)
-            {
-                if (depot.CanWork && depot.Prototype.BuildableEntities.Contains(proto))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
         private static VehicleDepotBase? FindClosestDepot(UiContext context, DrivingEntityProto proto, IEntityAssignedWithVehicles tower)
         {
             var depots = context.EntitiesManager.GetAllEntitiesOfType<VehicleDepotBase>();
-            var eligibleDepots = new List<VehicleDepotBase>();
+            VehicleDepotBase? closestDepot = null;
+            float minDistanceSqr = float.MaxValue;
+            int eligibleCount = 0;
             foreach (var depot in depots)
             {
                 if (depot.CanWork && depot.Prototype.BuildableEntities.Contains(proto))
                 {
-                    eligibleDepots.Add(depot);
-                }
-            }
-
-            if (eligibleDepots.Count == 0) return null;
-            if (eligibleDepots.Count == 1) return eligibleDepots[0];
-
-            var pfManager = AutoForestryDesignation.s_vehiclePathFindingManager;
-            var pfParams = AutoForestryDesignation.s_standardVehiclePathFindingParams;
-            if (pfManager != null && pfParams != null)
-            {
-                try
-                {
-                    IPathabilityProvider pathabilityProvider = pfManager.PathabilityProvider;
-                    pathabilityProvider.UpdateChangedTiles();
-
-                    Tile2i origin = tower.Position2f.Tile2i;
-                    if (AutoForestryDesignation.TryFindNearestPathableTile(pathabilityProvider, pfParams, origin, out Tile2i start))
+                    eligibleCount++;
+                    float distSqr = tower.Position2f.DistanceSqrTo(depot.Position2f).ToFloat();
+                    if (distSqr < minDistanceSqr)
                     {
-                        var targetTiles = new HashSet<Tile2i>();
-                        var depotByTile = new Dictionary<Tile2i, VehicleDepotBase>();
-                        foreach (var depot in eligibleDepots)
-                        {
-                            Tile2i depotTile = depot.Position2f.Tile2i;
-                            if (AutoForestryDesignation.TryFindNearestPathableTile(pathabilityProvider, pfParams, depotTile, out Tile2i pathableDepotTile))
-                            {
-                                targetTiles.Add(pathableDepotTile);
-                                depotByTile[pathableDepotTile] = depot;
-                            }
-                        }
-
-                        var distances = new Dictionary<Tile2i, int>();
-                        var queue = new Queue<Tile2i>();
-                        distances[start] = 0;
-                        queue.Enqueue(start);
-
-                        var searchDirections = new[]
-                        {
-                            new RelTile2i(1, 0),
-                            new RelTile2i(-1, 0),
-                            new RelTile2i(0, 1),
-                            new RelTile2i(0, -1)
-                        };
-
-                        const int MAX_SEARCH = 250000;
-                        while (queue.Count > 0 && distances.Count < MAX_SEARCH)
-                        {
-                            Tile2i current = queue.Dequeue();
-                            int distance = distances[current];
-
-                            if (targetTiles.Contains(current))
-                            {
-                                return depotByTile[current];
-                            }
-
-                            foreach (RelTile2i direction in searchDirections)
-                            {
-                                Tile2i next = current + direction;
-                                if (distances.ContainsKey(next))
-                                    continue;
-                                if (!pathabilityProvider.IsPathable(next, pfParams.PathabilityQueryMask))
-                                    continue;
-
-                                distances[next] = distance + 1;
-                                queue.Enqueue(next);
-                            }
-                        }
+                        minDistanceSqr = distSqr;
+                        closestDepot = depot;
                     }
                 }
-                catch (Exception ex)
-                {
-                    Log.Error("[AFD] Error calculating closest depot by driving distance: " + ex);
-                }
             }
-
-            // Fallback to straight-line distance
-            VehicleDepotBase? closestDepot = null;
-            float minDistanceSqr = float.MaxValue;
-            foreach (var depot in eligibleDepots)
-            {
-                float distSqr = tower.Position2f.DistanceSqrTo(depot.Position2f).ToFloat();
-                if (distSqr < minDistanceSqr)
-                {
-                    minDistanceSqr = distSqr;
-                    closestDepot = depot;
-                }
-            }
+            AutoForestryDesignation.s_log.Info($"Vehicle order depot selection: tower={tower.Id.Value} proto={proto.Id.Value} eligible={eligibleCount} method=StraightLine result={(closestDepot == null ? "None" : closestDepot.Id.Value.ToString())} distanceSqr={(closestDepot == null ? "n/a" : minDistanceSqr.ToString("F3"))}");
             return closestDepot;
+        }
+
+        private static void EnqueueAtNearestDepot(UiContext context, DrivingEntityProto proto, IEntityAssignedWithVehicles tower)
+        {
+            VehicleDepotBase? closestDepot = FindClosestDepot(context, proto, tower);
+            if (tower.IsDestroyed) return;
+            if (closestDepot != null)
+            {
+                context.InputScheduler.ScheduleInputCmd(new AddVehicleToBuildQueueCmd(proto, closestDepot, 1));
+                PendingVehicleAllocations.Enqueue(closestDepot.Id, tower.Id, proto.Id);
+                AutoForestryDesignation.PlayClickSound();
+            }
+            else
+                PlayInvalidOpSound(context);
         }
 
         private static void ShowEnqueueConfirmation(UiContext context, DrivingEntityProto proto, IEntityAssignedWithVehicles tower, int count, Button plusBtn)
         {
-            var closestDepot = FindClosestDepot(context, proto, tower);
+            VehicleDepotBase? closestDepot = FindClosestDepot(context, proto, tower);
 
-            if (closestDepot == null)
+            if (closestDepot == null || tower.IsDestroyed)
             {
                 PlayInvalidOpSound(context);
                 return;
@@ -563,6 +494,7 @@ namespace AutoForestryDesignations
                                 {
                                     string formattedTip = string.Format(AfdLocalization.PreAssignedTooltipFmt.TranslatedString, $"<b>{towerDesc}</b>");
                                     queueItem.Tooltip(new LocStrFormatted(formattedTip));
+                                    MarkDecorationOwned(queueItem);
 
                                     // Set tooltip on the delete overlay button inside QueueItemUi so it's not hidden on hover
                                     var deleteOverlayField = queueItem.GetType().GetField("m_deleteOverlay", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -575,6 +507,7 @@ namespace AutoForestryDesignations
                                             ((IUiComponent)deleteOverlay).SetTooltip(Option<ITooltipPromise>.None);
                                         }
                                         deleteOverlay.Tooltip(new LocStrFormatted(formattedTip));
+                                        MarkDecorationOwned(deleteOverlay);
                                     }
 
                                     // Highlight pre-assigned items with a yellow/gold border (width 2px, radius 4)
@@ -582,14 +515,20 @@ namespace AutoForestryDesignations
                                 }
                                 else
                                 {
-                                    queueItem.Tooltip(LocStrFormatted.Empty);
-                                    queueItem.Border(1.px(), ColorRgba.Empty, 4);
+                                    if (ReleaseOwnedDecoration(queueItem))
+                                    {
+                                        queueItem.Tooltip(LocStrFormatted.Empty);
+                                        queueItem.Border(1.px(), ColorRgba.Empty, 4);
+                                    }
                                 }
                             }
                             else
                             {
-                                queueItem.Tooltip(LocStrFormatted.Empty);
-                                queueItem.Border(1.px(), ColorRgba.Empty, 4);
+                                if (ReleaseOwnedDecoration(queueItem))
+                                {
+                                    queueItem.Tooltip(LocStrFormatted.Empty);
+                                    queueItem.Border(1.px(), ColorRgba.Empty, 4);
+                                }
                             }
                         }
                     });
