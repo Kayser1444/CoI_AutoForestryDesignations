@@ -12,6 +12,7 @@ v0.1.9 [packaged]
 * Optimized depot inspector queue decoration by replacing recursive child-list allocations with a lighter helper.
 * Added diagnostic logging for edge cases such as destroyed towers, failed assignment eligibility checks, missing tower references, and prototype queue mismatches.
 * Fixed release ZIP entry paths to use portable forward slashes, allowing reliable extraction on Linux.
+* Updated localized growth-range formatting across the supported non-English languages.
 
 v0.1.8 [packaged]
 * Added vehicle construction enqueueing for forestry tower assignments, including closest-depot by driving distance ordering, gold border highlighting on enqueued cards, and pre-assignment tooltips in the vehicle depot UI

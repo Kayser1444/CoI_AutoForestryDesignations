@@ -269,7 +269,7 @@
   ],
   [
     "AFD_BucketRangeFmt",
-    "{0} ({1}-{2}, {3:P0}-{4:P0})"
+    "{0} ({1}–{2}; {3:P0}–{4:P0})"
   ],
   [
     "AFD_OrderConstructionTooltip",
