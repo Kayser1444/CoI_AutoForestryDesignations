@@ -1,4 +1,4 @@
-v0.1.9 [unreleased]
+v0.1.9 [packaged]
 * Fixed AFD-only patching for vehicle-construction assignment controls so mine towers are no longer affected when ATD is installed; AFD now targets forestry towers only and ATD handles the equivalent mining feature.
 * Fixed overlapping depot-queue decorations between AFD and ATD when both mods are installed; each mod now only clears UI decoration state it owns.
 * Changed nearest-depot selection for tower vehicle orders to use immediate straight-line distance, avoiding the confirmation delay that came from the earlier heavier terrain/path-search approach.
@@ -11,6 +11,7 @@ v0.1.9 [unreleased]
 * Fixed enqueue confirmation so it respects `closestDepot.CanWork` instead of relying on an outdated hard-coded queue-count check.
 * Optimized depot inspector queue decoration by replacing recursive child-list allocations with a lighter helper.
 * Added diagnostic logging for edge cases such as destroyed towers, failed assignment eligibility checks, missing tower references, and prototype queue mismatches.
+* Fixed release ZIP entry paths to use portable forward slashes, allowing reliable extraction on Linux.
 
 v0.1.8 [packaged]
 * Added vehicle construction enqueueing for forestry tower assignments, including closest-depot by driving distance ordering, gold border highlighting on enqueued cards, and pre-assignment tooltips in the vehicle depot UI

@@ -88,6 +88,58 @@ if (Test-Path $zipPath) {
     Remove-Item $zipPath -Force
 }
 
-Compress-Archive -Path $packageRootDir -DestinationPath $zipPath -Force
+Add-Type -AssemblyName System.IO.Compression
+
+# ZIP entry names must use forward slashes. Compress-Archive has historically
+# emitted Windows-style backslashes in some host/module combinations, which
+# makes the package fail to extract correctly with some Linux archive tools.
+$zipStream = [System.IO.File]::Open($zipPath, [System.IO.FileMode]::CreateNew)
+try {
+    $zip = [System.IO.Compression.ZipArchive]::new(
+        $zipStream,
+        [System.IO.Compression.ZipArchiveMode]::Create,
+        $false)
+    try {
+        Get-ChildItem -Path $stagingDir -File -Recurse | ForEach-Object {
+            $entryName = [System.IO.Path]::GetRelativePath($stagingDir, $_.FullName).
+                Replace('\', '/').
+                Replace([System.IO.Path]::AltDirectorySeparatorChar, '/')
+            $entry = $zip.CreateEntry($entryName, [System.IO.Compression.CompressionLevel]::Optimal)
+            $entryStream = $entry.Open()
+            try {
+                $sourceStream = [System.IO.File]::OpenRead($_.FullName)
+                try {
+                    $sourceStream.CopyTo($entryStream)
+                }
+                finally {
+                    $sourceStream.Dispose()
+                }
+            }
+            finally {
+                $entryStream.Dispose()
+            }
+        }
+    }
+    finally {
+        $zip.Dispose()
+    }
+}
+finally {
+    $zipStream.Dispose()
+}
+
+$readZip = [System.IO.Compression.ZipFile]::OpenRead($zipPath)
+try {
+    $invalidEntry = $readZip.Entries |
+        Where-Object { $_.FullName.Contains('\') } |
+        Select-Object -First 1
+}
+finally {
+    $readZip.Dispose()
+}
+if ($invalidEntry) {
+    throw "Package contains a non-portable ZIP entry name: $($invalidEntry.FullName)"
+}
+
 Write-Host "Created package: $zipPath"
 exit 0

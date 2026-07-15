@@ -1,8 +1,9 @@
-v0.1.9 | Unreleased
+v0.1.9 | 2026-07-15
 * Improved vehicle ordering from forestry towers so it works more reliably and feels quicker when choosing a depot, and it no longer checks pathability when selecting the depot.
 * Fixed issues where queued vehicle construction orders could fail to assign correctly or get out of sync after queue changes.
 * Fixed the confirmation popup so vehicle orders now work correctly even when a depot already has a long build queue.
 * Improved depot and assignment UI behavior for queued vehicles, including smoother interaction and better performance when viewing depot queues.
+* Fixed: Release ZIP files now extract correctly on Linux
 
 v0.1.8 | 2026-07-09
 * Added vehicle construction enqueueing for forestry tower assignments, including closest-depot by driving distance ordering, gold border highlighting on enqueued cards, and pre-assignment tooltips in the vehicle depot UI
