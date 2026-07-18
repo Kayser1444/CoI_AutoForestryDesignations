@@ -33,6 +33,7 @@ using Mafi.Unity.UiToolkit.Library.FloatingPanel;
 using Mafi.Unity.Ui.Library;
 using Mafi.Unity.Ui.Library.Inspectors;
 using UnityEngine;
+using EntityId = Mafi.Core.EntityId;
 
 namespace AutoForestryDesignations
 {

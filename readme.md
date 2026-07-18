@@ -23,7 +23,7 @@ The mod also adds a live **Forestry information** panel to the tower inspector, 
 ## 📋 Notes
 - Compatible with vanilla saves.
 - Can be added to or removed from existing saves.
-- Requires Captain of Industry `0.8.2` or newer.
+- Requires Captain of Industry `0.8.5` or newer; older versions may work but are not supported or tested.
 
 ## 💾 Installation
 - Download the latest version of the mod from GitHub Releases

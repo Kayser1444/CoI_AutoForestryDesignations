@@ -1,4 +1,5 @@
 v0.1.9 | 2026-07-15
+* Changed: Minimum supported Captain of Industry version is now 0.8.5; older versions may still work but are unsupported and untested
 * Improved vehicle ordering from forestry towers so it works more reliably and feels quicker when choosing a depot, and it no longer checks pathability when selecting the depot.
 * Fixed issues where queued vehicle construction orders could fail to assign correctly or get out of sync after queue changes.
 * Fixed the confirmation popup so vehicle orders now work correctly even when a depot already has a long build queue.

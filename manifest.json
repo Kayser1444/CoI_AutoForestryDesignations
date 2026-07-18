@@ -7,7 +7,7 @@
   "authors": [
     "Kayser"
   ],
-  "min_game_version": "0.8.2",
+  "min_game_version": "0.8.5",
   "max_verified_game_version": "0.8.5",
   "primary_dlls": [
     "0Harmony.dll",

@@ -29,6 +29,7 @@ using Mafi.Unity.Trees;
 using Mafi.Unity.Utils;
 using UnityEngine;
 using CoI.AutoHelpers.Logging;
+using EntityId = Mafi.Core.EntityId;
 
 namespace AutoForestryDesignations
 {
