@@ -1,5 +1,9 @@
-v0.1.9 [packaged]
+v0.1.10 [packaged]
+* Updated for compatibility with Captain of Industry Update 2 (v0.8.5+).
 * Changed: Minimum supported Captain of Industry version is now 0.8.5. Older versions may still work, but are unsupported and untested.
+* Fixed build script compatibility with PowerShell 5.1 / .NET Framework environments.
+
+v0.1.9 [released]
 * Fixed AFD-only patching for vehicle-construction assignment controls so mine towers are no longer affected when ATD is installed; AFD now targets forestry towers only and ATD handles the equivalent mining feature.
 * Fixed overlapping depot-queue decorations between AFD and ATD when both mods are installed; each mod now only clears UI decoration state it owns.
 * Changed nearest-depot selection for tower vehicle orders to use immediate straight-line distance, avoiding the confirmation delay that came from the earlier heavier terrain/path-search approach.
