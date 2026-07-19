@@ -89,6 +89,7 @@ if (Test-Path $zipPath) {
 }
 
 Add-Type -AssemblyName System.IO.Compression
+Add-Type -AssemblyName System.IO.Compression.FileSystem
 
 # ZIP entry names must use forward slashes. Compress-Archive has historically
 # emitted Windows-style backslashes in some host/module combinations, which
@@ -101,9 +102,10 @@ try {
         $false)
     try {
         Get-ChildItem -Path $stagingDir -File -Recurse | ForEach-Object {
-            $entryName = [System.IO.Path]::GetRelativePath($stagingDir, $_.FullName).
+            $entryName = $_.FullName.Substring($stagingDir.Length).
                 Replace('\', '/').
-                Replace([System.IO.Path]::AltDirectorySeparatorChar, '/')
+                Replace([System.IO.Path]::AltDirectorySeparatorChar, '/').
+                TrimStart('/')
             $entry = $zip.CreateEntry($entryName, [System.IO.Compression.CompressionLevel]::Optimal)
             $entryStream = $entry.Open()
             try {
