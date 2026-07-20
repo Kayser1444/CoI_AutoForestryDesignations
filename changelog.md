@@ -1,5 +1,7 @@
-v0.1.10 [packaged]
+v0.1.11 [packaged]
 * Fixed: Restricted vehicle pre-allocation UI patches to ForestryTower entities only.
+
+v0.1.10 [released]
 * Updated for compatibility with Captain of Industry Update 4.2 (v0.8.6).
 * Changed: Minimum supported Captain of Industry version is now 0.8.5. Older versions may still work, but are unsupported and untested.
 * Fixed build script compatibility with PowerShell 5.1 / .NET Framework environments.
