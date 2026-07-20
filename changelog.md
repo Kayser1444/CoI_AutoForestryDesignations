@@ -1,4 +1,4 @@
-v0.1.11 [packaged]
+v0.1.11 [released]
 * Fixed: Restricted vehicle pre-allocation UI patches to ForestryTower entities only.
 
 v0.1.10 [released]
