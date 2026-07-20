@@ -139,6 +139,10 @@ namespace AutoForestryDesignations
             try
             {
                 if (!(proto is TreeHarvesterProto) && !(proto is TreePlanterProto)) return;
+
+                var entity = entityProvider();
+                if (!(entity is ForestryTower)) return;
+
                 // Find the column inside row
                 var col = __instance.AllChildren.OfType<Column>().FirstOrDefault();
                 if (col == null) return;
