@@ -1,4 +1,4 @@
-v0.1.12 [packaged]
+v0.1.12 [released]
 * Restored vehicle-prototype-based pre-allocation UI patching for tree harvesters and tree planters, including compatible modded subclasses and non-tower assignment panels.
 * Fixed the pre-allocation visibility observer to use the stable inspector parent, matching vanilla and avoiding a hidden-row update cycle.
 * Added a full Shift-Alt-click vehicle-order hint to the vanilla assign tooltip and aligned the confirmation wording and action button on "Order".
