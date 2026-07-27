@@ -41,8 +41,11 @@ namespace AutoForestryDesignations
     {
         private static FloatingColumn? s_activePopup;
         private sealed class OwnedQueueDecoration { }
+        private sealed class OrderShortcutHintDecoration { }
         private static readonly ConditionalWeakTable<UiComponent, OwnedQueueDecoration> s_ownedQueueDecorations =
             new ConditionalWeakTable<UiComponent, OwnedQueueDecoration>();
+        private static readonly ConditionalWeakTable<UiComponent, OrderShortcutHintDecoration> s_orderShortcutHints =
+            new ConditionalWeakTable<UiComponent, OrderShortcutHintDecoration>();
 
         private static void MarkDecorationOwned(UiComponent component)
         {
@@ -134,14 +137,11 @@ namespace AutoForestryDesignations
 
 
         // Postfix for VehicleProtoAssignerUi constructor
-        public static void VehicleProtoAssignerUi_Ctor_Postfix(UiComponent __instance, DrivingEntityProto proto, UiContext context, Func<IEntityAssignedWithVehicles> entityProvider)
+        public static void VehicleProtoAssignerUi_Ctor_Postfix(UiComponent __instance, UiComponent parent, DrivingEntityProto proto, UiContext context, Func<IEntityAssignedWithVehicles> entityProvider)
         {
             try
             {
                 if (!(proto is TreeHarvesterProto) && !(proto is TreePlanterProto)) return;
-
-                var entity = entityProvider();
-                if (!(entity is ForestryTower)) return;
 
                 // Find the column inside row
                 var col = __instance.AllChildren.OfType<Column>().FirstOrDefault();
@@ -151,6 +151,7 @@ namespace AutoForestryDesignations
                 if (buttons.Count < 2) return;
 
                 var plusBtn = buttons[0];
+                TryAppendOrderShortcutHint(plusBtn, proto, context, entityProvider);
 
                 // Retrieve original click action
                 var mOnClickField = typeof(Mafi.Unity.UiToolkit.Library.Button).GetField("m_onClick", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -220,7 +221,10 @@ namespace AutoForestryDesignations
                 var assignedDisplay = __instance.AllChildren.OfType<Mafi.Unity.Ui.Library.Display>().FirstOrDefault();
                 if (assignedDisplay != null)
                 {
-                    __instance.ObserveIndexable(() => entityProvider().AllVehiclesWithProto(proto))
+                    // Observe from the inspector parent, as vanilla does. Observing from the
+                    // assigner row creates a visibility cycle: once the row is hidden, its
+                    // observer may no longer run to make the row visible again.
+                    parent.ObserveIndexable(() => entityProvider().AllVehiclesWithProto(proto))
                         .Observe(() => context.VehiclesManager.GetStats(proto, entityProvider().ZoneMask))
                         .Observe(() => entityProvider().CanVehicleBeAssigned(proto))
                         .Observe(() => context.UnlockedProtosDbForUi.IsUnlocked(proto))
@@ -253,7 +257,72 @@ namespace AutoForestryDesignations
                 Log.Error("[AFD] Error in VehicleProtoAssignerUi constructor postfix: " + ex);
             }
         }
-        private static VehicleDepotBase? FindClosestDepot(UiContext context, DrivingEntityProto proto, IEntityAssignedWithVehicles tower)
+
+        private static void TryAppendOrderShortcutHint(
+            ButtonIcon plusBtn,
+            DrivingEntityProto proto,
+            UiContext context,
+            Func<IEntityAssignedWithVehicles> entityProvider)
+        {
+            try
+            {
+                if (s_orderShortcutHints.TryGetValue(plusBtn, out _)) return;
+
+                var tooltip = plusBtn.ExistingTooltip.ValueOrNull;
+                if (!(tooltip is FloatingPanelPromise floatingPanel)) return;
+
+                var factoryProperty = typeof(FloatingPanelPromise).GetProperty(
+                    "Factory",
+                    BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                var factory = factoryProperty?.GetValue(floatingPanel) as Func<Option<UiComponent>>;
+                if (factory == null || factoryProperty == null) return;
+
+                Func<Option<UiComponent>> decoratedFactory = delegate
+                {
+                    var content = factory();
+                    var floater = content.ValueOrNull;
+                    if (floater == null || s_orderShortcutHints.TryGetValue(floater, out _))
+                        return content;
+
+                    try
+                    {
+                        var target = entityProvider();
+                        if (target == null || target.IsDestroyed) return content;
+
+                        var closestDepot = FindClosestDepot(context, proto, target, logSelection: false);
+                        if (closestDepot == null) return content;
+
+                        string formattedHint = string.Format(
+                            AfdLocalization.OrderConstructionShortcutHint.TranslatedString,
+                            $"<b>{proto.Strings.Name}</b>",
+                            $"<b>{PendingVehicleAllocations.GetEntityDescription(closestDepot)}</b>",
+                            $"<b>{PendingVehicleAllocations.GetEntityDescription(target)}</b>");
+                        floater.Add(
+                            new HorizontalDivider().MarginTopBottom(4),
+                            new Label(new LocStrFormatted(formattedHint)).TextCenterMiddle());
+                        s_orderShortcutHints.Add(floater, new OrderShortcutHintDecoration());
+                    }
+                    catch (Exception ex)
+                    {
+                        AutoForestryDesignation.LogDebug("Could not append vehicle-order shortcut hint on hover: " + ex.Message);
+                    }
+                    return content;
+                };
+
+                factoryProperty.SetValue(floatingPanel, decoratedFactory);
+                s_orderShortcutHints.Add(plusBtn, new OrderShortcutHintDecoration());
+            }
+            catch (Exception ex)
+            {
+                AutoForestryDesignation.LogDebug("Could not prepare vehicle-order shortcut hint: " + ex.Message);
+            }
+        }
+
+        private static VehicleDepotBase? FindClosestDepot(
+            UiContext context,
+            DrivingEntityProto proto,
+            IEntityAssignedWithVehicles tower,
+            bool logSelection = true)
         {
             var depots = context.EntitiesManager.GetAllEntitiesOfType<VehicleDepotBase>();
             VehicleDepotBase? closestDepot = null;
@@ -272,7 +341,8 @@ namespace AutoForestryDesignations
                     }
                 }
             }
-            AutoForestryDesignation.s_log.Info($"Vehicle order depot selection: tower={tower.Id.Value} proto={proto.Id.Value} eligible={eligibleCount} method=StraightLine result={(closestDepot == null ? "None" : closestDepot.Id.Value.ToString())} distanceSqr={(closestDepot == null ? "n/a" : minDistanceSqr.ToString("F3"))}");
+            if (logSelection)
+                AutoForestryDesignation.s_log.Info($"Vehicle order depot selection: tower={tower.Id.Value} proto={proto.Id.Value} eligible={eligibleCount} method=StraightLine result={(closestDepot == null ? "None" : closestDepot.Id.Value.ToString())} distanceSqr={(closestDepot == null ? "n/a" : minDistanceSqr.ToString("F3"))}");
             return closestDepot;
         }
 

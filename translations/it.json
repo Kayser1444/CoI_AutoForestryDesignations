@@ -29,7 +29,7 @@
   ],
   [
     "AFD_BoolNo",
-    "NO"
+    "Disattivato"
   ],
   [
     "AFD_OnlyFertileTilesLabel",
@@ -273,7 +273,11 @@
   ],
   [
     "AFD_OrderConstructionTooltip",
-    "Accoda un {0} per {2} a {1}"
+    "Ordina un nuovo {0} per {2} presso {1}"
+  ],
+  [
+    "AFD_OrderConstructionShortcutHint",
+    "Fai clic tenendo premuto Maiusc-Alt per ordinare un nuovo {0} per {2} presso {1}"
   ],
   [
     "AFD_PreAssignedTooltipFmt",
@@ -281,15 +285,15 @@
   ],
   [
     "AFD_EnqueueConfirmPromptSingular",
-    "Accodare un {0} per {2} a {1}?"
+    "Ordinare un nuovo {0} per {2} presso {1}?"
   ],
   [
     "AFD_EnqueueConfirmPromptPlural",
-    "Accodare {0} {1} per {3} a {2}?"
+    "Ordinare {0} nuove unità di {1} per {3} presso {2}?"
   ],
   [
     "AFD_EnqueueConfirmBtnText",
-    "Accodamento"
+    "Ordina"
   ],
   [
     "AFD_ZoomToDepotTooltip",

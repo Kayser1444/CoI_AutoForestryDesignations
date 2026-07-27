@@ -29,7 +29,7 @@
   ],
   [
     "AFD_BoolNo",
-    "No"
+    "Desactivado"
   ],
   [
     "AFD_OnlyFertileTilesLabel",
@@ -273,7 +273,11 @@
   ],
   [
     "AFD_OrderConstructionTooltip",
-    "Ponga en cola un {0} para {2} en {1}"
+    "Pide un nuevo {0} para {2} en {1}"
+  ],
+  [
+    "AFD_OrderConstructionShortcutHint",
+    "Mayús + Alt + clic para solicitar un nuevo {0} para {2} en {1}"
   ],
   [
     "AFD_PreAssignedTooltipFmt",
@@ -281,15 +285,15 @@
   ],
   [
     "AFD_EnqueueConfirmPromptSingular",
-    "¿Poner en cola un {0} para {2} en {1}?"
+    "¿Pedir un nuevo {0} para {2} en {1}?"
   ],
   [
     "AFD_EnqueueConfirmPromptPlural",
-    "¿Poner en cola {0} {1} para {3} en {2}?"
+    "¿Pedir {0} unidades nuevas de {1} para {3} en {2}?"
   ],
   [
     "AFD_EnqueueConfirmBtnText",
-    "poner en cola"
+    "Pedir"
   ],
   [
     "AFD_ZoomToDepotTooltip",

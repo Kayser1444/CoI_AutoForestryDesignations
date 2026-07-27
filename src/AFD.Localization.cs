@@ -355,8 +355,13 @@ namespace AutoForestryDesignations
 
         public static LocStr OrderConstructionTooltip = Loc.Str(
             "AFD_OrderConstructionTooltip",
-            "Enqueue a {0} for {2} at {1}",
+            "Order a new {0} for {2} at {1}",
             "Tooltip shown on the assign vehicle button. {0} = vehicle description, {1} = depot description, {2} = tower description.");
+
+        public static LocStr OrderConstructionShortcutHint = Loc.Str(
+            "AFD_OrderConstructionShortcutHint",
+            "Shift-Alt-click to order a new {0} for {2} at {1}",
+            "Hint appended to the vanilla assign-vehicle floater. Vehicle, depot, target.");
 
         public static LocStr PreAssignedTooltipFmt = Loc.Str(
             "AFD_PreAssignedTooltipFmt",
@@ -365,17 +370,17 @@ namespace AutoForestryDesignations
 
         public static LocStr EnqueueConfirmPromptSingular = Loc.Str(
             "AFD_EnqueueConfirmPromptSingular",
-            "Enqueue a {0} for {2} at {1}?",
+            "Order a new {0} for {2} at {1}?",
             "Prompt shown when enqueuing 1 vehicle. {0} = vehicle description, {1} = depot description, {2} = tower description.");
 
         public static LocStr EnqueueConfirmPromptPlural = Loc.Str(
             "AFD_EnqueueConfirmPromptPlural",
-            "Enqueue {0} {1}s for {3} at {2}?",
+            "Order {0} new {1}s for {3} at {2}?",
             "Prompt shown when enqueuing multiple vehicles. {0} = count, {1} = vehicle description, {2} = depot description, {3} = tower description.");
 
         public static LocStr EnqueueConfirmBtnText = Loc.Str(
             "AFD_EnqueueConfirmBtnText",
-            "Enqueue",
+            "Order",
             "Text on the confirmation button for enqueuing construction.");
 
         public static LocStr ZoomToDepotTooltip = Loc.Str(

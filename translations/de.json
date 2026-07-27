@@ -29,7 +29,7 @@
   ],
   [
     "AFD_BoolNo",
-    "NEIN"
+    "Nein"
   ],
   [
     "AFD_OnlyFertileTilesLabel",
@@ -273,7 +273,11 @@
   ],
   [
     "AFD_OrderConstructionTooltip",
-    "Stellen Sie ein {0} für {2} bei {1} in die Warteschlange"
+    "Bestellen Sie ein neues {0} für {2} bei {1}"
+  ],
+  [
+    "AFD_OrderConstructionShortcutHint",
+    "Umschalt-Alt-Klick, um ein neues {0} für {2} bei {1} zu bestellen"
   ],
   [
     "AFD_PreAssignedTooltipFmt",
@@ -281,15 +285,15 @@
   ],
   [
     "AFD_EnqueueConfirmPromptSingular",
-    "Ein {0} für {2} bei {1} in die Warteschlange stellen?"
+    "Ein neues {0} für {2} bei {1} bestellen?"
   ],
   [
     "AFD_EnqueueConfirmPromptPlural",
-    "{0} {1}s für {3} bei {2} in die Warteschlange stellen?"
+    "{0} neue Fahrzeuge vom Typ {1} für {3} bei {2} bestellen?"
   ],
   [
     "AFD_EnqueueConfirmBtnText",
-    "In die Warteschlange stellen"
+    "Bestellen"
   ],
   [
     "AFD_ZoomToDepotTooltip",

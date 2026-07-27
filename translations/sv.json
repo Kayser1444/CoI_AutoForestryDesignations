@@ -29,7 +29,7 @@
   ],
   [
     "AFD_BoolNo",
-    "Inga"
+    "Nej"
   ],
   [
     "AFD_OnlyFertileTilesLabel",
@@ -273,7 +273,11 @@
   ],
   [
     "AFD_OrderConstructionTooltip",
-    "Ställ en {0} i kö för {2} vid {1}"
+    "Beställ en ny {0} för {2} på {1}"
+  ],
+  [
+    "AFD_OrderConstructionShortcutHint",
+    "Skift-Alt-klicka för att beställa en ny {0} för {2} på {1}"
   ],
   [
     "AFD_PreAssignedTooltipFmt",
@@ -281,15 +285,15 @@
   ],
   [
     "AFD_EnqueueConfirmPromptSingular",
-    "Ställ en {0} i kö för {2} vid {1}?"
+    "Beställa en ny {0} för {2} vid {1}?"
   ],
   [
     "AFD_EnqueueConfirmPromptPlural",
-    "Ställ {0} {1} i kö för {3} vid {2}?"
+    "Beställa {0} nya fordon av typen {1} för {3} vid {2}?"
   ],
   [
     "AFD_EnqueueConfirmBtnText",
-    "Köa"
+    "Beställ"
   ],
   [
     "AFD_ZoomToDepotTooltip",

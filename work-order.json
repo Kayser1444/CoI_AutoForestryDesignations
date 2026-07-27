@@ -1,7 +1,7 @@
 {
   "mod": "AutoForestryDesignations",
   "source_file": "src\\AFD.Localization.cs",
-  "total_keys": 74,
+  "total_keys": 75,
   "skip_keys": [
     "dtk.mod.name",
     "dtk.rate_limit.items_per_min",
@@ -13,25 +13,69 @@
     "AFD_BoolNo": {
       "en": "No",
       "context": "Displayed in a toggle control when the option is disabled.",
-      "es": "No",
-      "de": "NEIN",
-      "it": "NO",
+      "de": "Nein",
+      "es": "Desactivado",
+      "it": "Disattivato",
       "pt": "Não",
       "ru": "Нет",
-      "sv": "Inga",
-      "zh": "不"
+      "sv": "Nej",
+      "zh": "否"
     },
-    "AFD_BucketRangeFmt": {
-      "en": "{0} ({1}-{2}, {3:P0}-{4:P0})",
-      "context": "Label template for non-full growth buckets. {0}=bucket name, {1}=start age, {2}=end age, {3}=start maturity percent, {4}=end maturity percent.",
-      "de": "{0} ({1}-{2}, {3:P0}-{4:P0})",
-      "es": "{0} ({1}-{2}, {3:P0}-{4:P0})",
-      "it": "{0} ({1}-{2}, {3:P0}-{4:P0})",
-      "pt": "{0} ({1}-{2}, {3:P0}-{4:P0})",
-      "ru": "{0} ({1}-{2}, {3:P0}-{4:P0})",
-      "sv": "{0} ({1}-{2}, {3:P0}-{4:P0})",
-      "zh": "{0}（{1}-{2}、{3:P0}-{4:P0}）"
+    "AFD_OrderConstructionShortcutHint": {
+      "en": "Shift-Alt-click to order a new {0} for {2} at {1}",
+      "context": "Hint appended to the vanilla assign-vehicle floater. Vehicle, depot, target.",
+      "de": "Umschalt-Alt-Klick, um ein neues {0} für {2} bei {1} zu bestellen",
+      "es": "Mayús + Alt + clic para solicitar un nuevo {0} para {2} en {1}",
+      "it": "Fai clic tenendo premuto Maiusc-Alt per ordinare un nuovo {0} per {2} presso {1}",
+      "pt": "Shift-Alt-clique para solicitar um novo {0} para {2} em {1}",
+      "ru": "Нажмите, удерживая клавишу Shift-Alt, чтобы заказать новый {0} для {2} в {1}.",
+      "sv": "Skift-Alt-klicka för att beställa en ny {0} för {2} på {1}",
+      "zh": "按住 Shift-Alt 键并单击即可在 {1} 为 {2} 订购新的 {0}"
+    },
+    "AFD_OrderConstructionTooltip": {
+      "en": "Order a new {0} for {2} at {1}",
+      "context": "Order template. {0}=vehicle, {1}=depot, {2}=target.",
+      "de": "Bestellen Sie ein neues {0} für {2} bei {1}",
+      "es": "Pide un nuevo {0} para {2} en {1}",
+      "it": "Ordina un nuovo {0} per {2} presso {1}",
+      "pt": "Encomende um novo {0} para {2} em {1}",
+      "ru": "Закажите новый {0} для {2} в {1}.",
+      "sv": "Beställ en ny {0} för {2} på {1}",
+      "zh": "在 {1} 为 {2} 订购新的 {0}"
+    },
+    "AFD_EnqueueConfirmPromptSingular": {
+      "en": "Order a new {0} for {2} at {1}?",
+      "context": "Vehicle construction confirmation. {0}=vehicle, {1}=depot, {2}=target.",
+      "de": "Ein neues {0} für {2} bei {1} bestellen?",
+      "es": "¿Pedir un nuevo {0} para {2} en {1}?",
+      "it": "Ordinare un nuovo {0} per {2} presso {1}?",
+      "pt": "Encomendar um novo {0} para {2} em {1}?",
+      "ru": "Заказать новый {0} для {2} в {1}?",
+      "sv": "Beställa en ny {0} för {2} vid {1}?",
+      "zh": "在 {1} 为 {2} 订购新的 {0}？"
+    },
+    "AFD_EnqueueConfirmPromptPlural": {
+      "en": "Order {0} new {1}s for {3} at {2}?",
+      "context": "Vehicle construction confirmation. {0}=count, {1}=vehicle, {2}=depot, {3}=target.",
+      "de": "{0} neue Fahrzeuge vom Typ {1} für {3} bei {2} bestellen?",
+      "es": "¿Pedir {0} unidades nuevas de {1} para {3} en {2}?",
+      "it": "Ordinare {0} nuove unità di {1} per {3} presso {2}?",
+      "pt": "Encomendar {0} novas unidades de {1} para {3} em {2}?",
+      "ru": "Заказать {0} новых машин типа {1} для {3} в {2}?",
+      "sv": "Beställa {0} nya fordon av typen {1} för {3} vid {2}?",
+      "zh": "在 {2} 为 {3} 订购 {0} 个新的 {1}？"
+    },
+    "AFD_EnqueueConfirmBtnText": {
+      "en": "Order",
+      "context": "Vehicle construction confirmation button.",
+      "de": "Bestellen",
+      "es": "Pedir",
+      "it": "Ordina",
+      "pt": "Encomendar",
+      "ru": "Заказать",
+      "sv": "Beställ",
+      "zh": "订购"
     }
   },
-  "keys_needing_translation": 2
+  "keys_needing_translation": 6
 }

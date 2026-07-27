@@ -273,7 +273,11 @@
   ],
   [
     "AFD_OrderConstructionTooltip",
-    "Enfileirar um {0} para {2} em {1}"
+    "Encomende um novo {0} para {2} em {1}"
+  ],
+  [
+    "AFD_OrderConstructionShortcutHint",
+    "Shift-Alt-clique para solicitar um novo {0} para {2} em {1}"
   ],
   [
     "AFD_PreAssignedTooltipFmt",
@@ -281,15 +285,15 @@
   ],
   [
     "AFD_EnqueueConfirmPromptSingular",
-    "Enfileirar um {0} para {2} em {1}?"
+    "Encomendar um novo {0} para {2} em {1}?"
   ],
   [
     "AFD_EnqueueConfirmPromptPlural",
-    "Enfileirar {0} {1}s para {3} em {2}?"
+    "Encomendar {0} novas unidades de {1} para {3} em {2}?"
   ],
   [
     "AFD_EnqueueConfirmBtnText",
-    "Enfileirar"
+    "Encomendar"
   ],
   [
     "AFD_ZoomToDepotTooltip",

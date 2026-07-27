@@ -29,7 +29,7 @@
   ],
   [
     "AFD_BoolNo",
-    "不"
+    "否"
   ],
   [
     "AFD_OnlyFertileTilesLabel",
@@ -273,7 +273,11 @@
   ],
   [
     "AFD_OrderConstructionTooltip",
-    "将 {0} 在 {1} 处为 {2} 排队"
+    "在 {1} 为 {2} 订购新的 {0}"
+  ],
+  [
+    "AFD_OrderConstructionShortcutHint",
+    "按住 Shift-Alt 键并单击即可在 {1} 为 {2} 订购新的 {0}"
   ],
   [
     "AFD_PreAssignedTooltipFmt",
@@ -281,15 +285,15 @@
   ],
   [
     "AFD_EnqueueConfirmPromptSingular",
-    "将 {0} 在 {1} 处为 {2} 排队？"
+    "在 {1} 为 {2} 订购新的 {0}？"
   ],
   [
     "AFD_EnqueueConfirmPromptPlural",
-    "将 {0} 个 {1} 在 {2} 处为 {3} 排队？"
+    "在 {2} 为 {3} 订购 {0} 个新的 {1}？"
   ],
   [
     "AFD_EnqueueConfirmBtnText",
-    "入队"
+    "订购"
   ],
   [
     "AFD_ZoomToDepotTooltip",

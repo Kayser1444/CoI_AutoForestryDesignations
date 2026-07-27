@@ -273,7 +273,11 @@
   ],
   [
     "AFD_OrderConstructionTooltip",
-    "Enqueue a {0} for {2} at {1}"
+    "Order a new {0} for {2} at {1}"
+  ],
+  [
+    "AFD_OrderConstructionShortcutHint",
+    "Shift-Alt-click to order a new {0} for {2} at {1}"
   ],
   [
     "AFD_PreAssignedTooltipFmt",
@@ -281,15 +285,15 @@
   ],
   [
     "AFD_EnqueueConfirmPromptSingular",
-    "Enqueue a {0} for {2} at {1}?"
+    "Order a new {0} for {2} at {1}?"
   ],
   [
     "AFD_EnqueueConfirmPromptPlural",
-    "Enqueue {0} {1}s for {3} at {2}?"
+    "Order {0} new {1}s for {3} at {2}?"
   ],
   [
     "AFD_EnqueueConfirmBtnText",
-    "Enqueue"
+    "Order"
   ],
   [
     "AFD_ZoomToDepotTooltip",

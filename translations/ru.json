@@ -273,7 +273,11 @@
   ],
   [
     "AFD_OrderConstructionTooltip",
-    "Поставьте {0} в очередь для {2} в {1}"
+    "Закажите новый {0} для {2} в {1}."
+  ],
+  [
+    "AFD_OrderConstructionShortcutHint",
+    "Нажмите, удерживая клавишу Shift-Alt, чтобы заказать новый {0} для {2} в {1}."
   ],
   [
     "AFD_PreAssignedTooltipFmt",
@@ -281,15 +285,15 @@
   ],
   [
     "AFD_EnqueueConfirmPromptSingular",
-    "Поставить {0} в очередь для {2} в {1}?"
+    "Заказать новый {0} для {2} в {1}?"
   ],
   [
     "AFD_EnqueueConfirmPromptPlural",
-    "Поставить в очередь {0} {1} для {3} в {2}?"
+    "Заказать {0} новых машин типа {1} для {3} в {2}?"
   ],
   [
     "AFD_EnqueueConfirmBtnText",
-    "очередь"
+    "Заказать"
   ],
   [
     "AFD_ZoomToDepotTooltip",
