@@ -1,3 +1,10 @@
+v0.1.12 | 2026-07-27
+* Added Shift-Alt-click shortcut hint to vehicle assignment tooltips
+* Fixed: Restored vehicle ordering support across tree harvester and tree planter assignment controls and non-tower panels
+* Fixed: Resolved vehicle allocation visibility updates when opening assignment inspector panels
+* Fixed: Resolved vehicle order tooltip target and depot resolution when hovering vehicle assignment controls
+* Updated maximum verified game version to 0.8.6
+
 v0.1.11 | 2026-07-20
 * Fixed: Restricted vehicle pre-allocation UI patches to ForestryTower entities only
 
