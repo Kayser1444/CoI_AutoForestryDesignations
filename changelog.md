@@ -1,4 +1,4 @@
-v0.1.13a [unreleased]
+v0.1.13 [unreleased]
 
 v0.1.12 [released]
 * Restored vehicle-prototype-based pre-allocation UI patching for tree harvesters and tree planters, including compatible modded subclasses and non-tower assignment panels.
