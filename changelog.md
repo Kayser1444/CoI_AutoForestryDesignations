@@ -3,7 +3,7 @@ v0.1.12 [packaged]
 * Fixed the pre-allocation visibility observer to use the stable inspector parent, matching vanilla and avoiding a hidden-row update cycle.
 * Added a full Shift-Alt-click vehicle-order hint to the vanilla assign tooltip and aligned the confirmation wording and action button on "Order".
 * Fixed the full vehicle-order tooltip to resolve its target and depot on hover, after the inspector entity provider is initialized, while always preserving the vanilla floater.
-* Corrected the manifest's maximum verified game version to 0.8.6, matching the existing Update 4.2 compatibility declaration.
+* Corrected the manifest's maximum verified game version to 0.8.6b, matching the existing Update 4.2 compatibility declaration.
 
 v0.1.11 [released]
 * Fixed: Restricted vehicle pre-allocation UI patches to ForestryTower entities only.
