@@ -1,302 +1,302 @@
 [
-  [
-    "AFD_ForestryDesignationsTitle",
-    "Разметка посадки леса"
-  ],
-  [
-    "AFD_ForestryInformationTitle",
-    "Информация о лесном хозяйстве"
-  ],
-  [
-    "AFD_CreateDesignationsBtn",
-    "Создать разметку"
-  ],
-  [
-    "AFD_CreateDesignationsBtnTip",
-    "Сканирует область вышки и размечает территорию посадки леса."
-  ],
-  [
-    "AFD_ClearDesignationsBtnTip",
-    "Очистить всю разметку посадки леса в области этой вышки."
-  ],
-  [
-    "AFD_RefreshCompositionTip",
-    "Обновить состав леса"
-  ],
-  [
-    "AFD_BoolYes",
-    "Да"
-  ],
-  [
-    "AFD_BoolNo",
-    "Нет"
-  ],
-  [
-    "AFD_OnlyFertileTilesLabel",
-    "Только плодородные клетки"
-  ],
-  [
-    "AFD_OnlyFertileTilesTip",
-    "Размещать разметки только там, где земля подходит для посадки деревьев: плодородный рельеф (не скала, песок или океан) и не занята зданием или другой сущностью."
-  ],
-  [
-    "AFD_OnlyReachableTilesLabel",
-    "Только достижимые клетки"
-  ],
-  [
-    "AFD_OnlyReachableTilesTip",
-    "Если включено, пропускать клетки разметки, которые недостижимы транспортным путем из области вышки."
-  ],
-  [
-    "AFD_AvoidTerrainDesignationsLabel",
-    "Избегать разметок рельефа"
-  ],
-  [
-    "AFD_AvoidTerrainDesignationsTip",
-    "Пропускать клетки, которые уже содержат любую разметку рельефа, включая добычу, свалку или выравнивание."
-  ],
-  [
-    "AFD_MaxTilesLabel",
-    "Максимальное число разметок"
-  ],
-  [
-    "AFD_MaxTilesTip",
-    "Максимальное число клеток разметки за один запуск. 0 = без ограничения (∞)."
-  ],
-  [
-    "AFD_NoForestryTowerSelected",
-    "Лесная вышка не выбрана."
-  ],
-  [
-    "AFD_NoForestryDesignations",
-    "Лесопосадка не размечена."
-  ],
-  [
-    "AFD_PressToScanComposition",
-    "Нажмите ↺, чтобы просканировать состав леса."
-  ],
-  [
-    "AFD_KpiTreesLabel",
-    "Деревья"
-  ],
-  [
-    "AFD_KpiMaturityLabel",
-    "Зрелость"
-  ],
-  [
-    "AFD_KpiSustainableYieldLabel",
-    "Устойчивый урожай"
-  ],
-  [
-    "AFD_KpiTreesTip",
-    "Текущий живой счет управляемых деревьев внутри лесной области этой вышки. Первое число — деревья прямо сейчас; второе число — оценочный максимум деревьев на основе текущих подходящих мест посадки."
-  ],
-  [
-    "AFD_KpiMaturityTipFmt",
-    "Средняя зрелость и текущий возраст управляемых деревьев. Полная зрелость сейчас составляет <b>{0}</b>, включая настройки сложности."
-  ],
-  [
-    "AFD_KpiSustainableYieldTipFmt",
-    "Максимальное долгосрочное производство древесины, которое можно поддерживать для этой вышки за игровой месяц, с учетом размеченной области, порога рубки и скорости роста деревьев по настройкам сложности (сейчас <b>{0}</b> средняя полная зрелость)."
-  ],
-  [
-    "AFD_GrowthBreakdownHeader",
-    "Разбивка роста"
-  ],
-  [
-    "AFD_GrowthBreakdownTipFmt",
-    "Разбивка зрелости управляемых деревьев. Возраст полной зрелости зависит от типа дерева и сложности; текущая средняя полная зрелость — {0}. Стандартная кривая лесного урожая: 40% возраста = 30% урожая, 60% = 60%, 80% = 88%, 100% = полный."
-  ],
-  [
-    "AFD_GrowthHeaderTipNoCutFmt",
-    "Распределение по зрелости относительно текущего возраста полного роста каждого дерева. Вариант рубки: не рубить. Средняя полная зрелость: {0}."
-  ],
-  [
-    "AFD_GrowthHeaderTipWithCutFmt",
-    "Распределение по зрелости относительно текущего возраста полного роста каждого дерева. Вариант рубки: {0} ({1}% от {2} полностью выросшего дерева)."
-  ],
-  [
-    "AFD_HarvestThresholdTip",
-    "Порог рубки"
-  ],
-  [
-    "AFD_SegmentTipFmt",
-    "<b>{0}</b>\n{1} деревьев ({2:P0} от посаженных, {3:P0} от вместимости)\n{4}"
-  ],
-  [
-    "AFD_SegmentAboveHarvest",
-    "выше порога рубки"
-  ],
-  [
-    "AFD_SegmentBelowHarvest",
-    "ниже порога рубки"
-  ],
-  [
-    "AFD_UnusedCapacityTipFmt",
-    "Неиспользованная вместимость: {0} клеток ({1:P0} от вместимости)"
-  ],
-  [
-    "AFD_SegmentInteractionHint",
-    "Наведите, чтобы подсветить деревья на этой стадии.\nНажмите, чтобы пометить или снять пометку для рубки."
-  ],
-  [
-    "AFD_SettingsModName",
-    "Автоматические лесные зоны"
-  ],
-  [
-    "AFD_SettingsTabDefaults",
-    "По умолчанию"
-  ],
-  [
-    "AFD_SettingsTabGameSettings",
-    "Игровые настройки"
-  ],
-  [
-    "AFD_SettingsHeadingForestryTowerDefaults",
-    "Настройки лесной башни по умолчанию"
-  ],
-  [
-    "AFD_SettingsHeadingDesignationDefaults",
-    "Настройки зон по умолчанию"
-  ],
-  [
-    "AFD_SettingsHeadingScanPerformance",
-    "Производительность сканирования"
-  ],
-  [
-    "AFD_SettingsHeadingPanelDefaults",
-    "Настройки панелей по умолчанию"
-  ],
-  [
-    "AFD_SettingsAvoidTilesWithTreesLabel",
-    "Избегать клеток с деревьями"
-  ],
-  [
-    "AFD_SettingsAvoidTilesWithTreesTip",
-    "По умолчанию: при создании зон пропускать клетки, где уже есть дерево."
-  ],
-  [
-    "AFD_SettingsMarkHarvestReadyLabel",
-    "Помечать деревья для рубки"
-  ],
-  [
-    "AFD_SettingsMarkHarvestReadyTip",
-    "По умолчанию: после создания зон автоматически помечать для рубки деревья, достигшие порога башни."
-  ],
-  [
-    "AFD_SettingsBatchSizeLabel",
-    "Размер пакета"
-  ],
-  [
-    "AFD_SettingsBatchSizeTip",
-    "Количество зон, размещаемых за кадр. Меньше = отзывчивее; больше = быстрее сканирование. Ограничено 1-200."
-  ],
-  [
-    "AFD_SettingsForestryPanelCollapsedLabel",
-    "Панель лесных зон свернута"
-  ],
-  [
-    "AFD_SettingsForestryPanelCollapsedTip",
-    "Состояние свертывания панели лесных зон по умолчанию при открытии инспектора башни."
-  ],
-  [
-    "AFD_SettingsInfoPanelCollapsedLabel",
-    "Информационная панель свернута"
-  ],
-  [
-    "AFD_SettingsInfoPanelCollapsedTip",
-    "Состояние свертывания панели информации о лесе по умолчанию при открытии инспектора башни."
-  ],
-  [
-    "AFD_SettingsSaveAsGlobal",
-    "Сохранить как конфиг"
-  ],
-  [
-    "AFD_SettingsSaveAsGlobalTooltip",
-    "Сохраняет эти настройки в AFDsettings.json. Они будут использоваться как значения по умолчанию для всех новых игр."
-  ],
-  [
-    "AFD_SettingsSavedToFile",
-    "Сохранено в AFDsettings.json."
-  ],
-  [
-    "AFD_SettingsSaveFailed",
-    "Не удалось сохранить - проверьте журнал"
-  ],
-  [
-    "AFD_SettingsRestoreDefaults",
-    "Сбросить по умолчанию"
-  ],
-  [
-    "AFD_SettingsRestoreDefaultsTooltip",
-    "Сбрасывает все значения зон и панелей к встроенным значениям. (Не сохраняет их автоматически как конфиг.)"
-  ],
-  [
-    "AFD_SettingsRestoredDefaults",
-    "Значения по умолчанию восстановлены"
-  ],
-  [
-    "AFD_NewlyPlantedTip",
-    "Недавно посаженные / самая низкая зрелость"
-  ],
-  [
-    "AFD_FullyGrownTipFmt",
-    "Полностью выросшие / наивысшая зрелость ({0} средняя полная зрелость в этой вышке)."
-  ],
-  [
-    "AFD_BucketFullyMatureFmt",
-    "Полностью зрелые ({0}, 100%)"
-  ],
-  [
-    "AFD_BucketNewlyPlantedName",
-    "Недавно посаженные"
-  ],
-  [
-    "AFD_BucketYoungName",
-    "Молодые"
-  ],
-  [
-    "AFD_BucketGrowingName",
-    "Растущие"
-  ],
-  [
-    "AFD_BucketMaturingName",
-    "Созревающие"
-  ],
-  [
-    "AFD_BucketNearlyMatureName",
-    "Почти зрелые"
-  ],
-  [
-    "AFD_BucketRangeFmt",
-    "{0} ({1}–{2}; {3:P0}–{4:P0})"
-  ],
-  [
-    "AFD_OrderConstructionTooltip",
-    "Закажите новый {0} для {2} в {1}."
-  ],
-  [
-    "AFD_OrderConstructionShortcutHint",
-    "Нажмите, удерживая клавишу Shift-Alt, чтобы заказать новый {0} для {2} в {1}."
-  ],
-  [
-    "AFD_PreAssignedTooltipFmt",
-    "Предварительно назначено {0}"
-  ],
-  [
-    "AFD_EnqueueConfirmPromptSingular",
-    "Заказать новый {0} для {2} в {1}?"
-  ],
-  [
-    "AFD_EnqueueConfirmPromptPlural",
-    "Заказать {0} новых машин типа {1} для {3} в {2}?"
-  ],
-  [
-    "AFD_EnqueueConfirmBtnText",
-    "Заказать"
-  ],
-  [
-    "AFD_ZoomToDepotTooltip",
-    "Приблизить к {0}"
-  ]
+    [
+        "AFD_ForestryDesignationsTitle",
+        "Разметка лесопосадок"
+    ],
+    [
+        "AFD_ForestryInformationTitle",
+        "Информация о лесном хозяйстве"
+    ],
+    [
+        "AFD_CreateDesignationsBtn",
+        "Создать разметку"
+    ],
+    [
+        "AFD_CreateDesignationsBtnTip",
+        "Сканирует область вышки и размечает область лесопосадок."
+    ],
+    [
+        "AFD_ClearDesignationsBtnTip",
+        "Очистить всю разметку лесопосадок в области этой вышки."
+    ],
+    [
+        "AFD_RefreshCompositionTip",
+        "Обновить состав леса"
+    ],
+    [
+        "AFD_BoolYes",
+        "Да"
+    ],
+    [
+        "AFD_BoolNo",
+        "Нет"
+    ],
+    [
+        "AFD_OnlyFertileTilesLabel",
+        "Только плодородные клетки"
+    ],
+    [
+        "AFD_OnlyFertileTilesTip",
+        "Размещать разметку только там, где земля подходит для посадки деревьев: плодородный рельеф (не скала, песок или океан) и не занята зданием или другим объектом."
+    ],
+    [
+        "AFD_OnlyReachableTilesLabel",
+        "Только достижимые клетки"
+    ],
+    [
+        "AFD_OnlyReachableTilesTip",
+        "При включении этой функции, пропускать клетки разметки, которые недостижимы для техники в области вышки."
+    ],
+    [
+        "AFD_AvoidTerrainDesignationsLabel",
+        "Избегать разметки рельефа"
+    ],
+    [
+        "AFD_AvoidTerrainDesignationsTip",
+        "Пропускать клетки, которые уже содержат любую разметку рельефа, включая карьерные работы, отвалы или выравнивание."
+    ],
+    [
+        "AFD_MaxTilesLabel",
+        "Максимальное число разметок"
+    ],
+    [
+        "AFD_MaxTilesTip",
+        "Максимальное число клеток разметки за один запуск. 0 = без ограничения (∞)."
+    ],
+    [
+        "AFD_NoForestryTowerSelected",
+        "Лесохозяйственная вышка не выбрана."
+    ],
+    [
+        "AFD_NoForestryDesignations",
+        "Разметка лесопосадок отсутствует."
+    ],
+    [
+        "AFD_PressToScanComposition",
+        "Нажмите ↺, чтобы просканировать состав леса."
+    ],
+    [
+        "AFD_KpiTreesLabel",
+        "Деревья"
+    ],
+    [
+        "AFD_KpiMaturityLabel",
+        "Зрелость"
+    ],
+    [
+        "AFD_KpiSustainableYieldLabel",
+        "Устойчивый цикл роста"
+    ],
+    [
+        "AFD_KpiTreesTip",
+        "Текущее количество деревьев в управляемой лесной области этой вышки. Первое число — деревья сейчас; второе число — оценочный максимум деревьев на основе текущих подходящих мест для посадки."
+    ],
+    [
+        "AFD_KpiMaturityTipFmt",
+        "Средняя зрелость и текущий возраст управляемых деревьев. Полная зрелость сейчас составляет <b>{0}</b>, включая настройки сложности."
+    ],
+    [
+        "AFD_KpiSustainableYieldTipFmt",
+        "Максимальное долгосрочное производство древесины, которое можно поддерживать для этой вышки за игровой месяц, с учётом размеченной области, порога рубки и скорости роста деревьев по настройкам сложности (сейчас <b>{0}</b> средняя полная зрелость)."
+    ],
+    [
+        "AFD_GrowthBreakdownHeader",
+        "Разбивка по стадиям роста"
+    ],
+    [
+        "AFD_GrowthBreakdownTipFmt",
+        "Разбивка зрелости управляемых деревьев. Возраст полной зрелости зависит от типа дерева и сложности; текущая средняя полная зрелость — {0}. Стандартная кривая лесного урожая: 40% возраста = 30% урожая, 60% = 60%, 80% = 88%, 100% = полный."
+    ],
+    [
+        "AFD_GrowthHeaderTipNoCutFmt",
+        "Распределение по зрелости относительно текущего возраста полного роста каждого дерева. Вариант рубки: не рубить. Средняя полная зрелость: {0}."
+    ],
+    [
+        "AFD_GrowthHeaderTipWithCutFmt",
+        "Распределение по зрелости относительно текущего возраста полного роста каждого дерева. Вариант рубки: {0} ({1}% от {2} полностью выросшего дерева)."
+    ],
+    [
+        "AFD_HarvestThresholdTip",
+        "Порог рубки"
+    ],
+    [
+        "AFD_SegmentTipFmt",
+        "<b>{0}</b>\n{1} деревьев ({2:P0} от посаженных, {3:P0} от вместимости)\n{4}"
+    ],
+    [
+        "AFD_SegmentAboveHarvest",
+        "выше порога рубки"
+    ],
+    [
+        "AFD_SegmentBelowHarvest",
+        "ниже порога рубки"
+    ],
+    [
+        "AFD_UnusedCapacityTipFmt",
+        "Неиспользованная вместимость: {0} клеток ({1:P0} от вместимости)"
+    ],
+    [
+        "AFD_SegmentInteractionHint",
+        "Наведите, чтобы подсветить деревья на этой стадии.\nНажмите, чтобы пометить или снять пометку для рубки."
+    ],
+    [
+        "AFD_SettingsModName",
+        "Автоматическая разметка лесопосадок"
+    ],
+    [
+        "AFD_SettingsTabDefaults",
+        "По умолчанию"
+    ],
+    [
+        "AFD_SettingsTabGameSettings",
+        "Игровые настройки"
+    ],
+    [
+        "AFD_SettingsHeadingForestryTowerDefaults",
+        "Настройки лесохозяйственной вышки по умолчанию"
+    ],
+    [
+        "AFD_SettingsHeadingDesignationDefaults",
+        "Настройки разметки по умолчанию"
+    ],
+    [
+        "AFD_SettingsHeadingScanPerformance",
+        "Производительность сканирования"
+    ],
+    [
+        "AFD_SettingsHeadingPanelDefaults",
+        "Настройки панелей по умолчанию"
+    ],
+    [
+        "AFD_SettingsAvoidTilesWithTreesLabel",
+        "Избегать клеток с деревьями"
+    ],
+    [
+        "AFD_SettingsAvoidTilesWithTreesTip",
+        "По умолчанию: при создании разметки пропускать клетки, где уже есть дерево."
+    ],
+    [
+        "AFD_SettingsMarkHarvestReadyLabel",
+        "Помечать деревья для рубки"
+    ],
+    [
+        "AFD_SettingsMarkHarvestReadyTip",
+        "По умолчанию: после создания разметки автоматически помечать для рубки деревья, достигшие установленного порога вышки."
+    ],
+    [
+        "AFD_SettingsBatchSizeLabel",
+        "Размер пакета"
+    ],
+    [
+        "AFD_SettingsBatchSizeTip",
+        "Количество разметок, размещаемых за кадр. Меньше = отзывчивее; больше = быстрее сканирование. Ограничено 1-200."
+    ],
+    [
+        "AFD_SettingsForestryPanelCollapsedLabel",
+        "Панель лесопосадок свёрнута"
+    ],
+    [
+        "AFD_SettingsForestryPanelCollapsedTip",
+        "Состояние свёртывания панели разметки лесопосадок по умолчанию, при открытии интерфейса вышки."
+    ],
+    [
+        "AFD_SettingsInfoPanelCollapsedLabel",
+        "Информационная панель свёрнута"
+    ],
+    [
+        "AFD_SettingsInfoPanelCollapsedTip",
+        "Состояние свёртывания информационной панели лесного хозяйства по умолчанию, при открытии интерфейса вышки."
+    ],
+    [
+        "AFD_SettingsSaveAsGlobal",
+        "Сохранить как конфиг"
+    ],
+    [
+        "AFD_SettingsSaveAsGlobalTooltip",
+        "Сохраняет эти настройки в «AFDsettings.json». Они будут использоваться как значения по умолчанию для всех новых игр."
+    ],
+    [
+        "AFD_SettingsSavedToFile",
+        "Сохранено в «AFDsettings.json»."
+    ],
+    [
+        "AFD_SettingsSaveFailed",
+        "Не удалось сохранить — проверьте журнал"
+    ],
+    [
+        "AFD_SettingsRestoreDefaults",
+        "Сбросить по умолчанию"
+    ],
+    [
+        "AFD_SettingsRestoreDefaultsTooltip",
+        "Сбрасывает все значения разметки и панелей к встроенным значениям.<br>(Не сохраняет их автоматически как конфиг)"
+    ],
+    [
+        "AFD_SettingsRestoredDefaults",
+        "Значения по умолчанию восстановлены"
+    ],
+    [
+        "AFD_NewlyPlantedTip",
+        "Недавно посаженные / самая низкая зрелость"
+    ],
+    [
+        "AFD_FullyGrownTipFmt",
+        "Полностью выросшие / наивысшая зрелость ({0} средняя полная зрелость в этой вышке)."
+    ],
+    [
+        "AFD_BucketFullyMatureFmt",
+        "Полностью зрелые ({0}, 100%)"
+    ],
+    [
+        "AFD_BucketNewlyPlantedName",
+        "Недавно посаженные"
+    ],
+    [
+        "AFD_BucketYoungName",
+        "Молодые"
+    ],
+    [
+        "AFD_BucketGrowingName",
+        "Растущие"
+    ],
+    [
+        "AFD_BucketMaturingName",
+        "Созревающие"
+    ],
+    [
+        "AFD_BucketNearlyMatureName",
+        "Почти зрелые"
+    ],
+    [
+        "AFD_BucketRangeFmt",
+        "{0} ({1}–{2}; {3:P0}–{4:P0})"
+    ],
+    [
+        "AFD_OrderConstructionTooltip",
+        "Поставьте {0} в очередь для {2} в {1}"
+    ],
+    [
+        "AFD_OrderConstructionShortcutHint",
+        "Нажмите, удерживая клавишу Shift-Alt, чтобы заказать новый {0} для {2} в {1}."
+    ],
+    [
+        "AFD_PreAssignedTooltipFmt",
+        "Предварительно назначено {0}"
+    ],
+    [
+        "AFD_EnqueueConfirmPromptSingular",
+        "Поставить {0} в очередь для {2} в {1}?"
+    ],
+    [
+        "AFD_EnqueueConfirmPromptPlural",
+        "Поставить в очередь {0} единиц техники типа {1} для {3} в {2}?"
+    ],
+    [
+        "AFD_EnqueueConfirmBtnText",
+        "Заказать"
+    ],
+    [
+        "AFD_ZoomToDepotTooltip",
+        "Приблизить к {0}"
+    ]
 ]

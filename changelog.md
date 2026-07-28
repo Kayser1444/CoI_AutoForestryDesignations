@@ -1,5 +1,7 @@
 v0.1.13 [unreleased]
 
+* Improved: Replaced the Russian translation with the reviewed community-provided localization.
+
 v0.1.12 [released]
 * Restored vehicle-prototype-based pre-allocation UI patching for tree harvesters and tree planters, including compatible modded subclasses and non-tower assignment panels.
 * Fixed the pre-allocation visibility observer to use the stable inspector parent, matching vanilla and avoiding a hidden-row update cycle.
