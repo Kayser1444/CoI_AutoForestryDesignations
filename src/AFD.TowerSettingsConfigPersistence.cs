@@ -69,6 +69,25 @@ namespace AutoForestryDesignations
             var sb = new StringBuilder();
             sb.Append("{\"schemaVersion\":");
             sb.Append(TowerSettingsConfigSchemaVersion.ToString(CultureInfo.InvariantCulture));
+            sb.Append(",\"worldSettings\":{\"onlyFertileTiles\":");
+            AppendJsonBool(sb, AutoForestryDesignationsMod.OnlyFertileTiles);
+            sb.Append(",\"avoidTilesWithTrees\":");
+            AppendJsonBool(sb, AutoForestryDesignationsMod.AvoidTilesWithTrees);
+            sb.Append(",\"avoidMiningDesignations\":");
+            AppendJsonBool(sb, AutoForestryDesignationsMod.AvoidMiningDesignations);
+            sb.Append(",\"onlyReachableTiles\":");
+            AppendJsonBool(sb, AutoForestryDesignationsMod.OnlyReachableTiles);
+            sb.Append(",\"maxTiles\":");
+            sb.Append(AutoForestryDesignationsMod.MaxTiles.ToString(CultureInfo.InvariantCulture));
+            sb.Append(",\"markHarvestReadyForHarvest\":");
+            AppendJsonBool(sb, AutoForestryDesignationsMod.MarkHarvestReadyForHarvest);
+            sb.Append(",\"forestryDesignationsPanelCollapsed\":");
+            AppendJsonBool(sb, AutoForestryDesignationsMod.ForestryDesignationsPanelCollapsed);
+            sb.Append(",\"forestryInformationPanelCollapsed\":");
+            AppendJsonBool(sb, AutoForestryDesignationsMod.ForestryInformationPanelCollapsed);
+            sb.Append(",\"truckPoolingEnabled\":");
+            AppendJsonBool(sb, AutoForestryDesignationsMod.TruckPoolingEnabled);
+            sb.Append('}');
             sb.Append(",\"towerSettings\":[");
 
             // Combine entity IDs from tower settings overrides and truck assignments
@@ -145,6 +164,29 @@ namespace AutoForestryDesignations
             {
                 s_log.Warning($"Persistence: unsupported tower settings schema version '{schemaVersion}'.");
                 return false;
+            }
+
+            if (root.TryGetValue("worldSettings", out object rawWorldSettings)
+                && rawWorldSettings is Dict<string, object> worldSettings)
+            {
+                if (TryGetBool(worldSettings, "onlyFertileTiles", out bool onlyFertileTiles))
+                    AutoForestryDesignationsMod.SetOnlyFertileTiles(onlyFertileTiles);
+                if (TryGetBool(worldSettings, "avoidTilesWithTrees", out bool avoidTilesWithTrees))
+                    AutoForestryDesignationsMod.SetAvoidTilesWithTrees(avoidTilesWithTrees);
+                if (TryGetBool(worldSettings, "avoidMiningDesignations", out bool avoidMiningDesignations))
+                    AutoForestryDesignationsMod.SetAvoidMiningDesignations(avoidMiningDesignations);
+                if (TryGetBool(worldSettings, "onlyReachableTiles", out bool onlyReachableTiles))
+                    AutoForestryDesignationsMod.SetOnlyReachableTiles(onlyReachableTiles);
+                if (TryGetInt(worldSettings, "maxTiles", out int maxTiles))
+                    AutoForestryDesignationsMod.SetMaxTiles(maxTiles);
+                if (TryGetBool(worldSettings, "markHarvestReadyForHarvest", out bool markHarvestReadyForHarvest))
+                    AutoForestryDesignationsMod.SetMarkHarvestReadyForHarvest(markHarvestReadyForHarvest);
+                if (TryGetBool(worldSettings, "forestryDesignationsPanelCollapsed", out bool forestryDesignationsPanelCollapsed))
+                    AutoForestryDesignationsMod.SetForestryDesignationsPanelCollapsed(forestryDesignationsPanelCollapsed);
+                if (TryGetBool(worldSettings, "forestryInformationPanelCollapsed", out bool forestryInformationPanelCollapsed))
+                    AutoForestryDesignationsMod.SetForestryInformationPanelCollapsed(forestryInformationPanelCollapsed);
+                if (TryGetBool(worldSettings, "truckPoolingEnabled", out bool truckPoolingEnabled))
+                    AutoForestryDesignationsMod.SetTruckPoolingEnabled(truckPoolingEnabled);
             }
 
             if (!root.TryGetValue("towerSettings", out object rawEntries)

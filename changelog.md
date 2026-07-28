@@ -1,5 +1,7 @@
 v0.2.1 [unreleased]
 
+* Added `worldSettings` block to `afdTowerSettingsStateJson` in save files to persist world-level settings and truck pooling defaults per save game.
+
 v0.2.0 [released]
 
 * Added **Truck Pooling** feature for Forestry Towers: virtually pools and balances assigned trucks across all active tree harvesters of a tower.

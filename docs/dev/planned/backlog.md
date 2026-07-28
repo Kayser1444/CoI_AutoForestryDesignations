@@ -10,3 +10,5 @@ Make the persistence layer co-exist with actual mod settings.
 ## Vehicle Management
 
 * [x] Assign trucks to the forestry tower instead of each harvester. @Tammy
+* [ ] **Truck manager**: Actively manages truck assignments to harvesters to try and optimize wood output (minimize harvester idle time).
+
