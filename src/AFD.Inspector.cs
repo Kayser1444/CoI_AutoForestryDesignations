@@ -338,8 +338,6 @@ namespace AutoForestryDesignations
                 }
                 else if (__instance is BaseInspector<TreeHarvester> harvesterInspector)
                 {
-                    Label? noteLabel = null;
-
                     harvesterInspector.Observe(() =>
                     {
                         var harvester = harvesterInspector.Entity;
@@ -353,61 +351,34 @@ namespace AutoForestryDesignations
                         var assignerUi = FindVehicleAssignerUi(harvesterInspector);
                         if (assignerUi != null)
                         {
-                            if (noteLabel == null)
-                            {
-                                if (assignerUi.TryGetParentWithType<PanelWithHeader>(out var panelWithHeader))
-                                {
-                                    noteLabel = new Label()
-                                        .Color(Theme.InactiveColor)
-                                        .TextOverflow(TextOverflow.Wrap)
-                                        .MarginTop(2.pt())
-                                        .MarginBottom(4.pt())
-                                        .MarginLeftRight(4.pt());
-                                    panelWithHeader.Body.Add(noteLabel);
-                                    LogDebug("Created truck pooling noteLabel inside PanelWithHeader");
-                                }
-                            }
-
                             var buttonCol = assignerUi.ChildAtOrDefault(2);
                             if (buttonCol != null && buttonCol.ChildrenCount >= 2)
                             {
-                                var plusBtn = buttonCol.ChildAtOrDefault<Button>(0);
-                                var minusBtn = buttonCol.ChildAtOrDefault<Button>(1);
+                                var plusBtn = buttonCol.ChildAtOrDefault<ButtonIcon>(0);
+                                var minusBtn = buttonCol.ChildAtOrDefault<ButtonIcon>(1);
                                 if (plusBtn != null && minusBtn != null)
                                 {
                                     if (tower != null)
                                     {
-                                        var disabledTip = string.Format(
-                                            AfdLocalization.TruckPoolingHarvesterButtonsDisabledTip.TranslatedString,
+                                        var noteTip = string.Format(
+                                            AfdLocalization.TruckPoolingHarvesterNote.TranslatedString,
                                             tower.Prototype.Strings.Name).AsLoc();
                                         plusBtn.Enabled(false);
-                                        plusBtn.Tooltip(disabledTip);
+                                        plusBtn.Tooltip(noteTip);
+                                        plusBtn.IconTint(Theme.WarningColor);
 
                                         minusBtn.Enabled(false);
-                                        minusBtn.Tooltip(disabledTip);
+                                        minusBtn.Tooltip(noteTip);
+                                        minusBtn.IconTint(Theme.WarningColor);
                                     }
                                     else
                                     {
                                         plusBtn.Tooltip(null);
-                                        minusBtn.Tooltip(null);
-                                    }
-                                }
-                            }
+                                        plusBtn.IconTint(null);
 
-                            if (noteLabel != null)
-                            {
-                                if (tower != null)
-                                {
-                                    var noteText = string.Format(
-                                        AfdLocalization.TruckPoolingHarvesterNote.TranslatedString,
-                                        tower.Prototype.Strings.Name).AsLoc();
-                                    noteLabel.Value(noteText);
-                                    noteLabel.Show();
-                                    LogDebug($"Updated truck pooling noteLabel text: {noteText.Value}");
-                                }
-                                else
-                                {
-                                    noteLabel.Hide();
+                                        minusBtn.Tooltip(null);
+                                        minusBtn.IconTint(null);
+                                    }
                                 }
                             }
                         }

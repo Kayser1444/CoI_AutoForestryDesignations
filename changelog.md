@@ -4,8 +4,7 @@ v0.2.0 [unreleased]
 * Added **Truck pool** vehicle assigner section (`TruckPoolTitle`) to the Forestry Tower inspector, displaying real-time pooled vehicle count and assignments.
 * Added per-tower and global **Truck pooling** toggle settings with `AFDsettings.json` persistence (`truckPoolingEnabled`), including global Mod Settings tab integration.
 * Added dynamic visibility observer so the "Truck pool" inspector section automatically shows when Truck Pooling is enabled and hides completely when disabled.
-* Disabled `+` and `-` truck assignment buttons on Tree Harvester inspectors when Truck Pooling is enabled on their assigned tower, adding explanatory tooltips ("Truck pooling enabled. Manage assignments via {0}").
-* Added explanatory note label ("Note: Truck pooling enabled on {0}. Assigned vehicles may be redistributed.") below truck cards on Tree Harvester inspectors when Truck Pooling is enabled on their assigned tower.
+* Disabled `+` and `-` truck assignment buttons on Tree Harvester inspectors when Truck Pooling is enabled on their assigned tower, tinting the button icons with warning amber styling (`Theme.WarningColor`) and appending explanatory notes ("Note: Truck pooling enabled on {0}. Assigned vehicles may be redistributed.") directly to button tooltips and hover floaters.
 * Added automatic truck redistribution when pausing or unpausing tree harvesters or forestry towers (`Entity.OnEnabledChanged`).
 * Added capacity- and physical footprint-based truck allocation priority sorting largest harvesters and largest trucks first.
 * Fixed batch truck collection (`AssignTrucksToTower`) when enabling Truck Pooling to ensure all trucks from all harvesters are pooled before rebalancing, preventing accidental truck unassignments.

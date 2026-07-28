@@ -302,6 +302,17 @@ namespace AutoForestryDesignations
                         floater.Add(
                             new HorizontalDivider().MarginTopBottom(4),
                             new Label(new LocStrFormatted(formattedHint)).TextCenterMiddle());
+
+                        if (target is TreeHarvester harvester && harvester.AssignedTo.ValueOrNull is ForestryTower tower && AutoForestryDesignation.GetTowerTruckPoolingEnabled(tower))
+                        {
+                            string noteStr = string.Format(
+                                AfdLocalization.TruckPoolingHarvesterNote.TranslatedString,
+                                tower.Prototype.Strings.Name);
+                            floater.Add(
+                                new HorizontalDivider().MarginTopBottom(4),
+                                new Label(new LocStrFormatted(noteStr)).Color(Theme.WarningColor).TextCenterMiddle());
+                        }
+
                         s_orderShortcutHints.Add(floater, new OrderShortcutHintDecoration());
                     }
                     catch (Exception ex)
