@@ -8,7 +8,7 @@ v0.2.0 [unreleased]
 * Added automatic truck redistribution when pausing or unpausing tree harvesters or forestry towers (`Entity.OnEnabledChanged`).
 * Added capacity- and physical footprint-based truck allocation priority sorting largest harvesters and largest trucks first.
 * Fixed batch truck collection (`AssignTrucksToTower`) when enabling Truck Pooling to ensure all trucks from all harvesters are pooled before rebalancing, preventing accidental truck unassignments.
-* Fixed real-time inspector refreshes on pool updates by invoking `tower.updateAssignedVehicles()`.
+* Fixed vehicle assigner row visibility when starting a new game where vehicle technology is not yet unlocked but initial starting vehicles (Pickups) are owned (`stats.Owned > 0`).
 * Improved Russian translation with reviewed community localization and updated translatable strings across all 7 supported languages (`de`, `en`, `es`, `it`, `pt`, `ru`, `sv`, `zh`).
 
 v0.1.12 [released]
