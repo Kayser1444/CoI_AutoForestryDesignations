@@ -1,4 +1,4 @@
-v0.2.0 [unreleased]
+v0.2.0 [packaged]
 
 * Added **Truck Pooling** feature for Forestry Towers: virtually pools and balances assigned trucks across all active tree harvesters of a tower.
 * Added **Truck pool** vehicle assigner section (`TruckPoolTitle`) to the Forestry Tower inspector, displaying real-time pooled vehicle count and assignments.
