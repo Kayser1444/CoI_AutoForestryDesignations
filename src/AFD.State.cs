@@ -203,7 +203,7 @@ namespace AutoForestryDesignations
         internal static bool GetTowerForestryInformationPanelCollapsed(IAreaManagingTower tower) => GetTowerSettingsOrDefaults(tower).ForestryInformationPanelCollapsed;
         internal static void SetTowerForestryInformationPanelCollapsed(IAreaManagingTower tower, bool value) => UpdateTowerSettings(tower, settings => settings.SetForestryInformationPanelCollapsed(value));
 
-        internal static bool GetTowerTruckPoolingEnabled(IAreaManagingTower tower) => GetTowerSettingsOrDefaults(tower).TruckPoolingEnabled;
+        internal static bool GetTowerTruckPoolingEnabled(IAreaManagingTower tower) => (tower != null && !tower.IsDestroyed) ? GetTowerSettingsOrDefaults(tower).TruckPoolingEnabled : false;
         internal static void SetTowerTruckPoolingEnabled(IAreaManagingTower tower, bool value)
         {
             UpdateTowerSettings(tower, settings => settings.SetTruckPoolingEnabled(value));

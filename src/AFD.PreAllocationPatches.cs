@@ -228,12 +228,14 @@ namespace AutoForestryDesignations
                     // observer may no longer run to make the row visible again.
                     parent.ObserveIndexable(() => entityProvider().AllVehiclesWithProto(proto))
                         .Observe(() => context.VehiclesManager.GetStats(proto, entityProvider().ZoneMask))
-                        .Observe(() => entityProvider().CanVehicleBeAssigned(proto))
-                        .Observe(() => context.UnlockedProtosDbForUi.IsUnlocked(proto))
+                        .Observe(() => entityProvider().CanVehicleBeAssigned(proto) && context.UnlockedProtosDbForUi.IsUnlocked(proto))
                         .Observe(() => PendingVehicleAllocations.GetQueuedCountForTower(entityProvider().Id, proto.Id))
-                        .Do(delegate(Lyst<Vehicle> assignedVehicles, VehicleStats stats, bool canBeAssigned, bool isUnlocked, int queuedCount)
+                        .Observe(() => (entityProvider() is Vehicle v && v.AssignedTo.ValueOrNull is ForestryTower t) ? AutoForestryDesignation.GetTowerTruckPoolingEnabled(t) : false)
+                        .Do(delegate(Lyst<Vehicle> assignedVehicles, VehicleStats stats, bool canBeAssignedAndUnlocked, int queuedCount, bool isPooled)
                         {
                             int assignedCount = assignedVehicles.Count;
+                            bool isUnlocked = context.UnlockedProtosDbForUi.IsUnlocked(proto);
+                            bool canBeAssigned = entityProvider().CanVehicleBeAssigned(proto);
                             if (queuedCount > 0)
                             {
                                 assignedDisplay.SetValue(new LocStrFormatted($"{assignedCount} (+{queuedCount})"));
@@ -245,12 +247,7 @@ namespace AutoForestryDesignations
                                 assignedDisplay.State((assignedCount <= 0) ? DisplayState.Inactive : DisplayState.Important);
                             }
                             
-                            bool isPooledOnTower = false;
-                            var entity = entityProvider();
-                            if (entity is Vehicle vehicle && vehicle.AssignedTo.ValueOrNull is ForestryTower tower && AutoForestryDesignation.GetTowerTruckPoolingEnabled(tower))
-                            {
-                                isPooledOnTower = true;
-                            }
+                            bool isPooledOnTower = isPooled;
 
                             bool enabled = stats.Assignable > 0 || (canBeAssigned && isUnlocked);
                             plusBtn.Enabled(enabled);
@@ -309,19 +306,6 @@ namespace AutoForestryDesignations
                     {
                         var target = entityProvider();
                         if (target == null || target.IsDestroyed) return content;
-
-                        var closestDepot = FindClosestDepot(context, proto, target, logSelection: false);
-                        if (closestDepot != null)
-                        {
-                            string formattedHint = string.Format(
-                                AfdLocalization.OrderConstructionShortcutHint.TranslatedString,
-                                $"<b>{proto.Strings.Name}</b>",
-                                $"<b>{PendingVehicleAllocations.GetEntityDescription(closestDepot)}</b>",
-                                $"<b>{PendingVehicleAllocations.GetEntityDescription(target)}</b>");
-                            floater.Add(
-                                new HorizontalDivider().MarginTopBottom(4),
-                                new Label(new LocStrFormatted(formattedHint)).TextCenterMiddle());
-                        }
 
                         if (target is Vehicle vehicle && vehicle.AssignedTo.ValueOrNull is ForestryTower tower && AutoForestryDesignation.GetTowerTruckPoolingEnabled(tower))
                         {
