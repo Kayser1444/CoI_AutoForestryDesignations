@@ -142,7 +142,7 @@ namespace AutoForestryDesignations
         {
             try
             {
-                bool isSupportedTruck = (proto is TruckProto truckProto) && (entityProvider() is ForestryTower || entityProvider() is TreeHarvester) && context.ProtosDb.All<TreeHarvesterProto>().Any(h => h.IsTruckSupported(truckProto));
+                bool isSupportedTruck = (proto is TruckProto);
                 if (!(proto is TreeHarvesterProto) && !(proto is TreePlanterProto) && !isSupportedTruck) return;
 
                 // Find the column inside row
@@ -246,11 +246,10 @@ namespace AutoForestryDesignations
                             }
                             
                             bool isPooledOnTower = false;
-                            ForestryTower? towerForHarvester = null;
-                            if (entityProvider() is TreeHarvester harvester && harvester.AssignedTo.ValueOrNull is ForestryTower tower && AutoForestryDesignation.GetTowerTruckPoolingEnabled(tower))
+                            var entity = entityProvider();
+                            if (entity is Vehicle vehicle && vehicle.AssignedTo.ValueOrNull is ForestryTower tower && AutoForestryDesignation.GetTowerTruckPoolingEnabled(tower))
                             {
                                 isPooledOnTower = true;
-                                towerForHarvester = tower;
                             }
 
                             bool enabled = stats.Assignable > 0 || (canBeAssigned && isUnlocked);
@@ -324,7 +323,7 @@ namespace AutoForestryDesignations
                                 new Label(new LocStrFormatted(formattedHint)).TextCenterMiddle());
                         }
 
-                        if (target is TreeHarvester harvester && harvester.AssignedTo.ValueOrNull is ForestryTower tower && AutoForestryDesignation.GetTowerTruckPoolingEnabled(tower))
+                        if (target is Vehicle vehicle && vehicle.AssignedTo.ValueOrNull is ForestryTower tower && AutoForestryDesignation.GetTowerTruckPoolingEnabled(tower))
                         {
                             string noteStr = string.Format(
                                 AfdLocalization.TruckPoolingHarvesterNote.TranslatedString,
