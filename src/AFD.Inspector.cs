@@ -61,6 +61,18 @@ namespace AutoForestryDesignations
                     LogDebug("Patched first constructor");
                 }
 
+                var harvesterInspectorType = assembly.GetType("Mafi.Unity.Ui.Inspectors.TreeHarvesterInspector");
+                if (harvesterInspectorType != null)
+                {
+                    var hCtors = harvesterInspectorType.GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                    if (hCtors.Length > 0)
+                    {
+                        harmony.Patch(hCtors[0],
+                            postfix: new HarmonyMethod(typeof(AutoForestryDesignation), nameof(InspectorCtorPostfix)));
+                        LogDebug("Patched TreeHarvesterInspector constructor");
+                    }
+                }
+
                 // Patch OnActivated() on ForestryTowerInspector
                 try
                 {

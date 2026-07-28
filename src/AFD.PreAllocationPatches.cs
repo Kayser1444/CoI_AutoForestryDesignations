@@ -245,12 +245,40 @@ namespace AutoForestryDesignations
                                 assignedDisplay.State((assignedCount <= 0) ? DisplayState.Inactive : DisplayState.Important);
                             }
                             
-                            bool enabled = stats.Assignable > 0 || (canBeAssigned && isUnlocked);
-                            plusBtn.Enabled(enabled);
+                            bool isPooledOnTower = false;
+                            ForestryTower? towerForHarvester = null;
+                            if (entityProvider() is TreeHarvester harvester && harvester.AssignedTo.ValueOrNull is ForestryTower tower && AutoForestryDesignation.GetTowerTruckPoolingEnabled(tower))
+                            {
+                                isPooledOnTower = true;
+                                towerForHarvester = tower;
+                            }
+
+                            if (isPooledOnTower && towerForHarvester != null)
+                            {
+                                var noteTip = string.Format(
+                                    AfdLocalization.TruckPoolingHarvesterNote.TranslatedString,
+                                    towerForHarvester.Prototype.Strings.Name).AsLoc();
+
+                                plusBtn.Enabled(false);
+                                plusBtn.Tooltip(noteTip);
+                                plusBtn.IconTint(Theme.WarningColor);
+
+                                minusBtn.Enabled(false);
+                                minusBtn.Tooltip(noteTip);
+                                minusBtn.IconTint(Theme.WarningColor);
+                            }
+                            else
+                            {
+                                bool enabled = stats.Assignable > 0 || (canBeAssigned && isUnlocked);
+                                plusBtn.Enabled(enabled);
+                                plusBtn.IconTint(null);
+
+                                bool minusEnabled = assignedCount > 0 || queuedCount > 0;
+                                minusBtn.Enabled(minusEnabled);
+                                minusBtn.IconTint(null);
+                            }
+
                             __instance.Visible(assignedCount > 0 || queuedCount > 0 || (canBeAssigned && (isUnlocked || stats.Owned > 0)));
-                            
-                            bool minusEnabled = assignedCount > 0 || queuedCount > 0;
-                            minusBtn.Enabled(minusEnabled);
                         });
                 }
             }
