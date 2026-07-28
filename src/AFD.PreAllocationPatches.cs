@@ -43,10 +43,23 @@ namespace AutoForestryDesignations
         private static FloatingColumn? s_activePopup;
         private sealed class OwnedQueueDecoration { }
         private sealed class OrderShortcutHintDecoration { }
+        private class TruckPoolingFloaterDecoration
+        {
+            public HorizontalDivider Divider;
+            public Label NoteLabel;
+
+            public TruckPoolingFloaterDecoration(HorizontalDivider divider, Label noteLabel)
+            {
+                Divider = divider;
+                NoteLabel = noteLabel;
+            }
+        }
         private static readonly ConditionalWeakTable<UiComponent, OwnedQueueDecoration> s_ownedQueueDecorations =
             new ConditionalWeakTable<UiComponent, OwnedQueueDecoration>();
         private static readonly ConditionalWeakTable<UiComponent, OrderShortcutHintDecoration> s_orderShortcutHints =
             new ConditionalWeakTable<UiComponent, OrderShortcutHintDecoration>();
+        private static readonly ConditionalWeakTable<UiComponent, TruckPoolingFloaterDecoration> s_poolingFloaterDecorations =
+            new ConditionalWeakTable<UiComponent, TruckPoolingFloaterDecoration>();
 
         private static void MarkDecorationOwned(UiComponent component)
         {
@@ -299,25 +312,37 @@ namespace AutoForestryDesignations
                 {
                     var content = factory();
                     var floater = content.ValueOrNull;
-                    if (floater == null || s_orderShortcutHints.TryGetValue(floater, out _))
-                        return content;
+                    if (floater == null) return content;
 
                     try
                     {
                         var target = entityProvider();
-                        if (target == null || target.IsDestroyed) return content;
-
-                        if (target is Vehicle vehicle && vehicle.AssignedTo.ValueOrNull is ForestryTower tower && AutoForestryDesignation.GetTowerTruckPoolingEnabled(tower))
+                        if (target != null && !target.IsDestroyed)
                         {
-                            string noteStr = string.Format(
-                                AfdLocalization.TruckPoolingHarvesterNote.TranslatedString,
-                                tower.Prototype.Strings.Name);
-                            floater.Add(
-                                new HorizontalDivider().MarginTopBottom(4),
-                                new Label(new LocStrFormatted(noteStr)).Color(Theme.WarningColor).TextCenterMiddle());
-                        }
+                            if (!s_poolingFloaterDecorations.TryGetValue(floater, out var decoration))
+                            {
+                                var divider = new HorizontalDivider().MarginTopBottom(4);
+                                var label = new Label().Color(Theme.WarningColor).TextCenterMiddle();
+                                floater.Add(divider, label);
+                                decoration = new TruckPoolingFloaterDecoration(divider, label);
+                                s_poolingFloaterDecorations.Add(floater, decoration);
+                            }
 
-                        s_orderShortcutHints.Add(floater, new OrderShortcutHintDecoration());
+                            if (target is Vehicle vehicle && vehicle.AssignedTo.ValueOrNull is ForestryTower tower && AutoForestryDesignation.GetTowerTruckPoolingEnabled(tower))
+                            {
+                                string noteStr = string.Format(
+                                    AfdLocalization.TruckPoolingHarvesterNote.TranslatedString,
+                                    tower.Prototype.Strings.Name);
+                                decoration.NoteLabel.Value(noteStr.AsLoc());
+                                decoration.NoteLabel.Show();
+                                decoration.Divider.Show();
+                            }
+                            else
+                            {
+                                decoration.NoteLabel.Hide();
+                                decoration.Divider.Hide();
+                            }
+                        }
                     }
                     catch (Exception ex)
                     {
