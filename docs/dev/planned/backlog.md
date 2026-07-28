@@ -9,4 +9,4 @@ Make the persistence layer co-exist with actual mod settings.
 
 ## Vehicle Management
 
-* Order vehicle construction and pre-allocate to tower from the tower panel by Shift-Alt-clicking the + button. See [design notes](vehicle-construction-from-tower.md) for how this would work.
+* Assign trucks to the forestry tower instead of each harvester. @Tammy
