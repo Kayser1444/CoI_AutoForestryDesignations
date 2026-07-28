@@ -108,6 +108,11 @@ namespace AutoForestryDesignations
             "Truck pooling enabled. Manage assignments via {0}.",
             "Tooltip shown on harvester vehicle assignment buttons when truck pooling is enabled on its assigned tower. {0} is replaced by the tower name.");
 
+        public static LocStr TruckPoolingHarvesterNote = Loc.Str(
+            "AFD_TruckPoolingHarvesterNote",
+            "Note: Truck pooling enabled on {0}. Assigned vehicles may be redistributed.",
+            "Note text shown below truck cards in harvester inspector when truck pooling is enabled on its assigned tower. {0} is replaced by the tower name.");
+
         // --- State / fallback labels ---
         public static LocStr NoForestryTowerSelected = Loc.Str(
             "AFD_NoForestryTowerSelected",

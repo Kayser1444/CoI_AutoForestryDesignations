@@ -80,6 +80,10 @@
     "卡车共享已启用。通过 {0} 管理分配。"
   ],
   [
+    "AFD_TruckPoolingHarvesterNote",
+    "注意：卡车共用已于 {0} 启用。分配的车辆可能会重新分配。"
+  ],
+  [
     "AFD_NoForestryTowerSelected",
     "未选择林业塔。"
   ],

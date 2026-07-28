@@ -80,6 +80,10 @@
     "Agrupación de camiones habilitada. Administrar asignaciones a través de {0}."
   ],
   [
+    "AFD_TruckPoolingHarvesterNote",
+    "Nota: el uso compartido de camiones está habilitado el {0}. Los vehículos asignados podrán ser redistribuidos."
+  ],
+  [
     "AFD_NoForestryTowerSelected",
     "No hay ninguna torre de control forestal seleccionada."
   ],

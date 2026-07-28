@@ -80,6 +80,10 @@
     "Truck pooling aktiverad. Hantera uppdrag via {0}."
   ],
   [
+    "AFD_TruckPoolingHarvesterNote",
+    "Obs! Truckpooling aktiverad på {0}. Tilldelade fordon kan omfördelas."
+  ],
+  [
     "AFD_NoForestryTowerSelected",
     "Inget skogsbrukstorn valt."
   ],

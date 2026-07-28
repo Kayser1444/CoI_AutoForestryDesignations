@@ -80,6 +80,10 @@
     "Pool de caminhões ativado. Gerencie atribuições por meio de {0}."
   ],
   [
+    "AFD_TruckPoolingHarvesterNote",
+    "Observação: Pool de caminhões ativado em {0}. Os veículos atribuídos podem ser redistribuídos."
+  ],
+  [
     "AFD_NoForestryTowerSelected",
     "Nenhuma torre florestal selecionada."
   ],

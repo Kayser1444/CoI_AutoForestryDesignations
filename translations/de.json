@@ -80,6 +80,10 @@
     "LKW-Pooling aktiviert. Aufgaben über {0} verwalten."
   ],
   [
+    "AFD_TruckPoolingHarvesterNote",
+    "Hinweis: LKW-Pooling aktiviert am {0}. Zugeteilte Fahrzeuge können umverteilt werden."
+  ],
+  [
     "AFD_NoForestryTowerSelected",
     "Kein Forstkontrollturm ausgewählt."
   ],

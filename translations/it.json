@@ -80,6 +80,10 @@
     "Truck pooling abilitato. Gestisci i compiti tramite {0}."
   ],
   [
+    "AFD_TruckPoolingHarvesterNote",
+    "Nota: Truck pooling abilitato su {0}. I veicoli assegnati possono essere ridistribuiti."
+  ],
+  [
     "AFD_NoForestryTowerSelected",
     "Non è stata selezionata alcuna torre forestale."
   ],

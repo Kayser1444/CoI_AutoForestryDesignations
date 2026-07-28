@@ -1,7 +1,7 @@
 {
   "mod": "AutoForestryDesignations",
   "source_file": "src\\AFD.Localization.cs",
-  "total_keys": 80,
+  "total_keys": 81,
   "skip_keys": [
     "dtk.mod.name",
     "dtk.rate_limit.items_per_min",
@@ -9,6 +9,18 @@
     "dtk.settings.language.local",
     "dtk.settings.number_format.auto"
   ],
-  "keys": {},
-  "keys_needing_translation": 0
+  "keys": {
+    "AFD_TruckPoolingHarvesterNote": {
+      "en": "Note: Truck pooling enabled on {0}. Assigned vehicles may be redistributed.",
+      "context": "Note text shown below truck cards in harvester inspector when truck pooling is enabled on its assigned tower. {0} is replaced by the tower name.",
+      "de": "Hinweis: LKW-Pooling aktiviert am {0}. Zugeteilte Fahrzeuge können umverteilt werden.",
+      "es": "Nota: el uso compartido de camiones está habilitado el {0}. Los vehículos asignados podrán ser redistribuidos.",
+      "it": "Nota: Truck pooling abilitato su {0}. I veicoli assegnati possono essere ridistribuiti.",
+      "pt": "Observação: Pool de caminhões ativado em {0}. Os veículos atribuídos podem ser redistribuídos.",
+      "ru": "Примечание. Объединение грузовиков в пул включено в {0}. Присвоенные транспортные средства могут быть перераспределены.",
+      "sv": "Obs! Truckpooling aktiverad på {0}. Tilldelade fordon kan omfördelas.",
+      "zh": "注意：卡车共用已于 {0} 启用。分配的车辆可能会重新分配。"
+    }
+  },
+  "keys_needing_translation": 1
 }

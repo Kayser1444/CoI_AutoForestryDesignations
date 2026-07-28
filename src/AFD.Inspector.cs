@@ -24,6 +24,7 @@ using Mafi.Core.Syncers;
 using Mafi.Core.Vehicles;
 using Mafi.Core.Vehicles.TreeHarvesters;
 using Mafi.Core.Vehicles.Trucks;
+using Mafi.Unity.UiToolkit;
 using Mafi.Unity.UiToolkit.Component;
 using Mafi.Unity.UiToolkit.Library;
 using Mafi.Unity.Ui.Library;
@@ -337,6 +338,8 @@ namespace AutoForestryDesignations
                 }
                 else if (__instance is BaseInspector<TreeHarvester> harvesterInspector)
                 {
+                    Label? noteLabel = null;
+
                     harvesterInspector.Observe(() =>
                     {
                         var harvester = harvesterInspector.Entity;
@@ -350,6 +353,21 @@ namespace AutoForestryDesignations
                         var assignerUi = FindVehicleAssignerUi(harvesterInspector);
                         if (assignerUi != null)
                         {
+                            if (noteLabel == null)
+                            {
+                                var vehicleAssignerUi = assignerUi.Parent.ValueOrNull;
+                                var parentContainer = vehicleAssignerUi?.Parent.ValueOrNull as UiComponent;
+                                if (parentContainer != null)
+                                {
+                                    noteLabel = new Label()
+                                        .Color(Theme.InactiveColor)
+                                        .MarginTop(2.pt())
+                                        .MarginBottom(2.pt())
+                                        .MarginLeftRight(4.pt());
+                                    parentContainer.Add(noteLabel);
+                                }
+                            }
+
                             var buttonCol = assignerUi.ChildAtOrDefault(2);
                             if (buttonCol != null && buttonCol.ChildrenCount >= 2)
                             {
@@ -373,6 +391,22 @@ namespace AutoForestryDesignations
                                         plusBtn.Tooltip(null);
                                         minusBtn.Tooltip(null);
                                     }
+                                }
+                            }
+
+                            if (noteLabel != null)
+                            {
+                                if (tower != null)
+                                {
+                                    var noteText = string.Format(
+                                        AfdLocalization.TruckPoolingHarvesterNote.TranslatedString,
+                                        tower.Prototype.Strings.Name).AsLoc();
+                                    noteLabel.Value(noteText);
+                                    noteLabel.Show();
+                                }
+                                else
+                                {
+                                    noteLabel.Hide();
                                 }
                             }
                         }
