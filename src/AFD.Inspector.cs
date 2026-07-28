@@ -355,16 +355,16 @@ namespace AutoForestryDesignations
                         {
                             if (noteLabel == null)
                             {
-                                var vehicleAssignerUi = assignerUi.Parent.ValueOrNull;
-                                var parentContainer = vehicleAssignerUi?.Parent.ValueOrNull as UiComponent;
-                                if (parentContainer != null)
+                                if (assignerUi.TryGetParentWithType<PanelWithHeader>(out var panelWithHeader))
                                 {
                                     noteLabel = new Label()
                                         .Color(Theme.InactiveColor)
+                                        .TextOverflow(TextOverflow.Wrap)
                                         .MarginTop(2.pt())
-                                        .MarginBottom(2.pt())
+                                        .MarginBottom(4.pt())
                                         .MarginLeftRight(4.pt());
-                                    parentContainer.Add(noteLabel);
+                                    panelWithHeader.Body.Add(noteLabel);
+                                    LogDebug("Created truck pooling noteLabel inside PanelWithHeader");
                                 }
                             }
 
@@ -403,6 +403,7 @@ namespace AutoForestryDesignations
                                         tower.Prototype.Strings.Name).AsLoc();
                                     noteLabel.Value(noteText);
                                     noteLabel.Show();
+                                    LogDebug($"Updated truck pooling noteLabel text: {noteText.Value}");
                                 }
                                 else
                                 {
