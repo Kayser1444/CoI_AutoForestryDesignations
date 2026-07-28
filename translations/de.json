@@ -64,6 +64,22 @@
     "Maximale Anzahl von Gebietsfeldern pro Lauf. 0 = keine Begrenzung (∞)."
   ],
   [
+    "AFD_TruckPoolingLabel",
+    "LKW-Pooling"
+  ],
+  [
+    "AFD_TruckPoolingTip",
+    "Bündeln und verteilen Sie zugewiesene LKWs automatisch auf alle aktiven Baumerntemaschinen dieses Turms."
+  ],
+  [
+    "AFD_TruckPoolTitle",
+    "LKW-Pool"
+  ],
+  [
+    "AFD_TruckPoolingHarvesterButtonsDisabledTip",
+    "LKW-Pooling aktiviert. Aufgaben über {0} verwalten."
+  ],
+  [
     "AFD_NoForestryTowerSelected",
     "Kein Forstkontrollturm ausgewählt."
   ],
@@ -74,6 +90,10 @@
   [
     "AFD_PressToScanComposition",
     "↺ drücken, um die Forstübersicht zu scannen."
+  ],
+  [
+    "AFD_AssignedTrucksForestryTowerTooltip",
+    "Zugewiesene LKWs bedienen automatisch alle diesem Turm zugewiesenen Baumerntemaschinen."
   ],
   [
     "AFD_KpiTreesLabel",

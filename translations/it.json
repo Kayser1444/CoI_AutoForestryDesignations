@@ -64,6 +64,22 @@
     "Numero massimo di caselle di designazione da posizionare per ogni esecuzione. 0 = nessun limite (∞)."
   ],
   [
+    "AFD_TruckPoolingLabel",
+    "Raggruppamento dei camion"
+  ],
+  [
+    "AFD_TruckPoolingTip",
+    "Raggruppa e bilancia automaticamente i camion assegnati tra tutte le raccoglitrici di alberi attive di questa torre."
+  ],
+  [
+    "AFD_TruckPoolTitle",
+    "Piscina per camion"
+  ],
+  [
+    "AFD_TruckPoolingHarvesterButtonsDisabledTip",
+    "Truck pooling abilitato. Gestisci i compiti tramite {0}."
+  ],
+  [
     "AFD_NoForestryTowerSelected",
     "Non è stata selezionata alcuna torre forestale."
   ],
@@ -74,6 +90,10 @@
   [
     "AFD_PressToScanComposition",
     "Premere ↺ per analizzare la composizione del bosco."
+  ],
+  [
+    "AFD_AssignedTrucksForestryTowerTooltip",
+    "I camion assegnati serviranno automaticamente tutti i raccoglitori di alberi assegnati a questa torre."
   ],
   [
     "AFD_KpiTreesLabel",

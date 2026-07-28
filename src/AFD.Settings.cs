@@ -215,6 +215,10 @@ namespace AutoForestryDesignations
                 if (forestryInformationPanelCollapsed.HasValue)
                     AutoForestryDesignationsMod.SetForestryInformationPanelCollapsed(forestryInformationPanelCollapsed.Value);
 
+                bool? truckPoolingEnabled = ParseBool(json, "truckPoolingEnabled");
+                if (truckPoolingEnabled.HasValue)
+                    AutoForestryDesignationsMod.SetTruckPoolingEnabled(truckPoolingEnabled.Value);
+
                 parsedVersion = ParseString(json, "settingsVersion");
             }
             catch (Exception ex)
@@ -312,7 +316,10 @@ namespace AutoForestryDesignations
             sb.AppendLine($"  \"forestryDesignationsPanelCollapsed\": {BoolToJsonStr(AutoForestryDesignationsMod.ForestryDesignationsPanelCollapsed)},");
             sb.AppendLine();
             sb.AppendLine("  \"_comment_forestryInformationPanelCollapsed\": \"Default collapsed state for the Forestry information panel when a forestry tower inspector is created. false = expanded by default, true = collapsed by default. Default: false.\",");
-            sb.AppendLine($"  \"forestryInformationPanelCollapsed\": {BoolToJsonStr(AutoForestryDesignationsMod.ForestryInformationPanelCollapsed)}");
+            sb.AppendLine($"  \"forestryInformationPanelCollapsed\": {BoolToJsonStr(AutoForestryDesignationsMod.ForestryInformationPanelCollapsed)},");
+            sb.AppendLine();
+            sb.AppendLine("  \"_comment_truckPoolingEnabled\": \"Default for new tower panels. When true, trucks assigned to forestry towers are pooled and automatically distributed among its active tree harvesters. Default: true.\",");
+            sb.AppendLine($"  \"truckPoolingEnabled\": {BoolToJsonStr(AutoForestryDesignationsMod.TruckPoolingEnabled)}");
             sb.Append("}");
             return sb.ToString();
         }

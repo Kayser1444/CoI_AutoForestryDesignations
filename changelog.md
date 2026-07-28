@@ -1,6 +1,15 @@
-v0.1.13 [unreleased]
+v0.2.0 [unreleased]
 
-* Improved: Replaced the Russian translation with the reviewed community-provided localization.
+* Added **Truck Pooling** feature for Forestry Towers: virtually pools and balances assigned trucks across all active tree harvesters of a tower.
+* Added **Truck pool** vehicle assigner section (`TruckPoolTitle`) to the Forestry Tower inspector, displaying real-time pooled vehicle count and assignments.
+* Added per-tower and global **Truck pooling** toggle settings with `AFDsettings.json` persistence (`truckPoolingEnabled`), including global Mod Settings tab integration.
+* Added dynamic visibility observer so the "Truck pool" inspector section automatically shows when Truck Pooling is enabled and hides completely when disabled.
+* Disabled `+` and `-` truck assignment buttons on Tree Harvester inspectors when Truck Pooling is enabled on their assigned tower, adding explanatory tooltips ("Truck pooling enabled. Manage assignments via {0}").
+* Added automatic truck redistribution when pausing or unpausing tree harvesters or forestry towers (`Entity.OnEnabledChanged`).
+* Added capacity- and physical footprint-based truck allocation priority sorting largest harvesters and largest trucks first.
+* Fixed batch truck collection (`AssignTrucksToTower`) when enabling Truck Pooling to ensure all trucks from all harvesters are pooled before rebalancing, preventing accidental truck unassignments.
+* Fixed real-time inspector refreshes on pool updates by invoking `tower.updateAssignedVehicles()`.
+* Improved Russian translation with reviewed community localization and updated translatable strings across all 7 supported languages (`de`, `en`, `es`, `it`, `pt`, `ru`, `sv`, `zh`).
 
 v0.1.12 [released]
 * Restored vehicle-prototype-based pre-allocation UI patching for tree harvesters and tree planters, including compatible modded subclasses and non-tower assignment panels.

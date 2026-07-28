@@ -117,6 +117,13 @@ namespace AutoForestryDesignations
                 value => AutoForestryDesignationsMod.SetOnlyReachableTiles(value),
                 refreshers));
 
+            content.Add(BuildToggleRow(
+                AfdLocalization.TruckPoolingLabel.AsFormatted,
+                AfdLocalization.TruckPoolingTip.AsFormatted,
+                () => AutoForestryDesignationsMod.TruckPoolingEnabled,
+                value => AutoForestryDesignationsMod.SetTruckPoolingEnabled(value),
+                refreshers));
+
             content.Add(BuildIntStepRow(
                 AfdLocalization.MaxTilesLabel.AsFormatted,
                 AfdLocalization.MaxTilesTip.AsFormatted,

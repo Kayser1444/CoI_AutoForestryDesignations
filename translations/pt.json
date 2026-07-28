@@ -64,6 +64,22 @@
     "Número máximo de áreas de designação a colocar por execução. 0 = sem limite (∞)."
   ],
   [
+    "AFD_TruckPoolingLabel",
+    "Pool de caminhões"
+  ],
+  [
+    "AFD_TruckPoolingTip",
+    "Agrupe e equilibre automaticamente os caminhões atribuídos em todas as colheitadeiras de árvores ativas desta torre."
+  ],
+  [
+    "AFD_TruckPoolTitle",
+    "Piscina de caminhões"
+  ],
+  [
+    "AFD_TruckPoolingHarvesterButtonsDisabledTip",
+    "Pool de caminhões ativado. Gerencie atribuições por meio de {0}."
+  ],
+  [
     "AFD_NoForestryTowerSelected",
     "Nenhuma torre florestal selecionada."
   ],
@@ -74,6 +90,10 @@
   [
     "AFD_PressToScanComposition",
     "Pressione ↺ para examinar a composição florestal."
+  ],
+  [
+    "AFD_AssignedTrucksForestryTowerTooltip",
+    "Os caminhões atribuídos atenderão automaticamente todos os colhedores de árvores atribuídos a esta torre."
   ],
   [
     "AFD_KpiTreesLabel",

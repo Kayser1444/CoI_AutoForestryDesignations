@@ -43,6 +43,7 @@ namespace AutoForestryDesignations
             public Mafi.Unity.Ui.Library.Display OnlyReachableDisplay { get; }
             public Mafi.Unity.Ui.Library.Display MaxTilesDisplay { get; }
             public Mafi.Unity.Ui.Library.Display MarkHarvestReadyDisplay { get; }
+            public Mafi.Unity.Ui.Library.Display TruckPoolingDisplay { get; }
             public PanelWithHeader Panel { get; }
 
             public Bindings(
@@ -53,7 +54,8 @@ namespace AutoForestryDesignations
                 Mafi.Unity.Ui.Library.Display avoidMiningDisplay,
                 Mafi.Unity.Ui.Library.Display onlyReachableDisplay,
                 Mafi.Unity.Ui.Library.Display maxTilesDisplay,
-                Mafi.Unity.Ui.Library.Display markHarvestReadyDisplay)
+                Mafi.Unity.Ui.Library.Display markHarvestReadyDisplay,
+                Mafi.Unity.Ui.Library.Display truckPoolingDisplay)
             {
                 GetTower = getTower;
                 Panel = panel;
@@ -63,6 +65,7 @@ namespace AutoForestryDesignations
                 OnlyReachableDisplay = onlyReachableDisplay;
                 MaxTilesDisplay = maxTilesDisplay;
                 MarkHarvestReadyDisplay = markHarvestReadyDisplay;
+                TruckPoolingDisplay = truckPoolingDisplay;
             }
         }
 
@@ -89,6 +92,7 @@ namespace AutoForestryDesignations
             b.OnlyReachableDisplay.SetValue(BoolText(AutoForestryDesignation.GetTowerOnlyReachableTiles(tower)));
             b.MaxTilesDisplay.SetValue(new LocStrFormatted(MaxTilesText(AutoForestryDesignation.GetTowerMaxTiles(tower))));
             b.MarkHarvestReadyDisplay.SetValue(BoolText(AutoForestryDesignation.GetTowerMarkHarvestReadyForHarvest(tower)));
+            b.TruckPoolingDisplay.SetValue(BoolText(AutoForestryDesignation.GetTowerTruckPoolingEnabled(tower)));
             b.Panel.Collapsed(AutoForestryDesignation.GetTowerForestryDesignationsPanelCollapsed(tower));
         }
 
@@ -272,7 +276,30 @@ namespace AutoForestryDesignations
             var markHarvestReadyDisplay = new Mafi.Unity.Ui.Library.Display(BoolText(initMarkHarvestReady))
                 .MinDigits(3).AlignSelfStretch().MarginTopBottom(2.px());
 
-            s_bindings[key] = new Bindings(getTower, panel, onlyFertileDisplay, avoidWithTreesDisplay, avoidMiningDisplay, onlyReachableDisplay, maxTilesDisplay, markHarvestReadyDisplay);
+            // --- Truck pooling ---
+            bool initTruckPooling = initialTower != null
+                ? AutoForestryDesignation.GetTowerTruckPoolingEnabled(initialTower)
+                : AutoForestryDesignationsMod.TruckPoolingEnabled;
+            var truckPoolingDisplay = new Mafi.Unity.Ui.Library.Display(BoolText(initTruckPooling))
+                .MinDigits(3).AlignSelfStretch().MarginTopBottom(2.px());
+            panel.BodyAdd(BuildToggleRow(
+                AfdLocalization.TruckPoolingLabel,
+                AfdLocalization.TruckPoolingTip,
+                truckPoolingDisplay,
+                (Action)delegate
+                {
+                    var tower = getTower(); if (tower == null) return;
+                    AutoForestryDesignation.SetTowerTruckPoolingEnabled(tower, true);
+                    truckPoolingDisplay.SetValue(BoolText(true));
+                },
+                (Action)delegate
+                {
+                    var tower = getTower(); if (tower == null) return;
+                    AutoForestryDesignation.SetTowerTruckPoolingEnabled(tower, false);
+                    truckPoolingDisplay.SetValue(BoolText(false));
+                }));
+
+            s_bindings[key] = new Bindings(getTower, panel, onlyFertileDisplay, avoidWithTreesDisplay, avoidMiningDisplay, onlyReachableDisplay, maxTilesDisplay, markHarvestReadyDisplay, truckPoolingDisplay);
             return panel;
         }
 

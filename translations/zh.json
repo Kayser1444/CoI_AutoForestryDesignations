@@ -64,6 +64,22 @@
     "每次运行最多放置的规划地块数量。0 = 无限制（∞）。"
   ],
   [
+    "AFD_TruckPoolingLabel",
+    "卡车拼车"
+  ],
+  [
+    "AFD_TruckPoolingTip",
+    "自动汇集和平衡该塔所有活动树木收割机上分配的卡车。"
+  ],
+  [
+    "AFD_TruckPoolTitle",
+    "卡车池"
+  ],
+  [
+    "AFD_TruckPoolingHarvesterButtonsDisabledTip",
+    "卡车共享已启用。通过 {0} 管理分配。"
+  ],
+  [
     "AFD_NoForestryTowerSelected",
     "未选择林业塔。"
   ],
@@ -74,6 +90,10 @@
   [
     "AFD_PressToScanComposition",
     "按 ↺ 扫描林业组成。"
+  ],
+  [
+    "AFD_AssignedTrucksForestryTowerTooltip",
+    "分配的卡车将自动为分配给该塔的所有树木收割机提供服务。"
   ],
   [
     "AFD_KpiTreesLabel",

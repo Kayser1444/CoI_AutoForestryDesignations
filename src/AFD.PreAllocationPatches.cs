@@ -17,6 +17,7 @@ using Mafi.Core.Buildings.Forestry;
 using Mafi.Core.Vehicles;
 using Mafi.Core.Vehicles.TreeHarvesters;
 using Mafi.Core.Vehicles.TreePlanters;
+using Mafi.Core.Vehicles.Trucks;
 using Mafi.Core.Vehicles.Commands;
 using Mafi.Collections;
 using Mafi.Core.Input;
@@ -141,7 +142,8 @@ namespace AutoForestryDesignations
         {
             try
             {
-                if (!(proto is TreeHarvesterProto) && !(proto is TreePlanterProto)) return;
+                bool isSupportedTruck = (proto is TruckProto truckProto) && (entityProvider() is ForestryTower) && context.ProtosDb.All<TreeHarvesterProto>().Any(h => h.IsTruckSupported(truckProto));
+                if (!(proto is TreeHarvesterProto) && !(proto is TreePlanterProto) && !isSupportedTruck) return;
 
                 // Find the column inside row
                 var col = __instance.AllChildren.OfType<Column>().FirstOrDefault();

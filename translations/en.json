@@ -64,6 +64,22 @@
     "Maximum number of designation tiles to place per run. 0 = no limit (u221e)."
   ],
   [
+    "AFD_TruckPoolingLabel",
+    "Truck pooling"
+  ],
+  [
+    "AFD_TruckPoolingTip",
+    "Virtually pool and balance assigned trucks across all active tree harvesters of this tower."
+  ],
+  [
+    "AFD_TruckPoolTitle",
+    "Truck pool"
+  ],
+  [
+    "AFD_TruckPoolingHarvesterButtonsDisabledTip",
+    "Truck pooling enabled. Manage assignments via {0}."
+  ],
+  [
     "AFD_NoForestryTowerSelected",
     "No forestry tower selected."
   ],
@@ -74,6 +90,10 @@
   [
     "AFD_PressToScanComposition",
     "Press u21ba to scan forestry composition."
+  ],
+  [
+    "AFD_AssignedTrucksForestryTowerTooltip",
+    "Truck pool will automatically distribute trucks to tree harvesters assigned to this tower."
   ],
   [
     "AFD_KpiTreesLabel",

@@ -64,6 +64,22 @@
     "Maximalt antal anvisningsrutor att placera per körning. 0 = ingen gräns (∞)."
   ],
   [
+    "AFD_TruckPoolingLabel",
+    "Lastbil pooling"
+  ],
+  [
+    "AFD_TruckPoolingTip",
+    "Samla och balansera automatiskt tilldelade lastbilar över alla aktiva trädskördare i detta torn."
+  ],
+  [
+    "AFD_TruckPoolTitle",
+    "Lastbil pool"
+  ],
+  [
+    "AFD_TruckPoolingHarvesterButtonsDisabledTip",
+    "Truck pooling aktiverad. Hantera uppdrag via {0}."
+  ],
+  [
     "AFD_NoForestryTowerSelected",
     "Inget skogsbrukstorn valt."
   ],
@@ -74,6 +90,10 @@
   [
     "AFD_PressToScanComposition",
     "Tryck på ↺ för att skanna skogsbruksöversikten."
+  ],
+  [
+    "AFD_AssignedTrucksForestryTowerTooltip",
+    "Tilldelade lastbilar kommer automatiskt att betjäna alla trädskördare som tilldelats detta torn."
   ],
   [
     "AFD_KpiTreesLabel",

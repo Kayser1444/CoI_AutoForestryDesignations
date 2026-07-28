@@ -9,4 +9,4 @@ Make the persistence layer co-exist with actual mod settings.
 
 ## Vehicle Management
 
-* Assign trucks to the forestry tower instead of each harvester. @Tammy
+* [x] Assign trucks to the forestry tower instead of each harvester. @Tammy

@@ -11,7 +11,10 @@ using System.IO;
 using HarmonyLib;
 using Mafi;
 using Mafi.Collections;
+using Mafi.Core.Buildings.Forestry;
 using Mafi.Core.Buildings.VehicleDepots;
+using Mafi.Core.Vehicles.TreeHarvesters;
+using Mafi.Core.Vehicles.Trucks;
 using Mafi.Core.Entities;
 using Mafi.Core.Game;
 using Mafi.Core.GameLoop;
@@ -121,6 +124,10 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
     public static bool ForestryInformationPanelCollapsed { get; private set; } = false;
     public static void SetForestryInformationPanelCollapsed(bool value) => ForestryInformationPanelCollapsed = value;
 
+    /// <summary>When enabled, trucks assigned to forestry towers (or their harvesters) are pooled and balanced automatically. Default: true.</summary>
+    public static bool TruckPoolingEnabled { get; private set; } = true;
+    public static void SetTruckPoolingEnabled(bool value) => TruckPoolingEnabled = value;
+
     /// <summary>Resets all global defaults to their built-in values.</summary>
     public static void ResetGlobalDefaults()
     {
@@ -132,6 +139,7 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
         SetMarkHarvestReadyForHarvest(false);
         SetForestryDesignationsPanelCollapsed(false);
         SetForestryInformationPanelCollapsed(false);
+        SetTruckPoolingEnabled(true);
         AutoForestryDesignation.SetBatchSize(30);
     }
 
@@ -165,6 +173,7 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
             AutoForestryDesignation.Initialize(desigManager, protosDb, worldMapManager, ticker, entitiesManager, m_simLoopEvents, vehiclePathFindingManager);
             m_towerSettingsStateStore = ModStateJsonStores.CreateDefault(JsonConfig, AutoForestryDesignation.TowerSettingsConfigKey);
             AutoForestryDesignation.LoadTowerSettingsFromJsonStore(m_towerSettingsStateStore);
+            TowerTruckAssignments.ReconcileAndPurgeStaleEntries(entitiesManager);
 
             m_preAllocationsStateStore = ModStateJsonStores.CreateDefault(JsonConfig, "afdPendingVehicleAllocations");
             PendingVehicleAllocations.LoadFromJsonStore(m_preAllocationsStateStore);
@@ -179,6 +188,11 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
 
     private void beforeSave()
     {
+        if (m_entitiesManager != null)
+        {
+            TowerTruckAssignments.ReconcileAndPurgeStaleEntries(m_entitiesManager);
+        }
+
         IModStateJsonStore store = m_towerSettingsStateStore
             ?? ModStateJsonStores.CreateDefault(JsonConfig, AutoForestryDesignation.TowerSettingsConfigKey);
         m_towerSettingsStateStore = store;
@@ -206,6 +220,7 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
         unsubscribeWorldEvents();
         m_saveLifecycle.DisposeRuntime();
         PendingVehicleAllocations.ClearAll();
+        TowerTruckAssignments.ClearAll();
     }
 
     private void unsubscribeWorldEvents()
@@ -241,7 +256,20 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
 
     private void onEntityRemoved(IEntity entity)
     {
-        if (entity is IEntityAssignedWithVehicles)
+        if (entity is ForestryTower tower)
+        {
+            TowerTruckAssignments.OnTowerDestroyed(tower.Id);
+            PendingVehicleAllocations.OnTowerDestroyed(tower.Id);
+        }
+        else if (entity is Truck truck)
+        {
+            TowerTruckAssignments.OnTruckDestroyed(truck.Id, m_entitiesManager);
+        }
+        else if (entity is TreeHarvester harvester)
+        {
+            TowerTruckAssignments.OnHarvesterRemoved(harvester, m_entitiesManager);
+        }
+        else if (entity is IEntityAssignedWithVehicles)
         {
             PendingVehicleAllocations.OnTowerDestroyed(entity.Id);
         }

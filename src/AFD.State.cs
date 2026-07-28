@@ -12,6 +12,7 @@ using System.Linq;
 using Mafi;
 using Mafi.Collections;
 using Mafi.Core;
+using Mafi.Core.Buildings.Forestry;
 using Mafi.Core.Buildings.Towers;
 using Mafi.Core.Entities;
 using Mafi.Core.PathFinding;
@@ -23,6 +24,7 @@ using Mafi.Core.Terrain.Designation;
 using Mafi.Core.Terrain.Trees;
 using Mafi.Core.Vehicles.TreeHarvesters;
 using Mafi.Core.Vehicles.TreePlanters;
+using Mafi.Core.Vehicles.Trucks;
 using Mafi.Core.World;
 using Mafi.Unity.Terrain;
 using Mafi.Unity.Trees;
@@ -68,6 +70,7 @@ namespace AutoForestryDesignations
             public bool MarkHarvestReadyForHarvest { get; private set; }
             public bool ForestryDesignationsPanelCollapsed { get; private set; }
             public bool ForestryInformationPanelCollapsed { get; private set; }
+            public bool TruckPoolingEnabled { get; private set; }
 
             public AFDTowerSettings()
             {
@@ -79,6 +82,7 @@ namespace AutoForestryDesignations
                 MarkHarvestReadyForHarvest = AutoForestryDesignationsMod.MarkHarvestReadyForHarvest;
                 ForestryDesignationsPanelCollapsed = AutoForestryDesignationsMod.ForestryDesignationsPanelCollapsed;
                 ForestryInformationPanelCollapsed = AutoForestryDesignationsMod.ForestryInformationPanelCollapsed;
+                TruckPoolingEnabled = AutoForestryDesignationsMod.TruckPoolingEnabled;
             }
 
             public static AFDTowerSettings FromGlobalDefaults() => new AFDTowerSettings();
@@ -91,6 +95,7 @@ namespace AutoForestryDesignations
             public void SetMarkHarvestReadyForHarvest(bool value) => MarkHarvestReadyForHarvest = value;
             public void SetForestryDesignationsPanelCollapsed(bool value) => ForestryDesignationsPanelCollapsed = value;
             public void SetForestryInformationPanelCollapsed(bool value) => ForestryInformationPanelCollapsed = value;
+            public void SetTruckPoolingEnabled(bool value) => TruckPoolingEnabled = value;
 
             public bool MatchesGlobalDefaults()
             {
@@ -101,7 +106,8 @@ namespace AutoForestryDesignations
                     && MaxTiles == AutoForestryDesignationsMod.MaxTiles
                     && MarkHarvestReadyForHarvest == AutoForestryDesignationsMod.MarkHarvestReadyForHarvest
                     && ForestryDesignationsPanelCollapsed == AutoForestryDesignationsMod.ForestryDesignationsPanelCollapsed
-                    && ForestryInformationPanelCollapsed == AutoForestryDesignationsMod.ForestryInformationPanelCollapsed;
+                    && ForestryInformationPanelCollapsed == AutoForestryDesignationsMod.ForestryInformationPanelCollapsed
+                    && TruckPoolingEnabled == AutoForestryDesignationsMod.TruckPoolingEnabled;
             }
         }
 
@@ -196,6 +202,38 @@ namespace AutoForestryDesignations
 
         internal static bool GetTowerForestryInformationPanelCollapsed(IAreaManagingTower tower) => GetTowerSettingsOrDefaults(tower).ForestryInformationPanelCollapsed;
         internal static void SetTowerForestryInformationPanelCollapsed(IAreaManagingTower tower, bool value) => UpdateTowerSettings(tower, settings => settings.SetForestryInformationPanelCollapsed(value));
+
+        internal static bool GetTowerTruckPoolingEnabled(IAreaManagingTower tower) => GetTowerSettingsOrDefaults(tower).TruckPoolingEnabled;
+        internal static void SetTowerTruckPoolingEnabled(IAreaManagingTower tower, bool value)
+        {
+            UpdateTowerSettings(tower, settings => settings.SetTruckPoolingEnabled(value));
+            if (tower is ForestryTower ft)
+            {
+                if (value)
+                {
+                    var trucksToPool = new List<Truck>();
+                    for (int i = 0; i < ft.AllVehicles.Count; i++)
+                    {
+                        if (ft.AllVehicles[i] is TreeHarvester harvester)
+                        {
+                            for (int j = 0; j < harvester.AllVehicles.Count; j++)
+                            {
+                                if (harvester.AllVehicles[j] is Truck truck)
+                                {
+                                    trucksToPool.Add(truck);
+                                }
+                            }
+                        }
+                    }
+                    TowerTruckAssignments.AssignTrucksToTower(ft, trucksToPool, s_entitiesManager);
+                }
+                else
+                {
+                    TowerTruckAssignments.SetTruckIdsForTower(ft.Id, Array.Empty<EntityId>());
+                    TowerTruckAssignments.RefreshTowerVehicleState(ft);
+                }
+            }
+        }
 
         public static void Initialize(
             ITerrainDesignationsManager desigManager,

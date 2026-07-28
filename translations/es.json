@@ -64,6 +64,22 @@
     "Número máximo de casillas de designación a colocar por ejecución. 0 = sin límite (∞)."
   ],
   [
+    "AFD_TruckPoolingLabel",
+    "Agrupación de camiones"
+  ],
+  [
+    "AFD_TruckPoolingTip",
+    "Agrupe y equilibre automáticamente los camiones asignados en todos los recolectores de árboles activos de esta torre."
+  ],
+  [
+    "AFD_TruckPoolTitle",
+    "Piscina de camiones"
+  ],
+  [
+    "AFD_TruckPoolingHarvesterButtonsDisabledTip",
+    "Agrupación de camiones habilitada. Administrar asignaciones a través de {0}."
+  ],
+  [
     "AFD_NoForestryTowerSelected",
     "No hay ninguna torre de control forestal seleccionada."
   ],
@@ -74,6 +90,10 @@
   [
     "AFD_PressToScanComposition",
     "Pulsa ↺ para escanear la composición forestal."
+  ],
+  [
+    "AFD_AssignedTrucksForestryTowerTooltip",
+    "Los camiones asignados atenderán automáticamente a todas las recolectoras de árboles asignadas a esta torre."
   ],
   [
     "AFD_KpiTreesLabel",

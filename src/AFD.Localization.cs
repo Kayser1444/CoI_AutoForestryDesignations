@@ -88,6 +88,26 @@ namespace AutoForestryDesignations
             "Maximum number of designation tiles to place per run. 0 = no limit (\u221e).",
             "Tooltip for the Max Tiles step setting.");
 
+        public static LocStr TruckPoolingLabel = Loc.Str(
+            "AFD_TruckPoolingLabel",
+            "Truck pooling",
+            "Label for the Truck Pooling toggle setting.");
+
+        public static LocStr TruckPoolingTip = Loc.Str(
+            "AFD_TruckPoolingTip",
+            "Virtually pool and balance assigned trucks across all active tree harvesters of this tower.",
+            "Tooltip for the Truck Pooling toggle setting.");
+
+        public static LocStr TruckPoolTitle = Loc.Str(
+            "AFD_TruckPoolTitle",
+            "Truck pool",
+            "Header title for the Truck Pool vehicle assigner section in the Forestry Tower inspector.");
+
+        public static LocStr TruckPoolingHarvesterButtonsDisabledTip = Loc.Str(
+            "AFD_TruckPoolingHarvesterButtonsDisabledTip",
+            "Truck pooling enabled. Manage assignments via {0}.",
+            "Tooltip shown on harvester vehicle assignment buttons when truck pooling is enabled on its assigned tower. {0} is replaced by the tower name.");
+
         // --- State / fallback labels ---
         public static LocStr NoForestryTowerSelected = Loc.Str(
             "AFD_NoForestryTowerSelected",
@@ -103,6 +123,11 @@ namespace AutoForestryDesignations
             "AFD_PressToScanComposition",
             "Press \u21ba to scan forestry composition.",
             "Prompt shown in the Forestry information panel before the first scan.");
+
+        public static LocStr AssignedTrucksForestryTowerTooltip = Loc.Str(
+            "AFD_AssignedTrucksForestryTowerTooltip",
+            "Truck pool will automatically distribute trucks to tree harvesters assigned to this tower.",
+            "Tooltip that explains what trucks do when assigned to a forestry tower.");
 
         // --- KPI card labels ---
         public static LocStr KpiTreesLabel = Loc.Str(

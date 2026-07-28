@@ -7,6 +7,7 @@
 // intended to contain only original mod code/configuration; if MaFi Games material
 // is included by mistake, I intend to correct it promptly upon discovery or notice.
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -70,6 +71,10 @@ namespace AutoForestryDesignations
             sb.Append(TowerSettingsConfigSchemaVersion.ToString(CultureInfo.InvariantCulture));
             sb.Append(",\"towerSettings\":[");
 
+            // Combine entity IDs from tower settings overrides and truck assignments
+            var allTowerIds = new HashSet<EntityId>(s_towerSettingsByEntityId.Keys);
+            // Query any towers with truck assignments from TowerTruckAssignments
+            // (Pass null for entitiesManager or just iterate s_towerTrucks if accessible)
             bool first = true;
             foreach (var pair in s_towerSettingsByEntityId)
             {
@@ -80,7 +85,9 @@ namespace AutoForestryDesignations
                 }
 
                 AFDTowerSettings settings = pair.Value;
-                if (settings.MatchesGlobalDefaults())
+                HashSet<EntityId> truckIds = TowerTruckAssignments.GetTruckIdsForTower(entityId);
+
+                if (settings.MatchesGlobalDefaults() && truckIds.Count == 0)
                 {
                     continue;
                 }
@@ -102,6 +109,21 @@ namespace AutoForestryDesignations
                 AppendBoolOverride(sb, "markHarvestReadyForHarvest", settings.MarkHarvestReadyForHarvest, AutoForestryDesignationsMod.MarkHarvestReadyForHarvest);
                 AppendBoolOverride(sb, "forestryDesignationsPanelCollapsed", settings.ForestryDesignationsPanelCollapsed, AutoForestryDesignationsMod.ForestryDesignationsPanelCollapsed);
                 AppendBoolOverride(sb, "forestryInformationPanelCollapsed", settings.ForestryInformationPanelCollapsed, AutoForestryDesignationsMod.ForestryInformationPanelCollapsed);
+                AppendBoolOverride(sb, "truckPoolingEnabled", settings.TruckPoolingEnabled, AutoForestryDesignationsMod.TruckPoolingEnabled);
+
+                if (truckIds.Count > 0)
+                {
+                    sb.Append(",\"assignedTruckIds\":[");
+                    bool firstTruck = true;
+                    foreach (var tid in truckIds)
+                    {
+                        if (!firstTruck) sb.Append(',');
+                        firstTruck = false;
+                        sb.Append(tid.Value.ToString(CultureInfo.InvariantCulture));
+                    }
+                    sb.Append(']');
+                }
+
                 sb.Append('}');
             }
 
@@ -132,6 +154,8 @@ namespace AutoForestryDesignations
             }
 
             s_towerSettingsByEntityId.Clear();
+            TowerTruckAssignments.ClearAll();
+
             foreach (object rawEntry in entries)
             {
                 if (!(rawEntry is Dict<string, object> entry)
@@ -141,6 +165,7 @@ namespace AutoForestryDesignations
                     continue;
                 }
 
+                EntityId towerId = new EntityId(entityIdValue);
                 var settings = AFDTowerSettings.FromGlobalDefaults();
                 if (TryGetBool(entry, "onlyFertileTiles", out bool onlyFertileTiles))
                     settings.SetOnlyFertileTiles(onlyFertileTiles);
@@ -158,10 +183,36 @@ namespace AutoForestryDesignations
                     settings.SetForestryDesignationsPanelCollapsed(forestryDesignationsPanelCollapsed);
                 if (TryGetBool(entry, "forestryInformationPanelCollapsed", out bool forestryInformationPanelCollapsed))
                     settings.SetForestryInformationPanelCollapsed(forestryInformationPanelCollapsed);
+                if (TryGetBool(entry, "truckPoolingEnabled", out bool truckPoolingEnabled))
+                    settings.SetTruckPoolingEnabled(truckPoolingEnabled);
+
+                if (entry.TryGetValue("assignedTruckIds", out object rawTrucks) && rawTrucks is object[] truckArray)
+                {
+                    var truckIds = new List<EntityId>();
+                    foreach (object item in truckArray)
+                    {
+                        if (item is int idVal && idVal > 0)
+                        {
+                            truckIds.Add(new EntityId(idVal));
+                        }
+                        else if (item is double dVal && dVal > 0)
+                        {
+                            truckIds.Add(new EntityId((int)dVal));
+                        }
+                        else if (item is long lVal && lVal > 0)
+                        {
+                            truckIds.Add(new EntityId((int)lVal));
+                        }
+                    }
+                    if (truckIds.Count > 0)
+                    {
+                        TowerTruckAssignments.SetTruckIdsForTower(towerId, truckIds);
+                    }
+                }
 
                 if (!settings.MatchesGlobalDefaults())
                 {
-                    s_towerSettingsByEntityId[new EntityId(entityIdValue)] = settings;
+                    s_towerSettingsByEntityId[towerId] = settings;
                     loadedCount++;
                 }
             }
