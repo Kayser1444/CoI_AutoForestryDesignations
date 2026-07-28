@@ -142,7 +142,7 @@ namespace AutoForestryDesignations
         {
             try
             {
-                bool isSupportedTruck = (proto is TruckProto truckProto) && (entityProvider() is ForestryTower) && context.ProtosDb.All<TreeHarvesterProto>().Any(h => h.IsTruckSupported(truckProto));
+                bool isSupportedTruck = (proto is TruckProto truckProto) && (entityProvider() is ForestryTower || entityProvider() is TreeHarvester) && context.ProtosDb.All<TreeHarvesterProto>().Any(h => h.IsTruckSupported(truckProto));
                 if (!(proto is TreeHarvesterProto) && !(proto is TreePlanterProto) && !isSupportedTruck) return;
 
                 // Find the column inside row
@@ -253,28 +253,20 @@ namespace AutoForestryDesignations
                                 towerForHarvester = tower;
                             }
 
-                            if (isPooledOnTower && towerForHarvester != null)
+                            bool enabled = stats.Assignable > 0 || (canBeAssigned && isUnlocked);
+                            plusBtn.Enabled(enabled);
+
+                            bool minusEnabled = assignedCount > 0 || queuedCount > 0;
+                            minusBtn.Enabled(minusEnabled);
+
+                            if (isPooledOnTower)
                             {
-                                var noteTip = string.Format(
-                                    AfdLocalization.TruckPoolingHarvesterNote.TranslatedString,
-                                    towerForHarvester.Prototype.Strings.Name).AsLoc();
-
-                                plusBtn.Enabled(false);
-                                plusBtn.Tooltip(noteTip);
                                 plusBtn.IconTint(Theme.WarningColor);
-
-                                minusBtn.Enabled(false);
-                                minusBtn.Tooltip(noteTip);
                                 minusBtn.IconTint(Theme.WarningColor);
                             }
                             else
                             {
-                                bool enabled = stats.Assignable > 0 || (canBeAssigned && isUnlocked);
-                                plusBtn.Enabled(enabled);
                                 plusBtn.IconTint(null);
-
-                                bool minusEnabled = assignedCount > 0 || queuedCount > 0;
-                                minusBtn.Enabled(minusEnabled);
                                 minusBtn.IconTint(null);
                             }
 
@@ -320,16 +312,17 @@ namespace AutoForestryDesignations
                         if (target == null || target.IsDestroyed) return content;
 
                         var closestDepot = FindClosestDepot(context, proto, target, logSelection: false);
-                        if (closestDepot == null) return content;
-
-                        string formattedHint = string.Format(
-                            AfdLocalization.OrderConstructionShortcutHint.TranslatedString,
-                            $"<b>{proto.Strings.Name}</b>",
-                            $"<b>{PendingVehicleAllocations.GetEntityDescription(closestDepot)}</b>",
-                            $"<b>{PendingVehicleAllocations.GetEntityDescription(target)}</b>");
-                        floater.Add(
-                            new HorizontalDivider().MarginTopBottom(4),
-                            new Label(new LocStrFormatted(formattedHint)).TextCenterMiddle());
+                        if (closestDepot != null)
+                        {
+                            string formattedHint = string.Format(
+                                AfdLocalization.OrderConstructionShortcutHint.TranslatedString,
+                                $"<b>{proto.Strings.Name}</b>",
+                                $"<b>{PendingVehicleAllocations.GetEntityDescription(closestDepot)}</b>",
+                                $"<b>{PendingVehicleAllocations.GetEntityDescription(target)}</b>");
+                            floater.Add(
+                                new HorizontalDivider().MarginTopBottom(4),
+                                new Label(new LocStrFormatted(formattedHint)).TextCenterMiddle());
+                        }
 
                         if (target is TreeHarvester harvester && harvester.AssignedTo.ValueOrNull is ForestryTower tower && AutoForestryDesignation.GetTowerTruckPoolingEnabled(tower))
                         {

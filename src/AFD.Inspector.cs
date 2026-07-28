@@ -61,18 +61,6 @@ namespace AutoForestryDesignations
                     LogDebug("Patched first constructor");
                 }
 
-                var harvesterInspectorType = assembly.GetType("Mafi.Unity.Ui.Inspectors.TreeHarvesterInspector");
-                if (harvesterInspectorType != null)
-                {
-                    var hCtors = harvesterInspectorType.GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-                    if (hCtors.Length > 0)
-                    {
-                        harmony.Patch(hCtors[0],
-                            postfix: new HarmonyMethod(typeof(AutoForestryDesignation), nameof(InspectorCtorPostfix)));
-                        LogDebug("Patched TreeHarvesterInspector constructor");
-                    }
-                }
-
                 // Patch OnActivated() on ForestryTowerInspector
                 try
                 {
@@ -342,60 +330,14 @@ namespace AutoForestryDesignations
 
                 LogDebug("InspectorCtorPostfix called");
 
-                if (__instance is BaseInspector<ForestryTower> forestryInspector)
+                if (!(__instance is BaseInspector<ForestryTower> forestryInspector))
                 {
-                    var panel = forestryInspector.AddVehicleAssigner<ForestryTower, TruckProto>(AfdLocalization.TruckPoolTitle, AfdLocalization.AssignedTrucksForestryTowerTooltip);
-                    forestryInspector.Observe(() => GetTowerTruckPoolingEnabled(forestryInspector.Entity))
-                                     .Do(enabled => panel.Visible(enabled));
+                    return;
                 }
-                else if (__instance is BaseInspector<TreeHarvester> harvesterInspector)
-                {
-                    harvesterInspector.Observe(() =>
-                    {
-                        var harvester = harvesterInspector.Entity;
-                        if (harvester != null && harvester.AssignedTo.ValueOrNull is ForestryTower tower && GetTowerTruckPoolingEnabled(tower))
-                        {
-                            return tower;
-                        }
-                        return null;
-                    }).Do(tower =>
-                    {
-                        var assignerUi = FindVehicleAssignerUi(harvesterInspector);
-                        if (assignerUi != null)
-                        {
-                            var buttonCol = assignerUi.ChildAtOrDefault(2);
-                            if (buttonCol != null && buttonCol.ChildrenCount >= 2)
-                            {
-                                var plusBtn = buttonCol.ChildAtOrDefault<ButtonIcon>(0);
-                                var minusBtn = buttonCol.ChildAtOrDefault<ButtonIcon>(1);
-                                if (plusBtn != null && minusBtn != null)
-                                {
-                                    if (tower != null)
-                                    {
-                                        var noteTip = string.Format(
-                                            AfdLocalization.TruckPoolingHarvesterNote.TranslatedString,
-                                            tower.Prototype.Strings.Name).AsLoc();
-                                        plusBtn.Enabled(false);
-                                        plusBtn.Tooltip(noteTip);
-                                        plusBtn.IconTint(Theme.WarningColor);
 
-                                        minusBtn.Enabled(false);
-                                        minusBtn.Tooltip(noteTip);
-                                        minusBtn.IconTint(Theme.WarningColor);
-                                    }
-                                    else
-                                    {
-                                        plusBtn.Tooltip(null);
-                                        plusBtn.IconTint(null);
-
-                                        minusBtn.Tooltip(null);
-                                        minusBtn.IconTint(null);
-                                    }
-                                }
-                            }
-                        }
-                    });
-                }
+                var panel = forestryInspector.AddVehicleAssigner<ForestryTower, TruckProto>(AfdLocalization.TruckPoolTitle, AfdLocalization.AssignedTrucksForestryTowerTooltip);
+                forestryInspector.Observe(() => GetTowerTruckPoolingEnabled(forestryInspector.Entity))
+                                 .Do(enabled => panel.Visible(enabled));
 
                 var inspectorType = __instance.GetType();
                 var baseType = inspectorType;
