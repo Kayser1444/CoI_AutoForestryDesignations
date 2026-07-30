@@ -92,19 +92,22 @@ namespace AutoForestryDesignations
 
             // Combine entity IDs from tower settings overrides and truck assignments
             var allTowerIds = new HashSet<EntityId>(s_towerSettingsByEntityId.Keys);
-            // Query any towers with truck assignments from TowerTruckAssignments
-            // (Pass null for entitiesManager or just iterate s_towerTrucks if accessible)
-            bool first = true;
-            foreach (var pair in s_towerSettingsByEntityId)
+            foreach (var towerId in TowerTruckAssignments.GetAllTowerIdsWithTrucks())
             {
-                EntityId entityId = pair.Key;
+                allTowerIds.Add(towerId);
+            }
+
+            bool first = true;
+            foreach (var entityId in allTowerIds)
+            {
                 if (!entityId.IsValid)
                 {
                     continue;
                 }
 
-                AFDTowerSettings settings = pair.Value;
-                HashSet<EntityId> truckIds = TowerTruckAssignments.GetTruckIdsForTower(entityId);
+                s_towerSettingsByEntityId.TryGetValue(entityId, out var settingsOrNull);
+                AFDTowerSettings settings = settingsOrNull ?? AFDTowerSettings.FromGlobalDefaults();
+                List<EntityId> truckIds = TowerTruckAssignments.GetTruckIdsForTower(entityId);
 
                 if (settings.MatchesGlobalDefaults() && truckIds.Count == 0)
                 {

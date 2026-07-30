@@ -10,6 +10,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Mafi;
 using Mafi.Collections;
 using Mafi.Core;
@@ -31,6 +32,12 @@ namespace AutoForestryDesignations
         // TruckId -> TowerId (reverse lookup)
         private static readonly Dictionary<EntityId, EntityId> s_truckToTower = new Dictionary<EntityId, EntityId>();
 
+        // Cached reflection handle for ForestryTower.updateAssignedVehicles (private)
+        private static readonly System.Lazy<MethodInfo?> s_updateAssignedVehiclesMethod = new System.Lazy<MethodInfo?>(() =>
+            typeof(ForestryTower).GetMethod("updateAssignedVehicles", BindingFlags.Instance | BindingFlags.NonPublic));
+
+        internal static MethodInfo? UpdateAssignedVehiclesMethod => s_updateAssignedVehiclesMethod.Value;
+
         public static void ClearAll()
         {
             lock (s_lock)
@@ -48,15 +55,28 @@ namespace AutoForestryDesignations
             }
         }
 
-        public static HashSet<EntityId> GetTruckIdsForTower(EntityId towerId)
+        public static List<EntityId> GetAllTowerIdsWithTrucks()
+        {
+            lock (s_lock)
+            {
+                var result = new List<EntityId>();
+                foreach (var kvp in s_towerTrucks)
+                {
+                    if (kvp.Value.Count > 0) result.Add(kvp.Key);
+                }
+                return result;
+            }
+        }
+
+        public static List<EntityId> GetTruckIdsForTower(EntityId towerId)
         {
             lock (s_lock)
             {
                 if (s_towerTrucks.TryGetValue(towerId, out var trucks))
                 {
-                    return new HashSet<EntityId>(trucks);
+                    return new List<EntityId>(trucks);
                 }
-                return new HashSet<EntityId>();
+                return new List<EntityId>();
             }
         }
 
@@ -235,6 +255,11 @@ namespace AutoForestryDesignations
             }
         }
 
+        /// <summary>
+        /// Called when a harvester is unassigned from a tower.  The harvester's
+        /// trucks are intentionally removed from the tower pool — trucks travel
+        /// with their harvester rather than staying behind in the tower pool.
+        /// </summary>
         public static void OnHarvesterUnassignedFromTower(TreeHarvester harvester, ForestryTower tower, IEntitiesManager? entitiesManager)
         {
             if (harvester == null || tower == null || !tower.Id.IsValid) return;
@@ -259,6 +284,47 @@ namespace AutoForestryDesignations
             }
 
             RebalanceTowerTrucks(tower, entitiesManager);
+        }
+
+        public static void AdoptHarvesterTrucksForTower(ForestryTower tower)
+        {
+            if (tower == null || tower.IsDestroyed) return;
+            if (!AutoForestryDesignation.GetTowerTruckPoolingEnabled(tower)) return;
+
+            lock (s_lock)
+            {
+                var harvesters = GetHarvesters(tower);
+                foreach (var harvester in harvesters)
+                {
+                    if (harvester == null || harvester.IsDestroyed) continue;
+                    var trucks = GetTrucks(harvester);
+                    foreach (var truck in trucks)
+                    {
+                        if (truck == null || truck.IsDestroyed || !truck.Id.IsValid) continue;
+
+                        if (!s_towerTrucks.TryGetValue(tower.Id, out var set))
+                        {
+                            set = new HashSet<EntityId>();
+                            s_towerTrucks[tower.Id] = set;
+                        }
+
+                        if (!set.Contains(truck.Id))
+                        {
+                            if (s_truckToTower.TryGetValue(truck.Id, out var oldTowerId) && oldTowerId != tower.Id)
+                            {
+                                if (s_towerTrucks.TryGetValue(oldTowerId, out var oldSet))
+                                {
+                                    oldSet.Remove(truck.Id);
+                                    if (oldSet.Count == 0) s_towerTrucks.Remove(oldTowerId);
+                                }
+                            }
+
+                            set.Add(truck.Id);
+                            s_truckToTower[truck.Id] = tower.Id;
+                        }
+                    }
+                }
+            }
         }
 
         public static void ReconcileAndPurgeStaleEntries(IEntitiesManager entitiesManager)
@@ -304,6 +370,15 @@ namespace AutoForestryDesignations
                     }
                 }
             }
+
+            foreach (var tower in entitiesManager.GetAllEntitiesOfType<ForestryTower>())
+            {
+                if (tower == null || tower.IsDestroyed) continue;
+                if (!AutoForestryDesignation.GetTowerTruckPoolingEnabled(tower)) continue;
+
+                AdoptHarvesterTrucksForTower(tower);
+                RebalanceTowerTrucks(tower, entitiesManager);
+            }
         }
 
         [ThreadStatic]
@@ -316,8 +391,7 @@ namespace AutoForestryDesignations
             if (tower == null || tower.IsDestroyed) return;
             try
             {
-                var updateAssignedVehiclesMethod = typeof(ForestryTower).GetMethod("updateAssignedVehicles", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-                updateAssignedVehiclesMethod?.Invoke(tower, null);
+                UpdateAssignedVehiclesMethod?.Invoke(tower, null);
             }
             catch { }
         }
@@ -326,6 +400,8 @@ namespace AutoForestryDesignations
         {
             if (s_isRebalancing || tower == null || tower.IsDestroyed || entitiesManager == null) return;
             if (!AutoForestryDesignation.GetTowerTruckPoolingEnabled(tower)) return;
+
+            AdoptHarvesterTrucksForTower(tower);
 
             try
             {
@@ -352,30 +428,59 @@ namespace AutoForestryDesignations
                 }
 
                 // Gather valid tree harvesters assigned to this tower
-                var harvesters = GetHarvesters(tower).Where(h => !h.IsDestroyed).ToList();
+                var harvesters = GetHarvesters(tower);
+                harvesters.RemoveAll(h => h.IsDestroyed);
                 if (harvesters.Count == 0)
                 {
                     return;
                 }
 
-                // Local per-rebalance truck cache to avoid repeated allocations
-                var harvesterTrucksCache = new Dictionary<TreeHarvester, List<Truck>>();
-                List<Truck> GetCachedTrucks(TreeHarvester h)
+                // Snapshot current truck assignments per harvester
+                var currentTrucksByHarvester = new Dictionary<TreeHarvester, List<Truck>>();
+                foreach (var h in harvesters)
                 {
-                    if (!harvesterTrucksCache.TryGetValue(h, out var list))
-                    {
-                        list = GetTrucks(h);
-                        harvesterTrucksCache[h] = list;
-                    }
-                    return list;
+                    currentTrucksByHarvester[h] = GetTrucks(h);
                 }
 
-                // Filter active/enabled harvesters and sort by physical footprint size (largest first)
-                var enabledHarvesters = harvesters.Where(h => !h.IsNotEnabled).ToList();
-                var targetHarvesters = (enabledHarvesters.Count > 0 ? enabledHarvesters : harvesters)
-                    .OrderByDescending(h => GetHarvesterSizeRating(h))
-                    .ThenByDescending(h => h.Id.Value)
-                    .ToList();
+                // Build a set of pool truck IDs for quick membership checks
+                var poolTruckIdSet = new HashSet<EntityId>(truckIds);
+
+                // Count current pool trucks per harvester (excluding non-pool trucks)
+                var currentPoolCount = new Dictionary<TreeHarvester, int>();
+                foreach (var h in harvesters)
+                {
+                    int count = 0;
+                    foreach (var truck in currentTrucksByHarvester[h])
+                    {
+                        if (poolTruckIdSet.Contains(truck.Id)) count++;
+                    }
+                    currentPoolCount[h] = count;
+                }
+
+                // Filter active/enabled harvesters
+                var enabledHarvesters = new List<TreeHarvester>();
+                foreach (var h in harvesters)
+                {
+                    if (!h.IsNotEnabled) enabledHarvesters.Add(h);
+                }
+                var targetHarvesters = enabledHarvesters.Count > 0 ? enabledHarvesters : harvesters;
+
+                // Sort target harvesters:
+                // 1. Physical footprint size rating (largest first)
+                // 2. Current assigned pool truck count (highest first — preserves existing assignments when remainder > 0)
+                // 3. EntityId (deterministic tie-breaker)
+                targetHarvesters.Sort((a, b) =>
+                {
+                    int cmp = GetHarvesterSizeRating(b).CompareTo(GetHarvesterSizeRating(a));
+                    if (cmp != 0) return cmp;
+
+                    int countA = currentPoolCount.TryGetValue(a, out int cA) ? cA : 0;
+                    int countB = currentPoolCount.TryGetValue(b, out int cB) ? cB : 0;
+                    cmp = countB.CompareTo(countA);
+                    if (cmp != 0) return cmp;
+
+                    return b.Id.Value.CompareTo(a.Id.Value);
+                });
 
                 int N = validTrucks.Count;
                 int M = targetHarvesters.Count;
@@ -383,7 +488,7 @@ namespace AutoForestryDesignations
                 int baseQuota = N / M;
                 int remainder = N % M;
 
-                // Map each target harvester to its calculated quota (largest harvesters get remainder extra)
+                // Map each target harvester to its calculated truck quota
                 var quotas = new Dictionary<TreeHarvester, int>();
                 for (int i = 0; i < targetHarvesters.Count; i++)
                 {
@@ -399,59 +504,172 @@ namespace AutoForestryDesignations
                     }
                 }
 
-                // Sort valid trucks by cargo capacity / size rating (largest capacity first)
-                validTrucks = validTrucks
-                    .OrderByDescending(t => GetTruckCapacityRating(t))
-                    .ThenByDescending(t => t.Id.Value)
-                    .ToList();
-
-                // Partition valid trucks into target truck sets for each harvester
-                var harvesterTargetTrucks = new Dictionary<TreeHarvester, HashSet<Truck>>();
-                int truckIndex = 0;
-                foreach (var h in targetHarvesters)
+                // Group pool trucks by proto ID string
+                var trucksByProto = new Dictionary<string, List<Truck>>();
+                foreach (var truck in validTrucks)
                 {
-                    int count = quotas[h];
-                    var targetSet = new HashSet<Truck>();
-                    for (int k = 0; k < count && truckIndex < validTrucks.Count; k++)
+                    string protoKey = truck.Prototype.Id.Value;
+                    if (!trucksByProto.TryGetValue(protoKey, out var list))
                     {
-                        targetSet.Add(validTrucks[truckIndex++]);
+                        list = new List<Truck>();
+                        trucksByProto[protoKey] = list;
                     }
-                    harvesterTargetTrucks[h] = targetSet;
-                }
-                foreach (var h in harvesters)
-                {
-                    if (!harvesterTargetTrucks.ContainsKey(h))
-                    {
-                        harvesterTargetTrucks[h] = new HashSet<Truck>();
-                    }
+                    list.Add(truck);
                 }
 
-                // Step 1: Unassign trucks not in target set for each harvester
-                foreach (var h in harvesters)
+                // --- Stability-preserving rebalance ---
+                // For each proto, identify over-quota and under-quota harvesters
+                // and transfer the minimum number of trucks.
+                foreach (var kvp in trucksByProto)
                 {
-                    var targetSet = harvesterTargetTrucks[h];
-                    var currentTrucks = GetCachedTrucks(h).ToList();
-                    foreach (var truck in currentTrucks)
+                    var protoTrucks = kvp.Value;
+
+                    // Count how many of this proto each harvester currently has
+                    var protoCountPerHarvester = new Dictionary<TreeHarvester, int>();
+                    foreach (var h in harvesters)
                     {
-                        if (!targetSet.Contains(truck))
+                        int count = 0;
+                        foreach (var truck in currentTrucksByHarvester[h])
                         {
-                            h.UnassignVehicle(truck, cancelJobs: false);
-                            GetCachedTrucks(h).Remove(truck);
+                            if (truck.Prototype.Id.Value == kvp.Key && poolTruckIdSet.Contains(truck.Id))
+                                count++;
+                        }
+                        protoCountPerHarvester[h] = count;
+                    }
+
+                    // Find unassigned trucks of this proto (not on any harvester)
+                    var assignedTruckIds = new HashSet<EntityId>();
+                    foreach (var h in harvesters)
+                    {
+                        foreach (var truck in currentTrucksByHarvester[h])
+                        {
+                            assignedTruckIds.Add(truck.Id);
+                        }
+                    }
+
+                    var unassigned = new List<Truck>();
+                    foreach (var truck in protoTrucks)
+                    {
+                        if (!assignedTruckIds.Contains(truck.Id))
+                            unassigned.Add(truck);
+                    }
+
+                    // Assign unassigned trucks to under-quota harvesters, preferring harvesters with fewer trucks of this proto
+                    foreach (var truck in unassigned)
+                    {
+                        TreeHarvester? best = null;
+                        int bestDeficit = 0;
+                        int minProtoCount = int.MaxValue;
+
+                        foreach (var h in targetHarvesters)
+                        {
+                            int deficit = quotas[h] - currentPoolCount[h];
+                            if (deficit <= 0) continue;
+
+                            int pCount = protoCountPerHarvester.TryGetValue(h, out int pc) ? pc : 0;
+                            if (deficit > bestDeficit || (deficit == bestDeficit && pCount < minProtoCount))
+                            {
+                                best = h;
+                                bestDeficit = deficit;
+                                minProtoCount = pCount;
+                            }
+                        }
+
+                        if (best != null)
+                        {
+                            best.AssignVehicle(truck, doNotCancelJobs: true);
+                            currentTrucksByHarvester[best].Add(truck);
+                            currentPoolCount[best]++;
+                            if (protoCountPerHarvester.ContainsKey(best))
+                                protoCountPerHarvester[best]++;
+                            else
+                                protoCountPerHarvester[best] = 1;
                         }
                     }
                 }
 
-                // Step 2: Assign target trucks not currently assigned to each harvester
+                // After assigning unassigned trucks, do the over/under transfer pass
+                // across all pool trucks (proto-agnostic — any equivalent truck will do)
+
+                // Collect donors (harvesters over quota) and their stealable pool trucks
+                var donors = new List<(TreeHarvester harvester, List<Truck> stealable)>();
+                foreach (var h in harvesters)
+                {
+                    int surplus = currentPoolCount[h] - quotas[h];
+                    if (surplus > 0)
+                    {
+                        // Collect pool trucks that can be moved (pick from the end to minimize disruption)
+                        var stealable = new List<Truck>();
+                        var currentList = currentTrucksByHarvester[h];
+                        for (int i = currentList.Count - 1; i >= 0 && stealable.Count < surplus; i--)
+                        {
+                            if (poolTruckIdSet.Contains(currentList[i].Id))
+                                stealable.Add(currentList[i]);
+                        }
+                        if (stealable.Count > 0)
+                            donors.Add((h, stealable));
+                    }
+                }
+
+                // Transfer from donors to receivers (under-quota harvesters)
                 foreach (var h in targetHarvesters)
                 {
-                    var targetSet = harvesterTargetTrucks[h];
-                    var currentTrucks = GetCachedTrucks(h);
-                    foreach (var truck in targetSet)
+                    int deficit = quotas[h] - currentPoolCount[h];
+                    if (deficit <= 0) continue;
+
+                    for (int d = 0; d < donors.Count && deficit > 0; d++)
                     {
-                        if (!currentTrucks.Contains(truck))
+                        var (donor, stealable) = donors[d];
+                        while (stealable.Count > 0 && deficit > 0)
                         {
+                            var truck = stealable[stealable.Count - 1];
+                            stealable.RemoveAt(stealable.Count - 1);
+
+                            donor.UnassignVehicle(truck, cancelJobs: false);
+                            currentTrucksByHarvester[donor].Remove(truck);
+                            currentPoolCount[donor]--;
+
                             h.AssignVehicle(truck, doNotCancelJobs: true);
-                            currentTrucks.Add(truck);
+                            currentTrucksByHarvester[h].Add(truck);
+                            currentPoolCount[h]++;
+
+                            deficit--;
+                        }
+                    }
+                }
+
+                // Clean up: unassign any pool trucks still on disabled (quota-0) harvesters
+                foreach (var h in harvesters)
+                {
+                    if (quotas[h] > 0) continue;
+                    var currentList = currentTrucksByHarvester[h];
+                    for (int i = currentList.Count - 1; i >= 0; i--)
+                    {
+                        var truck = currentList[i];
+                        if (poolTruckIdSet.Contains(truck.Id))
+                        {
+                            h.UnassignVehicle(truck, cancelJobs: false);
+                            currentList.RemoveAt(i);
+                            currentPoolCount[h]--;
+
+                            // Assign to the most under-quota target harvester
+                            TreeHarvester? best = null;
+                            int bestDeficit = 0;
+                            foreach (var th in targetHarvesters)
+                            {
+                                int def = quotas[th] - currentPoolCount[th];
+                                if (def > bestDeficit)
+                                {
+                                    best = th;
+                                    bestDeficit = def;
+                                }
+                            }
+                            if (best != null)
+                            {
+                                best.AssignVehicle(truck, doNotCancelJobs: true);
+                                currentTrucksByHarvester[best].Add(truck);
+                                currentPoolCount[best]++;
+                            }
                         }
                     }
                 }
@@ -467,17 +685,6 @@ namespace AutoForestryDesignations
         {
             if (h == null || h.Prototype == null) return 0;
             return h.Prototype.EntitySize.X.ToIntRounded() * h.Prototype.EntitySize.Y.ToIntRounded();
-        }
-
-        private static int GetTruckCapacityRating(Truck t)
-        {
-            if (t == null || t.Prototype == null) return 0;
-            int cap = t.Prototype.CapacityBase.Value;
-            if (cap <= 0)
-            {
-                cap = t.Prototype.EntitySize.X.ToIntRounded() * t.Prototype.EntitySize.Y.ToIntRounded();
-            }
-            return cap;
         }
 
         private static List<TreeHarvester> GetHarvesters(ForestryTower tower)

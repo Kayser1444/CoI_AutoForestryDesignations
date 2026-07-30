@@ -158,11 +158,17 @@ namespace AutoForestryDesignations
                         harmony.Patch(harvesterUnassignFrom,
                             postfix: new HarmonyMethod(typeof(AutoForestryDesignation), nameof(TreeHarvesterUnassignFromPostfix)));
 
-                    var entityOnEnabledChanged = typeof(Entity).GetMethod("OnEnabledChanged",
-                        BindingFlags.Instance | BindingFlags.NonPublic);
-                    if (entityOnEnabledChanged != null)
-                        harmony.Patch(entityOnEnabledChanged,
-                            postfix: new HarmonyMethod(typeof(AutoForestryDesignation), nameof(EntityOnEnabledChangedPostfix)));
+                    var forestryTowerOnEnabledChanged = typeof(ForestryTower).GetMethod("OnEnabledChanged",
+                        BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
+                    if (forestryTowerOnEnabledChanged != null)
+                        harmony.Patch(forestryTowerOnEnabledChanged,
+                            postfix: new HarmonyMethod(typeof(AutoForestryDesignation), nameof(ForestryTowerOnEnabledChangedPostfix)));
+
+                    var vehicleOnEnabledChanged = typeof(Vehicle).GetMethod("OnEnabledChanged",
+                        BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
+                    if (vehicleOnEnabledChanged != null)
+                        harmony.Patch(vehicleOnEnabledChanged,
+                            postfix: new HarmonyMethod(typeof(AutoForestryDesignation), nameof(VehicleOnEnabledChangedPostfix)));
                 }
                 catch (Exception ex4)
                 {
@@ -178,6 +184,7 @@ namespace AutoForestryDesignations
 
         public static bool ForestryTowerCanVehicleBeAssignedPrefix(ForestryTower __instance, DynamicEntityProto vehicleProto, ref bool __result)
         {
+            if (!GetTowerTruckPoolingEnabled(__instance)) return true;
             if (vehicleProto is TruckProto truckProto && s_protosDb != null)
             {
                 bool isSupported = s_protosDb.All<TreeHarvesterProto>().Any(h => h.IsTruckSupported(truckProto));
@@ -195,19 +202,18 @@ namespace AutoForestryDesignations
             if (vehicle is Truck truck)
             {
                 TowerTruckAssignments.AssignTruckToTower(__instance, truck, s_entitiesManager);
-                var updateAssignedVehiclesMethod = typeof(ForestryTower).GetMethod("updateAssignedVehicles", BindingFlags.Instance | BindingFlags.NonPublic);
-                updateAssignedVehiclesMethod?.Invoke(__instance, null);
+                TowerTruckAssignments.UpdateAssignedVehiclesMethod?.Invoke(__instance, null);
             }
         }
 
         public static void ForestryTowerUnassignVehiclePostfix(ForestryTower __instance, Vehicle vehicle, bool cancelJobs)
         {
+            if (TowerTruckAssignments.IsRebalancing) return;
             if (vehicle is Truck truck)
             {
                 bool playerInitiated = !__instance.IsDestroyed && TowerTruckAssignments.HasTrucksAssigned(__instance.Id);
                 TowerTruckAssignments.UnassignTruckFromTower(__instance, truck, s_entitiesManager, playerInitiated: playerInitiated);
-                var updateAssignedVehiclesMethod = typeof(ForestryTower).GetMethod("updateAssignedVehicles", BindingFlags.Instance | BindingFlags.NonPublic);
-                updateAssignedVehiclesMethod?.Invoke(__instance, null);
+                TowerTruckAssignments.UpdateAssignedVehiclesMethod?.Invoke(__instance, null);
             }
         }
 
@@ -292,15 +298,16 @@ namespace AutoForestryDesignations
             }
         }
 
-        public static void EntityOnEnabledChangedPostfix(Entity __instance)
+        public static void ForestryTowerOnEnabledChangedPostfix(ForestryTower __instance)
+        {
+            TowerTruckAssignments.RebalanceTowerTrucks(__instance, s_entitiesManager);
+        }
+
+        public static void VehicleOnEnabledChangedPostfix(Vehicle __instance)
         {
             if (__instance is TreeHarvester harvester && harvester.AssignedTo.ValueOrNull is ForestryTower tower)
             {
                 TowerTruckAssignments.RebalanceTowerTrucks(tower, s_entitiesManager);
-            }
-            else if (__instance is ForestryTower ft)
-            {
-                TowerTruckAssignments.RebalanceTowerTrucks(ft, s_entitiesManager);
             }
         }
 

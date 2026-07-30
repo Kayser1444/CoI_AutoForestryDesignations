@@ -1,6 +1,14 @@
-v0.2.1 [unreleased]
+v0.2.1 | 2026-07-30 [released]
 
 * Added `worldSettings` block to `afdTowerSettingsStateJson` in save files to persist world-level settings and truck pooling defaults per save game.
+* Fixed truck pool assignment persistence so assigned truck IDs are saved even for towers using global default settings (`allTowerIds` union fix in `TowerSettingsConfigPersistence`).
+* Improved truck pool redistribution algorithm (`RebalanceTowerTrucks`) to use stability-preserving proto-level quotas, prioritizing harvesters with higher current truck counts during tie-breaking (when remainder > 0) to avoid unnecessary truck re-assignments between equal-sized harvesters.
+* Fixed `CanVehicleBeAssigned` prefix patch to check whether truck pooling is enabled on the target tower before overriding assignment rules.
+* Optimized `OnEnabledChanged` Harmony patches by targeting `ForestryTower.OnEnabledChanged` and `Vehicle.OnEnabledChanged` specifically instead of patching base `Entity.OnEnabledChanged`.
+* Cached reflection `MethodInfo` for `ForestryTower.updateAssignedVehicles` via static `System.Lazy<MethodInfo?>` across all invocation sites.
+* Optimized `TowerTruckAssignments.GetTruckIdsForTower` to return `List<EntityId>` instead of allocating a `HashSet<EntityId>`.
+* Fixed `ForestryTowerUnassignVehiclePostfix` by guarding with `TowerTruckAssignments.IsRebalancing` to prevent programmatic unassignments during rebalance from removing trucks from the pool.
+* Fixed truck pool initialization on save load so all trucks currently assigned to harvesters are automatically adopted into the tower's virtual truck pool (`AdoptHarvesterTrucksForTower`), resolving issues where loaded towers reported 0 pool trucks while harvesters held untracked vehicles.
 
 v0.2.0 [released]
 

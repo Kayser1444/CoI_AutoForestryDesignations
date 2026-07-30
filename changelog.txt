@@ -1,3 +1,10 @@
+v0.2.1 | 2026-07-30
+* Fixed: Restored auto-adoption of harvester-assigned trucks into the virtual tower truck pool when loading save games or initializing towers
+* Fixed: Resolved edge cases where truck pool assignments could be lost on game reload when using global default settings
+* Fixed: Prevented unnecessary truck re-assignments between harvesters when adding extra vehicles to equal-sized harvesters
+* Fixed: Corrected truck assignment eligibility check on Forestry Towers so vanilla assignment rules apply when truck pooling is disabled
+* Optimized: Narrowed internal entity lifecycle event hooks for better runtime performance
+
 v0.2.0 | 2026-07-28
 * Added: Truck Pooling feature for Forestry Towers, virtually pooling and automatically balancing assigned trucks across active tree harvesters
 * Added: Truck pool section to Forestry Tower inspector displaying real-time vehicle assignments
