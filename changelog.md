@@ -1,3 +1,5 @@
+v0.2.2a [unreleased]
+
 v0.2.1 | 2026-07-30 [released]
 
 * Added `worldSettings` block to `afdTowerSettingsStateJson` in save files to persist world-level settings and truck pooling defaults per save game.
