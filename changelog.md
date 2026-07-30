@@ -1,5 +1,7 @@
 v0.2.2 [unreleased]
 
+* Fixed truck pool rebalancing when assigning a harvester with 0 trucks to a Forestry Tower by moving harvester assignment and unassignment rebalance triggers from `TreeHarvester.OnAssignTo` / `UnassignFrom` to `ForestryTower.AssignVehicle` and `ForestryTower.UnassignVehicle` postfixes. This ensures `RebalanceTowerTrucks` runs after `ForestryTower.AllVehicles` has been updated by the game engine.
+
 v0.2.1 | 2026-07-30 [released]
 
 * Added `worldSettings` block to `afdTowerSettingsStateJson` in save files to persist world-level settings and truck pooling defaults per save game.
