@@ -81,7 +81,11 @@ foreach ($file in $filesToInclude) {
 
 $translationsDir = Join-Path $PSScriptRoot 'translations'
 if (Test-Path $translationsDir) {
-    Copy-Item $translationsDir -Destination (Join-Path $packageRootDir 'translations') -Recurse -Force
+    $packageTranslationsDir = Join-Path $packageRootDir 'translations'
+    New-Item -ItemType Directory -Path $packageTranslationsDir -Force | Out-Null
+    Get-ChildItem -Path $translationsDir -Filter '*.json' -File |
+        Where-Object { -not $_.Name.StartsWith('.') } |
+        Copy-Item -Destination $packageTranslationsDir -Force
 }
 
 if (Test-Path $zipPath) {

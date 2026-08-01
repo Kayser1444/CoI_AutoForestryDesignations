@@ -1,3 +1,6 @@
+v0.2.2 | 2026-08-01
+* Fixed: Rebalanced pooled trucks correctly after assigning or unassigning tree harvesters, including harvesters without trucks
+
 v0.2.1 | 2026-07-30
 * Fixed: Restored auto-adoption of harvester-assigned trucks into the virtual tower truck pool when loading save games or initializing towers
 * Fixed: Resolved edge cases where truck pool assignments could be lost on game reload when using global default settings
