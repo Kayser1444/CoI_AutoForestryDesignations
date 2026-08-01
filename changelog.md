@@ -1,4 +1,4 @@
-v0.2.2 [packaged]
+v0.2.2 | 2026-08-01 [released]
 
 * Fixed truck pool rebalancing when assigning a harvester with 0 trucks to a Forestry Tower by moving harvester assignment and unassignment rebalance triggers from `TreeHarvester.OnAssignTo` / `UnassignFrom` to `ForestryTower.AssignVehicle` and `ForestryTower.UnassignVehicle` postfixes. This ensures `RebalanceTowerTrucks` runs after `ForestryTower.AllVehicles` has been updated by the game engine.
 * Excluded dot-prefixed translation tooling files from release packages so the runtime localization loader only receives locale bundles.
