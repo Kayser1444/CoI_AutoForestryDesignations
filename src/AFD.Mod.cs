@@ -349,7 +349,9 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
             return;
         }
 
-        string[] jsonFiles = Directory.GetFiles(translationsDirectory, "*.json", SearchOption.TopDirectoryOnly);
+        string[] jsonFiles = Array.FindAll(
+            Directory.GetFiles(translationsDirectory, "*.json", SearchOption.TopDirectoryOnly),
+            filePath => !Path.GetFileName(filePath).StartsWith(".", StringComparison.Ordinal));
         Array.Sort(jsonFiles, StringComparer.OrdinalIgnoreCase);
         if (jsonFiles.Length == 0)
         {
@@ -451,4 +453,3 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
         m_harmony?.UnpatchAll("com.auto-forestry-designations.mod");
     }
 }
-

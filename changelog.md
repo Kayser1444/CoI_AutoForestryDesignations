@@ -1,5 +1,8 @@
 v0.2.3 [unreleased]
 
+* Fixed: Shift-Alt-clicking a tower vehicle-order button no longer enqueues both a pre-assigned truck and a second free truck.
+* Fixed: Dot-prefixed translation metadata is excluded from runtime localization scans and release packages.
+
 v0.2.2 | 2026-08-01 [released]
 
 * Fixed truck pool rebalancing when assigning a harvester with 0 trucks to a Forestry Tower by moving harvester assignment and unassignment rebalance triggers from `TreeHarvester.OnAssignTo` / `UnassignFrom` to `ForestryTower.AssignVehicle` and `ForestryTower.UnassignVehicle` postfixes. This ensures `RebalanceTowerTrucks` runs after `ForestryTower.AllVehicles` has been updated by the game engine.
