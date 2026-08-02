@@ -1,4 +1,4 @@
-v0.2.3 [unreleased]
+v0.2.3 [packaged]
 
 * Fixed: Shift-Alt-clicking a tower vehicle-order button no longer enqueues both a pre-assigned truck and a second free truck.
 * Fixed: Dot-prefixed translation metadata is excluded from runtime localization scans and release packages.
