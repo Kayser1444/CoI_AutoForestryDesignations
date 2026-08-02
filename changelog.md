@@ -1,3 +1,5 @@
+v0.2.4 [unreleased]
+
 v0.2.3 [released]
 
 * Fixed: Shift-Alt-clicking a tower vehicle-order button no longer enqueues both a pre-assigned truck and a second free truck.
