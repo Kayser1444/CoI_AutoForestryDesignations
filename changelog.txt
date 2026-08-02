@@ -1,3 +1,6 @@
+v0.2.3 | 2026-08-02
+* Fixed: Shift-Alt-clicking a tower vehicle-order button no longer enqueues both a pre-assigned truck and a second free truck
+
 v0.2.2 | 2026-08-01
 * Fixed: Rebalanced pooled trucks correctly after assigning or unassigning tree harvesters, including harvesters without trucks
 
