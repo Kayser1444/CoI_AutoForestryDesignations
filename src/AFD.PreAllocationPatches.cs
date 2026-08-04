@@ -155,6 +155,7 @@ namespace AutoForestryDesignations
         {
             try
             {
+                if (parent.GetType().Name != "ForestryTowerInspector") return;
                 bool isSupportedTruck = (proto is TruckProto);
                 if (!(proto is TreeHarvesterProto) && !(proto is TreePlanterProto) && !isSupportedTruck) return;
 
