@@ -1,3 +1,6 @@
+v0.2.4 | 2026-08-04
+* Fixed: Forestry Tower vehicle-order controls no longer interfere with ATD mine-tower vehicle displays when both mods are installed
+
 v0.2.3 | 2026-08-02
 * Fixed: Shift-Alt-clicking a tower vehicle-order button no longer enqueues both a pre-assigned truck and a second free truck
 
