@@ -1,5 +1,7 @@
 v0.2.4 [unreleased]
 
+* Fixed: Restricted vehicle pre-allocation UI updates to ForestryTower inspectors, preventing AFD from overwriting ATD mine-tower vehicle-order displays when both mods are installed.
+
 v0.2.3 [released]
 
 * Fixed: Shift-Alt-clicking a tower vehicle-order button no longer enqueues both a pre-assigned truck and a second free truck.
