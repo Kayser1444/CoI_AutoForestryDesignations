@@ -1,5 +1,6 @@
 v0.2.5 | 2026-08-08
 * Fixed: Holding Alt while assigning a vehicle from the default logistics zone now checks that zone before offering to order a new vehicle
+* Updated maximum verified game version to 0.8.7
 
 v0.2.4 | 2026-08-04
 * Fixed: Forestry Tower vehicle-order controls no longer interfere with ATD mine-tower vehicle displays when both mods are installed

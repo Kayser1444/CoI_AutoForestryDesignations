@@ -1,6 +1,7 @@
-v0.2.5 [packaged]
+v0.2.5 [unreleased]
 
 * Fixed: Holding Alt while assigning a vehicle from the default logistics zone now checks that zone before offering to order a new vehicle.
+* Updated maximum verified game version to 0.8.7 after verification against the new vanilla build.
 
 v0.2.4 [released]
 
