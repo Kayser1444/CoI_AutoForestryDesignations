@@ -1,3 +1,5 @@
+v0.2.6 [unreleased]
+
 v0.2.5 [released]
 
 * Fixed: Holding Alt while assigning a vehicle from the default logistics zone now checks that zone before offering to order a new vehicle.
