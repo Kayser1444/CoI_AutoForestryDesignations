@@ -219,6 +219,10 @@ namespace AutoForestryDesignations
                 if (truckPoolingEnabled.HasValue)
                     AutoForestryDesignationsMod.SetTruckPoolingEnabled(truckPoolingEnabled.Value);
 
+                bool? keepLoadedPlantersInTheField = ParseBool(json, "keepLoadedPlantersInTheField");
+                if (keepLoadedPlantersInTheField.HasValue)
+                    AutoForestryDesignationsMod.SetKeepLoadedPlantersInTheField(keepLoadedPlantersInTheField.Value);
+
                 parsedVersion = ParseString(json, "settingsVersion");
             }
             catch (Exception ex)
@@ -319,7 +323,10 @@ namespace AutoForestryDesignations
             sb.AppendLine($"  \"forestryInformationPanelCollapsed\": {BoolToJsonStr(AutoForestryDesignationsMod.ForestryInformationPanelCollapsed)},");
             sb.AppendLine();
             sb.AppendLine("  \"_comment_truckPoolingEnabled\": \"Default for new tower panels. When true, trucks assigned to forestry towers are pooled and automatically distributed among its active tree harvesters. Default: true.\",");
-            sb.AppendLine($"  \"truckPoolingEnabled\": {BoolToJsonStr(AutoForestryDesignationsMod.TruckPoolingEnabled)}");
+            sb.AppendLine($"  \"truckPoolingEnabled\": {BoolToJsonStr(AutoForestryDesignationsMod.TruckPoolingEnabled)},");
+            sb.AppendLine();
+            sb.AppendLine("  \"_comment_keepLoadedPlantersInTheField\": \"World-level setting. When true, loaded tree planters stay in the field and retry planting instead of returning to their forestry tower when no target is immediately available. Default: false.\",");
+            sb.AppendLine($"  \"keepLoadedPlantersInTheField\": {BoolToJsonStr(AutoForestryDesignationsMod.KeepLoadedPlantersInTheField)}");
             sb.Append("}");
             return sb.ToString();
         }

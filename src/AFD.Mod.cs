@@ -128,6 +128,10 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
     public static bool TruckPoolingEnabled { get; private set; } = true;
     public static void SetTruckPoolingEnabled(bool value) => TruckPoolingEnabled = value;
 
+    /// <summary>When enabled, loaded tree planters stay in the field and retry planting instead of parking at their tower. Default: false.</summary>
+    public static bool KeepLoadedPlantersInTheField { get; private set; } = false;
+    public static void SetKeepLoadedPlantersInTheField(bool value) => KeepLoadedPlantersInTheField = value;
+
     /// <summary>Resets all global defaults to their built-in values.</summary>
     public static void ResetGlobalDefaults()
     {
@@ -140,6 +144,7 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
         SetForestryDesignationsPanelCollapsed(false);
         SetForestryInformationPanelCollapsed(false);
         SetTruckPoolingEnabled(true);
+        SetKeepLoadedPlantersInTheField(false);
         AutoForestryDesignation.SetBatchSize(30);
     }
 
@@ -330,7 +335,6 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
                 resolver.Resolve<IRootEscapeManager>());
 
             ModSettings.RegisterTab(AfdModSettingsTab.BuildDefaultsTab());
-            ModSettings.RegisterTab(AfdModSettingsTab.BuildGameSettingsTab());
         }
         catch (Exception ex)
         {

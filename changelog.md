@@ -1,5 +1,9 @@
 v0.2.6 [unreleased]
 
+* Added the optional world-level **Keep loaded planters in the field** optimization, including save persistence and a Debug-build log when a loaded planter's return to its tower is suppressed.
+* Simplified the AFD Mod Settings UI into one tab with Tower settings defaults, Tower panels defaults, Designation behaviors, and Optimizations sections.
+* Removed the `Default:` prefix from designation behavior tooltips and flagged the changed English strings for translation.
+
 v0.2.5 [released]
 
 * Fixed: Holding Alt while assigning a vehicle from the default logistics zone now checks that zone before offering to order a new vehicle.

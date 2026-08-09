@@ -72,6 +72,14 @@
     "Agrupe y equilibre automáticamente los camiones asignados en todos los recolectores de árboles activos de esta torre."
   ],
   [
+    "AFD_KeepLoadedPlantersInTheFieldLabel",
+    "Mantener las plantadoras cargadas en el campo"
+  ],
+  [
+    "AFD_KeepLoadedPlantersInTheFieldTip",
+    "Cuando una plantadora de árboles con plantones no encuentra inmediatamente un objetivo de plantación válido, permanece cerca de su ubicación actual y vuelve a intentarlo en lugar de regresar a su torre forestal. Esto evita viajes largos, pero puede dejar una plantadora cargada esperando en el campo."
+  ],
+  [
     "AFD_TruckPoolTitle",
     "Piscina de camiones"
   ],
@@ -177,11 +185,11 @@
   ],
   [
     "AFD_SettingsHeadingForestryTowerDefaults",
-    "Predeterminados de torre forestal"
+    "Valores predeterminados de la configuración de la torre"
   ],
   [
     "AFD_SettingsHeadingDesignationDefaults",
-    "Predeterminados de designación"
+    "Comportamientos de designación"
   ],
   [
     "AFD_SettingsHeadingScanPerformance",
@@ -189,7 +197,11 @@
   ],
   [
     "AFD_SettingsHeadingPanelDefaults",
-    "Predeterminados de paneles"
+    "Valores predeterminados de los paneles de la torre"
+  ],
+  [
+    "AFD_SettingsHeadingOptimizations",
+    "Optimizaciones"
   ],
   [
     "AFD_SettingsAvoidTilesWithTreesLabel",
@@ -197,7 +209,7 @@
   ],
   [
     "AFD_SettingsAvoidTilesWithTreesTip",
-    "Predeterminado: omitir casillas que ya contienen un árbol al crear designaciones."
+    "Omita los mosaicos que ya contengan un árbol al crear designaciones."
   ],
   [
     "AFD_SettingsMarkHarvestReadyLabel",
@@ -205,7 +217,7 @@
   ],
   [
     "AFD_SettingsMarkHarvestReadyTip",
-    "Predeterminado: después de crear designaciones, marcar automáticamente para cosecha los árboles que alcancen el umbral de la torre."
+    "Después de crear designaciones, marque automáticamente los árboles que cumplan con el umbral de cosecha de la torre para la cosecha."
   ],
   [
     "AFD_SettingsBatchSizeLabel",

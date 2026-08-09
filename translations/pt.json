@@ -72,6 +72,14 @@
     "Agrupe e equilibre automaticamente os caminhões atribuídos em todas as colheitadeiras de árvores ativas desta torre."
   ],
   [
+    "AFD_KeepLoadedPlantersInTheFieldLabel",
+    "Manter plantadoras carregadas no campo"
+  ],
+  [
+    "AFD_KeepLoadedPlantersInTheFieldTip",
+    "Quando uma plantadora de árvores carregada com mudas não consegue encontrar imediatamente um local de plantio válido, ela permanece perto da posição atual e tenta novamente em vez de retornar à torre florestal. Isso evita longas viagens de retorno, mas pode deixar uma plantadora carregada esperando no campo."
+  ],
+  [
     "AFD_TruckPoolTitle",
     "Piscina de caminhões"
   ],
@@ -177,11 +185,11 @@
   ],
   [
     "AFD_SettingsHeadingForestryTowerDefaults",
-    "Padrões da torre florestal"
+    "Padrões de configurações da torre"
   ],
   [
     "AFD_SettingsHeadingDesignationDefaults",
-    "Padrões de designação"
+    "Comportamentos de designação"
   ],
   [
     "AFD_SettingsHeadingScanPerformance",
@@ -189,7 +197,11 @@
   ],
   [
     "AFD_SettingsHeadingPanelDefaults",
-    "Padrões dos painéis"
+    "Padrões dos painéis da torre"
+  ],
+  [
+    "AFD_SettingsHeadingOptimizations",
+    "Otimizações"
   ],
   [
     "AFD_SettingsAvoidTilesWithTreesLabel",
@@ -197,7 +209,7 @@
   ],
   [
     "AFD_SettingsAvoidTilesWithTreesTip",
-    "Padrão: pula blocos que já contêm uma árvore ao criar designações."
+    "Ignore os blocos que já contêm uma árvore ao criar designações."
   ],
   [
     "AFD_SettingsMarkHarvestReadyLabel",
@@ -205,7 +217,7 @@
   ],
   [
     "AFD_SettingsMarkHarvestReadyTip",
-    "Padrão: depois de criar designações, marca automaticamente para corte as árvores que atingem o limite da torre."
+    "Depois de criar designações, marque automaticamente as árvores que atendem ao limite de colheita da torre para colheita."
   ],
   [
     "AFD_SettingsBatchSizeLabel",

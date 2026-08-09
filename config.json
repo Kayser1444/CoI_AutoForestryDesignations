@@ -1,6 +1,6 @@
 {
   "afdTowerSettingsStateJson": {
-    "default": "{\"schemaVersion\":1,\"towerSettings\":[]}",
+    "default": "{\"schemaVersion\":1,\"worldSettings\":{\"keepLoadedPlantersInTheField\":false},\"towerSettings\":[]}",
     "description": "Internal saved state for Auto Forestry Designations tower settings."
   },
   "afdPendingVehicleAllocations": {

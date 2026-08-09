@@ -72,6 +72,14 @@
     "Samla och balansera automatiskt tilldelade lastbilar över alla aktiva trädskördare i detta torn."
   ],
   [
+    "AFD_KeepLoadedPlantersInTheFieldLabel",
+    "Behåll lastade planterare i fältet"
+  ],
+  [
+    "AFD_KeepLoadedPlantersInTheFieldTip",
+    "När en trädplanterare med plantor inte omedelbart hittar en giltig planteringsplats stannar den nära sin nuvarande position och försöker igen i stället för att åka tillbaka till skogstornet. Detta undviker långa återresor, men en lastad planterare kan bli väntande i fältet."
+  ],
+  [
     "AFD_TruckPoolTitle",
     "Lastbil pool"
   ],
@@ -177,11 +185,11 @@
   ],
   [
     "AFD_SettingsHeadingForestryTowerDefaults",
-    "Standard för skogstorn"
+    "Standardinställningar för tornet"
   ],
   [
     "AFD_SettingsHeadingDesignationDefaults",
-    "Standard för markeringar"
+    "Beteckningsbeteenden"
   ],
   [
     "AFD_SettingsHeadingScanPerformance",
@@ -189,7 +197,11 @@
   ],
   [
     "AFD_SettingsHeadingPanelDefaults",
-    "Panelstandard"
+    "Standardinställningar för tornpaneler"
+  ],
+  [
+    "AFD_SettingsHeadingOptimizations",
+    "Optimeringar"
   ],
   [
     "AFD_SettingsAvoidTilesWithTreesLabel",
@@ -197,7 +209,7 @@
   ],
   [
     "AFD_SettingsAvoidTilesWithTreesTip",
-    "Standard: hoppa över rutor som redan innehåller träd när markeringar skapas."
+    "Hoppa över brickor som redan innehåller ett träd när du skapar beteckningar."
   ],
   [
     "AFD_SettingsMarkHarvestReadyLabel",
@@ -205,7 +217,7 @@
   ],
   [
     "AFD_SettingsMarkHarvestReadyTip",
-    "Standard: markera automatiskt träd som uppfyller tornets avverkningströskel efter att markeringar skapats."
+    "Efter att ha skapat beteckningar, markera automatiskt träd som uppfyller tornets skördströskel för skörd."
   ],
   [
     "AFD_SettingsBatchSizeLabel",

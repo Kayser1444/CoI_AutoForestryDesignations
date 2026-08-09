@@ -1,7 +1,7 @@
 {
   "mod": "AutoForestryDesignations",
   "source_file": "src\\AFD.Localization.cs",
-  "total_keys": 81,
+  "total_keys": 84,
   "skip_keys": [
     "dtk.mod.name",
     "dtk.rate_limit.items_per_min",

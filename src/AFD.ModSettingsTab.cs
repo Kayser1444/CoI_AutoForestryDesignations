@@ -26,7 +26,7 @@ namespace AutoForestryDesignations
         private const string MOD_ID = "auto-forestry-designations";
         private const string MOD_ICON = "Assets/Unity/UserInterface/Toolbar/Forestry.svg";
         private const string DEFAULTS_ICON = "Assets/Unity/UserInterface/Toolbar/Copy.svg";
-        private const string GAME_SETTINGS_ICON = "Assets/Unity/UserInterface/EntityIcons/Gears.png";
+        private static readonly Px SETTINGS_SECTION_INDENT = 4.pt();
 
         internal static ModSettingsTab BuildDefaultsTab()
         {
@@ -40,36 +40,15 @@ namespace AutoForestryDesignations
                 MOD_ICON);
         }
 
-        internal static ModSettingsTab BuildGameSettingsTab()
-        {
-            return new ModSettingsTab(
-                MOD_ID,
-                AfdLocalization.SettingsModName.AsFormatted,
-                AfdLocalization.SettingsTabGameSettings.AsFormatted,
-                110,
-                BuildGameSettingsContent,
-                GAME_SETTINGS_ICON);
-        }
-
         private static UiComponent BuildDefaultsContent()
         {
             var refreshers = new List<Action>();
             var content = BuildSettingsColumn();
 
-            AddDesignationDefaultsSection(content, refreshers);
+            AddTowerSettingsDefaultsSection(content, refreshers);
             AddPanelDefaultsSection(content, refreshers);
-
-            content.Add(BuildFooter(refreshers));
-
-            return content;
-        }
-
-        private static UiComponent BuildGameSettingsContent()
-        {
-            var refreshers = new List<Action>();
-            var content = BuildSettingsColumn();
-
-            AddHarvestSection(content, refreshers);
+            AddDesignationBehaviorsSection(content, refreshers);
+            AddOptimizationsSection(content, refreshers);
 
             content.Add(BuildFooter(refreshers));
 
@@ -80,7 +59,7 @@ namespace AutoForestryDesignations
         {
             return new Column(2.pt())
                 .AlignItemsStretch()
-                .PaddingLeft(1.pt())
+                .PaddingLeft(SETTINGS_SECTION_INDENT)
                 .PaddingRight(1.pt());
         }
 
@@ -89,10 +68,10 @@ namespace AutoForestryDesignations
             return new Title(title)
                 .Color(Theme.PrimaryColor)
                 .MarginTop(2.pt())
-                .MarginLeft(-1.pt());
+                .MarginLeft(-SETTINGS_SECTION_INDENT);
         }
 
-        private static void AddDesignationDefaultsSection(Column content, List<Action> refreshers)
+        private static void AddTowerSettingsDefaultsSection(Column content, List<Action> refreshers)
         {
             content.Add(BuildSectionHeading(AfdLocalization.SettingsHeadingForestryTowerDefaults.AsFormatted));
 
@@ -133,7 +112,7 @@ namespace AutoForestryDesignations
                 refreshers));
         }
 
-        private static void AddHarvestSection(Column content, List<Action> refreshers)
+        private static void AddDesignationBehaviorsSection(Column content, List<Action> refreshers)
         {
             content.Add(BuildSectionHeading(AfdLocalization.SettingsHeadingDesignationDefaults.AsFormatted));
 
@@ -149,6 +128,18 @@ namespace AutoForestryDesignations
                 AfdLocalization.SettingsMarkHarvestReadyTip.AsFormatted,
                 () => AutoForestryDesignationsMod.MarkHarvestReadyForHarvest,
                 value => AutoForestryDesignationsMod.SetMarkHarvestReadyForHarvest(value),
+                refreshers));
+        }
+
+        private static void AddOptimizationsSection(Column content, List<Action> refreshers)
+        {
+            content.Add(BuildSectionHeading(AfdLocalization.SettingsHeadingOptimizations.AsFormatted));
+
+            content.Add(BuildToggleRow(
+                AfdLocalization.KeepLoadedPlantersInTheFieldLabel.AsFormatted,
+                AfdLocalization.KeepLoadedPlantersInTheFieldTip.AsFormatted,
+                () => AutoForestryDesignationsMod.KeepLoadedPlantersInTheField,
+                value => AutoForestryDesignationsMod.SetKeepLoadedPlantersInTheField(value),
                 refreshers));
         }
 

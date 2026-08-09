@@ -1,3 +1,8 @@
+v0.2.6 | 2026-08-09
+* Added an optional world-level setting to keep loaded tree planters in the field and retry planting instead of returning to their forestry tower when no target is immediately available
+* Added save persistence and `AFDsettings.json` configuration support for the loaded-planter behavior
+* Simplified the AFD Mod Settings layout into one tab with grouped tower, panel, designation behavior, and optimization settings
+
 v0.2.5 | 2026-08-08
 * Fixed: Holding Alt while assigning a vehicle from the default logistics zone now checks that zone before offering to order a new vehicle
 * Updated maximum verified game version to 0.8.7

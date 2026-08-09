@@ -72,6 +72,14 @@
     "自动汇集和平衡该塔所有活动树木收割机上分配的卡车。"
   ],
   [
+    "AFD_KeepLoadedPlantersInTheFieldLabel",
+    "让装载的种植机留在野外"
+  ],
+  [
+    "AFD_KeepLoadedPlantersInTheFieldTip",
+    "当装有树苗的植树机暂时找不到有效的种植目标时，让它留在当前位置附近并重试，而不是返回林业塔。这样可以避免长途往返，但装载的种植机可能会在野外等待。"
+  ],
+  [
     "AFD_TruckPoolTitle",
     "卡车池"
   ],
@@ -177,11 +185,11 @@
   ],
   [
     "AFD_SettingsHeadingForestryTowerDefaults",
-    "林业塔默认值"
+    "塔设置默认值"
   ],
   [
     "AFD_SettingsHeadingDesignationDefaults",
-    "规划默认值"
+    "指定行为"
   ],
   [
     "AFD_SettingsHeadingScanPerformance",
@@ -189,7 +197,11 @@
   ],
   [
     "AFD_SettingsHeadingPanelDefaults",
-    "面板默认值"
+    "塔板默认设置"
+  ],
+  [
+    "AFD_SettingsHeadingOptimizations",
+    "优化"
   ],
   [
     "AFD_SettingsAvoidTilesWithTreesLabel",
@@ -197,7 +209,7 @@
   ],
   [
     "AFD_SettingsAvoidTilesWithTreesTip",
-    "默认：创建规划时跳过已经包含树木的地块。"
+    "创建指定时跳过已包含树的图块。"
   ],
   [
     "AFD_SettingsMarkHarvestReadyLabel",
@@ -205,7 +217,7 @@
   ],
   [
     "AFD_SettingsMarkHarvestReadyTip",
-    "默认：创建规划后，自动将达到林业塔采伐阈值的树木标记为采伐。"
+    "创建指定后，自动标记符合塔的采伐阈值的树木进行采伐。"
   ],
   [
     "AFD_SettingsBatchSizeLabel",

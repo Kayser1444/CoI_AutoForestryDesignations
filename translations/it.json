@@ -72,6 +72,14 @@
     "Raggruppa e bilancia automaticamente i camion assegnati tra tutte le raccoglitrici di alberi attive di questa torre."
   ],
   [
+    "AFD_KeepLoadedPlantersInTheFieldLabel",
+    "Mantieni le piantatrici cariche nel campo"
+  ],
+  [
+    "AFD_KeepLoadedPlantersInTheFieldTip",
+    "Quando una piantatrice di alberi con piantine non riesce a trovare subito un obiettivo di piantagione valido, rimane vicino alla posizione attuale e riprova invece di tornare alla torre forestale. Questo evita lunghi viaggi di ritorno, ma può lasciare una piantatrice carica in attesa nel campo."
+  ],
+  [
     "AFD_TruckPoolTitle",
     "Piscina per camion"
   ],
@@ -177,11 +185,11 @@
   ],
   [
     "AFD_SettingsHeadingForestryTowerDefaults",
-    "Predefiniti torre forestale"
+    "Impostazioni predefinite della torre"
   ],
   [
     "AFD_SettingsHeadingDesignationDefaults",
-    "Predefiniti designazioni"
+    "Comportamenti di designazione"
   ],
   [
     "AFD_SettingsHeadingScanPerformance",
@@ -189,7 +197,11 @@
   ],
   [
     "AFD_SettingsHeadingPanelDefaults",
-    "Predefiniti pannelli"
+    "Impostazioni predefinite dei pannelli della torre"
+  ],
+  [
+    "AFD_SettingsHeadingOptimizations",
+    "Ottimizzazioni"
   ],
   [
     "AFD_SettingsAvoidTilesWithTreesLabel",
@@ -197,7 +209,7 @@
   ],
   [
     "AFD_SettingsAvoidTilesWithTreesTip",
-    "Predefinito: salta le caselle che contengono già un albero durante la creazione delle designazioni."
+    "Salta le tessere che contengono già un albero durante la creazione delle designazioni."
   ],
   [
     "AFD_SettingsMarkHarvestReadyLabel",
@@ -205,7 +217,7 @@
   ],
   [
     "AFD_SettingsMarkHarvestReadyTip",
-    "Predefinito: dopo aver creato le designazioni, marca automaticamente per il raccolto gli alberi che raggiungono la soglia della torre."
+    "Dopo aver creato le designazioni, contrassegna automaticamente gli alberi che soddisfano la soglia di raccolta della torre per la raccolta."
   ],
   [
     "AFD_SettingsBatchSizeLabel",

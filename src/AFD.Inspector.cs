@@ -22,7 +22,9 @@ using Mafi.Core.Entities;
 using Mafi.Core.Entities.Dynamic;
 using Mafi.Core.Syncers;
 using Mafi.Core.Vehicles;
+using Mafi.Core.Vehicles.Jobs;
 using Mafi.Core.Vehicles.TreeHarvesters;
+using Mafi.Core.Vehicles.TreePlanters;
 using Mafi.Core.Vehicles.Trucks;
 using Mafi.Unity.UiToolkit;
 using Mafi.Unity.UiToolkit.Component;
@@ -40,6 +42,7 @@ namespace AutoForestryDesignations
             try
             {
                 LogDebug("Apply() called");
+                ApplyLoadedPlanterParkingPatch(harmony);
                 
                 var assembly = typeof(Mafi.Unity.Entities.EntityMb).Assembly;
                 var inspectorType = assembly.GetType("Mafi.Unity.Ui.Inspectors.ForestryTowerInspector");
@@ -169,6 +172,45 @@ namespace AutoForestryDesignations
             { 
                 Log.Warning($"[AFD] Apply EXCEPTION: {ex}");
             }
+        }
+
+        private static void ApplyLoadedPlanterParkingPatch(Harmony harmony)
+        {
+            try
+            {
+                var parkingMethod = typeof(ParkAndWaitJobFactory).GetMethod(
+                    nameof(ParkAndWaitJobFactory.TryEnqueueParkingJobIfNeeded),
+                    BindingFlags.Instance | BindingFlags.Public);
+                if (parkingMethod == null)
+                {
+                    Log.Warning("[AFD] ParkAndWaitJobFactory parking method not found");
+                    return;
+                }
+
+                harmony.Patch(
+                    parkingMethod,
+                    prefix: new HarmonyMethod(typeof(AutoForestryDesignation), nameof(KeepLoadedPlanterOutOfTowerPrefix)));
+                LogDebug("Patched loaded tree planter parking fallback");
+            }
+            catch (Exception ex)
+            {
+                Log.Warning($"[AFD] EXCEPTION patching loaded tree planter parking fallback: {ex}");
+            }
+        }
+
+        public static bool KeepLoadedPlanterOutOfTowerPrefix(Vehicle vehicle, ref bool __result)
+        {
+            if (AutoForestryDesignationsMod.KeepLoadedPlantersInTheField
+                && vehicle is TreePlanter planter
+                && planter.IsNotEmpty
+                && planter.ForestryTower.HasValue)
+            {
+                __result = false;
+            LogDebug($"Keep loaded planters in the field invoked: prevented loaded tree planter {planter.Id} from returning to its forestry tower.");
+                return false;
+            }
+
+            return true;
         }
 
         public static bool ForestryTowerCanVehicleBeAssignedPrefix(ForestryTower __instance, DynamicEntityProto vehicleProto, ref bool __result)

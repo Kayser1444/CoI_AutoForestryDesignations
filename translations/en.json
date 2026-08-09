@@ -72,6 +72,14 @@
     "Virtually pool and balance assigned trucks across all active tree harvesters of this tower."
   ],
   [
+    "AFD_KeepLoadedPlantersInTheFieldLabel",
+    "Keep loaded planters in the field"
+  ],
+  [
+    "AFD_KeepLoadedPlantersInTheFieldTip",
+    "When a tree planter carrying saplings cannot immediately find a valid planting target, keep it near its current location and retry instead of sending it back to its forestry tower. This avoids long return trips but may leave a loaded planter waiting in the field."
+  ],
+  [
     "AFD_TruckPoolTitle",
     "Truck pool"
   ],
@@ -177,11 +185,11 @@
   ],
   [
     "AFD_SettingsHeadingForestryTowerDefaults",
-    "Forestry tower defaults"
+    "Tower settings defaults"
   ],
   [
     "AFD_SettingsHeadingDesignationDefaults",
-    "Designation defaults"
+    "Designation behaviors"
   ],
   [
     "AFD_SettingsHeadingScanPerformance",
@@ -189,7 +197,11 @@
   ],
   [
     "AFD_SettingsHeadingPanelDefaults",
-    "Panel defaults"
+    "Tower panels defaults"
+  ],
+  [
+    "AFD_SettingsHeadingOptimizations",
+    "Optimizations"
   ],
   [
     "AFD_SettingsAvoidTilesWithTreesLabel",
@@ -197,7 +209,7 @@
   ],
   [
     "AFD_SettingsAvoidTilesWithTreesTip",
-    "Default: skip tiles that already contain a tree when creating designations."
+    "Skip tiles that already contain a tree when creating designations."
   ],
   [
     "AFD_SettingsMarkHarvestReadyLabel",
@@ -205,7 +217,7 @@
   ],
   [
     "AFD_SettingsMarkHarvestReadyTip",
-    "Default: after creating designations, automatically mark trees that meet the tower's harvest threshold for harvesting."
+    "After creating designations, automatically mark trees that meet the tower's harvest threshold for harvesting."
   ],
   [
     "AFD_SettingsBatchSizeLabel",

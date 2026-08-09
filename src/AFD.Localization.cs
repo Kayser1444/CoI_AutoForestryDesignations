@@ -98,6 +98,16 @@ namespace AutoForestryDesignations
             "Virtually pool and balance assigned trucks across all active tree harvesters of this tower.",
             "Tooltip for the Truck Pooling toggle setting.");
 
+        public static LocStr KeepLoadedPlantersInTheFieldLabel = Loc.Str(
+            "AFD_KeepLoadedPlantersInTheFieldLabel",
+            "Keep loaded planters in the field",
+            "Label for the Keep Loaded Planters in the Field toggle setting.");
+
+        public static LocStr KeepLoadedPlantersInTheFieldTip = Loc.Str(
+            "AFD_KeepLoadedPlantersInTheFieldTip",
+            "When a tree planter carrying saplings cannot immediately find a valid planting target, keep it near its current location and retry instead of sending it back to its forestry tower. This avoids long return trips but may leave a loaded planter waiting in the field.",
+            "Tooltip for the Keep Loaded Planters in the Field toggle setting.");
+
         public static LocStr TruckPoolTitle = Loc.Str(
             "AFD_TruckPoolTitle",
             "Truck pool",
@@ -235,12 +245,12 @@ namespace AutoForestryDesignations
 
         public static LocStr SettingsHeadingForestryTowerDefaults = Loc.Str(
             "AFD_SettingsHeadingForestryTowerDefaults",
-            "Forestry tower defaults",
+            "Tower settings defaults",
             "Section heading for forestry tower default settings.");
 
         public static LocStr SettingsHeadingDesignationDefaults = Loc.Str(
             "AFD_SettingsHeadingDesignationDefaults",
-            "Designation defaults",
+            "Designation behaviors",
             "Section heading for game-level designation settings (harvest, avoid-trees).");
 
         public static LocStr SettingsHeadingScanPerformance = Loc.Str(
@@ -250,8 +260,13 @@ namespace AutoForestryDesignations
 
         public static LocStr SettingsHeadingPanelDefaults = Loc.Str(
             "AFD_SettingsHeadingPanelDefaults",
-            "Panel defaults",
+            "Tower panels defaults",
             "Section heading for panel collapsed-state defaults.");
+
+        public static LocStr SettingsHeadingOptimizations = Loc.Str(
+            "AFD_SettingsHeadingOptimizations",
+            "Optimizations",
+            "Section heading for optional optimization settings.");
 
         public static LocStr SettingsAvoidTilesWithTreesLabel = Loc.Str(
             "AFD_SettingsAvoidTilesWithTreesLabel",
@@ -260,7 +275,7 @@ namespace AutoForestryDesignations
 
         public static LocStr SettingsAvoidTilesWithTreesTip = Loc.Str(
             "AFD_SettingsAvoidTilesWithTreesTip",
-            "Default: skip tiles that already contain a tree when creating designations.",
+            "Skip tiles that already contain a tree when creating designations.",
             "Tooltip for the Avoid Tiles With Trees toggle in the settings tab.");
 
         public static LocStr SettingsMarkHarvestReadyLabel = Loc.Str(
@@ -270,7 +285,7 @@ namespace AutoForestryDesignations
 
         public static LocStr SettingsMarkHarvestReadyTip = Loc.Str(
             "AFD_SettingsMarkHarvestReadyTip",
-            "Default: after creating designations, automatically mark trees that meet the tower's harvest threshold for harvesting.",
+            "After creating designations, automatically mark trees that meet the tower's harvest threshold for harvesting.",
             "Tooltip for the Mark Harvest Ready toggle in the settings tab.");
 
         public static LocStr SettingsBatchSizeLabel = Loc.Str(

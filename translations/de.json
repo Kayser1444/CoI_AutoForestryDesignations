@@ -72,6 +72,14 @@
     "Bündeln und verteilen Sie zugewiesene LKWs automatisch auf alle aktiven Baumerntemaschinen dieses Turms."
   ],
   [
+    "AFD_KeepLoadedPlantersInTheFieldLabel",
+    "Beladene Pflanzer im Feld lassen"
+  ],
+  [
+    "AFD_KeepLoadedPlantersInTheFieldTip",
+    "Wenn ein mit Setzlingen beladener Baumpflanzer nicht sofort ein gültiges Pflanzziel findet, bleibt er an seinem aktuellen Ort und versucht es erneut, anstatt zum Forstturm zurückzufahren. Das vermeidet lange Rückfahrten, kann aber dazu führen, dass ein beladener Pflanzer im Feld wartet."
+  ],
+  [
     "AFD_TruckPoolTitle",
     "LKW-Pool"
   ],
@@ -177,11 +185,11 @@
   ],
   [
     "AFD_SettingsHeadingForestryTowerDefaults",
-    "Forstturm-Standardwerte"
+    "Standardeinstellungen für den Turm"
   ],
   [
     "AFD_SettingsHeadingDesignationDefaults",
-    "Markierungs-Standardwerte"
+    "Benennungsverhalten"
   ],
   [
     "AFD_SettingsHeadingScanPerformance",
@@ -189,7 +197,11 @@
   ],
   [
     "AFD_SettingsHeadingPanelDefaults",
-    "Panel-Standardwerte"
+    "Standardwerte für Turmpaneele"
+  ],
+  [
+    "AFD_SettingsHeadingOptimizations",
+    "Optimierungen"
   ],
   [
     "AFD_SettingsAvoidTilesWithTreesLabel",
@@ -197,7 +209,7 @@
   ],
   [
     "AFD_SettingsAvoidTilesWithTreesTip",
-    "Standard: Beim Erstellen von Markierungen Felder überspringen, die bereits einen Baum enthalten."
+    "Überspringen Sie beim Erstellen von Bezeichnungen Kacheln, die bereits einen Baum enthalten."
   ],
   [
     "AFD_SettingsMarkHarvestReadyLabel",
@@ -205,7 +217,7 @@
   ],
   [
     "AFD_SettingsMarkHarvestReadyTip",
-    "Standard: Nach dem Erstellen von Markierungen Bäume automatisch zur Ernte markieren, die den Ernteschwellenwert des Turms erfüllen."
+    "Markieren Sie nach dem Erstellen von Bezeichnungen automatisch Bäume, die die Ernteschwelle des Turms für die Ernte erreichen."
   ],
   [
     "AFD_SettingsBatchSizeLabel",
