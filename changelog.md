@@ -1,4 +1,4 @@
-v0.2.6 [packaged]
+v0.2.6 [released]
 
 * Added the optional world-level **Keep loaded planters in the field** optimization, including save persistence and a Debug-build log when a loaded planter's return to its tower is suppressed.
 * Simplified the AFD Mod Settings UI into one tab with Tower settings defaults, Tower panels defaults, Designation behaviors, and Optimizations sections.
