@@ -1,3 +1,5 @@
+v0.2.7 [unreleased]
+
 v0.2.6 [released]
 
 * Added the optional world-level **Keep loaded planters in the field** optimization, including save persistence and a Debug-build log when a loaded planter's return to its tower is suppressed.
