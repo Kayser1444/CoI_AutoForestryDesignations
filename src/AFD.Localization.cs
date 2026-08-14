@@ -98,15 +98,15 @@ namespace AutoForestryDesignations
             "Virtually pool and balance assigned trucks across all active tree harvesters of this tower.",
             "Tooltip for the Truck Pooling toggle setting.");
 
-        public static LocStr KeepLoadedPlantersInTheFieldLabel = Loc.Str(
-            "AFD_KeepLoadedPlantersInTheFieldLabel",
-            "Keep loaded planters in the field",
-            "Label for the Keep Loaded Planters in the Field toggle setting.");
+        public static LocStr ForestryVehicleOptimizationsLabel = Loc.Str(
+            "AFD_ForestryVehicleOptimizationsLabel",
+            "Forestry vehicle optimizations",
+            "Label for the world-level Forestry vehicle optimizations toggle setting.");
 
-        public static LocStr KeepLoadedPlantersInTheFieldTip = Loc.Str(
-            "AFD_KeepLoadedPlantersInTheFieldTip",
-            "When a tree planter carrying saplings cannot immediately find a valid planting target, keep it near its current location and retry instead of sending it back to its forestry tower. This avoids long return trips but may leave a loaded planter waiting in the field.",
-            "Tooltip for the Keep Loaded Planters in the Field toggle setting.");
+        public static LocStr ForestryVehicleOptimizationsTip = Loc.Str(
+            "AFD_ForestryVehicleOptimizationsTip",
+            "Suppresses the mandatory bathroom breaks enforced by the Union of Forestry Workers. Idle planters and harvesters are forced to remain in the field and proactively move to places where work is expected to materialize.",
+            "Tooltip for the Forestry vehicle optimizations toggle setting.");
 
         public static LocStr TruckPoolTitle = Loc.Str(
             "AFD_TruckPoolTitle",

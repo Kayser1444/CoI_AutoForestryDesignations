@@ -72,12 +72,12 @@
     "Samla och balansera automatiskt tilldelade lastbilar över alla aktiva trädskördare i detta torn."
   ],
   [
-    "AFD_KeepLoadedPlantersInTheFieldLabel",
-    "Behåll lastade planterare i fältet"
+    "AFD_ForestryVehicleOptimizationsLabel",
+    "Optimering av skogsfordon"
   ],
   [
-    "AFD_KeepLoadedPlantersInTheFieldTip",
-    "När en trädplanterare med plantor inte omedelbart hittar en giltig planteringsplats stannar den nära sin nuvarande position och försöker igen i stället för att åka tillbaka till skogstornet. Detta undviker långa återresor, men en lastad planterare kan bli väntande i fältet."
+    "AFD_ForestryVehicleOptimizationsTip",
+    "Undertrycker de obligatoriska toalettpauserna som Skogsarbetarförbundet har infört. Inaktiva planterare och skördare stannar i fältet och flyttar proaktivt till platser där arbete väntas uppstå."
   ],
   [
     "AFD_TruckPoolTitle",

@@ -1,4 +1,8 @@
-v0.2.7 [unreleased]
+v0.3.0 [unreleased]
+
+* Added the default-on world-level **Forestry vehicle optimizations** toggle. Assigned planters and harvesters now coordinate globally exclusive, same-tower future work claims, stage at vanilla working distance, and stay in the field instead of returning to the tower merely to wait.
+* Replaced the narrower loaded-planter behavior with claim-based planter recruitment and smart harvester staging, including active-work preemption, save-safe transient state, and vanilla unreachable-target handling.
+* Fixed: Future harvest claims now require the tree to be managed by the assigned tower, preventing mature or manually targeted trees outside its forestry designations from holding a harvester in place.
 
 v0.2.6 [released]
 

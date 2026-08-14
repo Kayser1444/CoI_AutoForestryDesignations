@@ -136,10 +136,10 @@ namespace AutoForestryDesignations
             content.Add(BuildSectionHeading(AfdLocalization.SettingsHeadingOptimizations.AsFormatted));
 
             content.Add(BuildToggleRow(
-                AfdLocalization.KeepLoadedPlantersInTheFieldLabel.AsFormatted,
-                AfdLocalization.KeepLoadedPlantersInTheFieldTip.AsFormatted,
-                () => AutoForestryDesignationsMod.KeepLoadedPlantersInTheField,
-                value => AutoForestryDesignationsMod.SetKeepLoadedPlantersInTheField(value),
+                AfdLocalization.ForestryVehicleOptimizationsLabel.AsFormatted,
+                AfdLocalization.ForestryVehicleOptimizationsTip.AsFormatted,
+                () => AutoForestryDesignationsMod.ForestryVehicleOptimizations,
+                value => AutoForestryDesignationsMod.SetForestryVehicleOptimizations(value),
                 refreshers));
         }
 

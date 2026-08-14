@@ -87,8 +87,8 @@ namespace AutoForestryDesignations
             AppendJsonBool(sb, AutoForestryDesignationsMod.ForestryInformationPanelCollapsed);
             sb.Append(",\"truckPoolingEnabled\":");
             AppendJsonBool(sb, AutoForestryDesignationsMod.TruckPoolingEnabled);
-            sb.Append(",\"keepLoadedPlantersInTheField\":");
-            AppendJsonBool(sb, AutoForestryDesignationsMod.KeepLoadedPlantersInTheField);
+            sb.Append(",\"forestryVehicleOptimizations\":");
+            AppendJsonBool(sb, AutoForestryDesignationsMod.ForestryVehicleOptimizations);
             sb.Append('}');
             sb.Append(",\"towerSettings\":[");
 
@@ -192,8 +192,8 @@ namespace AutoForestryDesignations
                     AutoForestryDesignationsMod.SetForestryInformationPanelCollapsed(forestryInformationPanelCollapsed);
                 if (TryGetBool(worldSettings, "truckPoolingEnabled", out bool truckPoolingEnabled))
                     AutoForestryDesignationsMod.SetTruckPoolingEnabled(truckPoolingEnabled);
-                if (TryGetBool(worldSettings, "keepLoadedPlantersInTheField", out bool keepLoadedPlantersInTheField))
-                    AutoForestryDesignationsMod.SetKeepLoadedPlantersInTheField(keepLoadedPlantersInTheField);
+                if (TryGetBool(worldSettings, "forestryVehicleOptimizations", out bool forestryVehicleOptimizations))
+                    AutoForestryDesignationsMod.SetForestryVehicleOptimizations(forestryVehicleOptimizations);
             }
 
             if (!root.TryGetValue("towerSettings", out object rawEntries)

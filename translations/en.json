@@ -72,12 +72,12 @@
     "Virtually pool and balance assigned trucks across all active tree harvesters of this tower."
   ],
   [
-    "AFD_KeepLoadedPlantersInTheFieldLabel",
-    "Keep loaded planters in the field"
+    "AFD_ForestryVehicleOptimizationsLabel",
+    "Forestry vehicle optimizations"
   ],
   [
-    "AFD_KeepLoadedPlantersInTheFieldTip",
-    "When a tree planter carrying saplings cannot immediately find a valid planting target, keep it near its current location and retry instead of sending it back to its forestry tower. This avoids long return trips but may leave a loaded planter waiting in the field."
+    "AFD_ForestryVehicleOptimizationsTip",
+    "Suppresses the mandatory bathroom breaks enforced by the Union of Forestry Workers. Idle planters and harvesters are forced to remain in the field and proactively move to places where work is expected to materialize."
   ],
   [
     "AFD_TruckPoolTitle",

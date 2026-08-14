@@ -72,12 +72,12 @@
     "自动汇集和平衡该塔所有活动树木收割机上分配的卡车。"
   ],
   [
-    "AFD_KeepLoadedPlantersInTheFieldLabel",
-    "让装载的种植机留在野外"
+    "AFD_ForestryVehicleOptimizationsLabel",
+    "林业车辆优化"
   ],
   [
-    "AFD_KeepLoadedPlantersInTheFieldTip",
-    "当装有树苗的植树机暂时找不到有效的种植目标时，让它留在当前位置附近并重试，而不是返回林业塔。这样可以避免长途往返，但装载的种植机可能会在野外等待。"
+    "AFD_ForestryVehicleOptimizationsTip",
+    "抑制森林工人联盟强制执行的上厕所休息。闲置的种树机和伐木机留在林区，并主动前往预计会出现工作的地点。"
   ],
   [
     "AFD_TruckPoolTitle",

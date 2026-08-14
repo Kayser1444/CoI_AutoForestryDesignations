@@ -219,9 +219,9 @@ namespace AutoForestryDesignations
                 if (truckPoolingEnabled.HasValue)
                     AutoForestryDesignationsMod.SetTruckPoolingEnabled(truckPoolingEnabled.Value);
 
-                bool? keepLoadedPlantersInTheField = ParseBool(json, "keepLoadedPlantersInTheField");
-                if (keepLoadedPlantersInTheField.HasValue)
-                    AutoForestryDesignationsMod.SetKeepLoadedPlantersInTheField(keepLoadedPlantersInTheField.Value);
+                bool? forestryVehicleOptimizations = ParseBool(json, "forestryVehicleOptimizations");
+                if (forestryVehicleOptimizations.HasValue)
+                    AutoForestryDesignationsMod.SetForestryVehicleOptimizations(forestryVehicleOptimizations.Value);
 
                 parsedVersion = ParseString(json, "settingsVersion");
             }
@@ -325,8 +325,8 @@ namespace AutoForestryDesignations
             sb.AppendLine("  \"_comment_truckPoolingEnabled\": \"Default for new tower panels. When true, trucks assigned to forestry towers are pooled and automatically distributed among its active tree harvesters. Default: true.\",");
             sb.AppendLine($"  \"truckPoolingEnabled\": {BoolToJsonStr(AutoForestryDesignationsMod.TruckPoolingEnabled)},");
             sb.AppendLine();
-            sb.AppendLine("  \"_comment_keepLoadedPlantersInTheField\": \"World-level setting. When true, loaded tree planters stay in the field and retry planting instead of returning to their forestry tower when no target is immediately available. Default: false.\",");
-            sb.AppendLine($"  \"keepLoadedPlantersInTheField\": {BoolToJsonStr(AutoForestryDesignationsMod.KeepLoadedPlantersInTheField)}");
+            sb.AppendLine("  \"_comment_forestryVehicleOptimizations\": \"World-level setting. When true, assigned forestry planters and harvesters stay in the field, coordinate future work, and do not return to their tower merely to wait. Default: true.\",");
+            sb.AppendLine($"  \"forestryVehicleOptimizations\": {BoolToJsonStr(AutoForestryDesignationsMod.ForestryVehicleOptimizations)}");
             sb.Append("}");
             return sb.ToString();
         }

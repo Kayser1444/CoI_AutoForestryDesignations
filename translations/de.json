@@ -72,12 +72,12 @@
     "Bündeln und verteilen Sie zugewiesene LKWs automatisch auf alle aktiven Baumerntemaschinen dieses Turms."
   ],
   [
-    "AFD_KeepLoadedPlantersInTheFieldLabel",
-    "Beladene Pflanzer im Feld lassen"
+    "AFD_ForestryVehicleOptimizationsLabel",
+    "Forstfahrzeug-Optimierungen"
   ],
   [
-    "AFD_KeepLoadedPlantersInTheFieldTip",
-    "Wenn ein mit Setzlingen beladener Baumpflanzer nicht sofort ein gültiges Pflanzziel findet, bleibt er an seinem aktuellen Ort und versucht es erneut, anstatt zum Forstturm zurückzufahren. Das vermeidet lange Rückfahrten, kann aber dazu führen, dass ein beladener Pflanzer im Feld wartet."
+    "AFD_ForestryVehicleOptimizationsTip",
+    "Unterdrückt die vom Verband der Forstarbeiter vorgeschriebenen Toilettenpausen. Untätige Pflanzer und Holzfäller bleiben im Feld und fahren vorausschauend zu Orten, an denen bald Arbeit entstehen dürfte."
   ],
   [
     "AFD_TruckPoolTitle",

@@ -8,6 +8,7 @@
 // is included by mistake, I intend to correct it promptly upon discovery or notice.
 using System;
 using System.IO;
+using System.Threading;
 using HarmonyLib;
 using Mafi;
 using Mafi.Collections;
@@ -25,6 +26,10 @@ using Mafi.Core.Console;
 using Mafi.Core.PathFinding;
 using Mafi.Core.SaveGame;
 using Mafi.Core.Terrain.Designation;
+using Mafi.Core.Terrain.Trees;
+using Mafi.Core.PathFinding.Goals;
+using Mafi.Core.Vehicles;
+using Mafi.Core.Vehicles.Jobs;
 using Mafi.Core.World;
 using Mafi.Unity.Terrain;
 using Mafi.Unity.Trees;
@@ -128,9 +133,20 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
     public static bool TruckPoolingEnabled { get; private set; } = true;
     public static void SetTruckPoolingEnabled(bool value) => TruckPoolingEnabled = value;
 
-    /// <summary>When enabled, loaded tree planters stay in the field and retry planting instead of parking at their tower. Default: false.</summary>
-    public static bool KeepLoadedPlantersInTheField { get; private set; } = false;
-    public static void SetKeepLoadedPlantersInTheField(bool value) => KeepLoadedPlantersInTheField = value;
+    private static int s_forestryVehicleOptimizationsRequested = 1;
+
+    /// <summary>Requested world setting. Vehicle behavior applies it at the next simulation update boundary. Default: true.</summary>
+    public static bool ForestryVehicleOptimizations
+        => Volatile.Read(ref s_forestryVehicleOptimizationsRequested) != 0;
+
+    public static void SetForestryVehicleOptimizations(bool value)
+    {
+        int requested = value ? 1 : 0;
+        if (Interlocked.Exchange(ref s_forestryVehicleOptimizationsRequested, requested) == requested)
+            return;
+
+        AutoForestryDesignation.s_log.Info($"Forestry vehicle optimizations {(value ? "enabled" : "disabled")}.");
+    }
 
     /// <summary>Resets all global defaults to their built-in values.</summary>
     public static void ResetGlobalDefaults()
@@ -144,7 +160,7 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
         SetForestryDesignationsPanelCollapsed(false);
         SetForestryInformationPanelCollapsed(false);
         SetTruckPoolingEnabled(true);
-        SetKeepLoadedPlantersInTheField(false);
+        SetForestryVehicleOptimizations(true);
         AutoForestryDesignation.SetBatchSize(30);
     }
 
@@ -176,6 +192,15 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
 
             AutoForestryDesignation.SetModRootDirectoryPath(Manifest.RootDirectoryPath);
             AutoForestryDesignation.Initialize(desigManager, protosDb, worldMapManager, ticker, entitiesManager, m_simLoopEvents, vehiclePathFindingManager);
+            AutoForestryDesignation.InitializeVehicleOptimizations(
+                resolver.Resolve<ITreesManager>(),
+                resolver.Resolve<TreeHarvestingJob.Factory>(),
+                resolver.Resolve<NavigateToJob.Factory>(),
+                resolver.Resolve<TreeVehicleGoal.Factory>(),
+                resolver.Resolve<PlantingVehicleGoal.Factory>(),
+                resolver.Resolve<UnreachableTerrainDesignationsManager>(),
+                resolver.Resolve<IVehiclesManager>());
+            m_simLoopEvents.UpdateStart.AddNonSaveable(this, AutoForestryDesignation.VehicleOptimizationsUpdateStart);
             m_towerSettingsStateStore = ModStateJsonStores.CreateDefault(JsonConfig, AutoForestryDesignation.TowerSettingsConfigKey);
             AutoForestryDesignation.LoadTowerSettingsFromJsonStore(m_towerSettingsStateStore);
             TowerTruckAssignments.ReconcileAndPurgeStaleEntries(entitiesManager);
@@ -212,6 +237,7 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
             PendingVehicleAllocations.SaveToJsonStore(m_preAllocationsStateStore);
         }
 
+        AutoForestryDesignation.BeforeVehicleOptimizationsSave();
         m_saveLifecycle.BeforeVanillaSave();
     }
 
@@ -226,6 +252,7 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
         m_saveLifecycle.DisposeRuntime();
         PendingVehicleAllocations.ClearAll();
         TowerTruckAssignments.ClearAll();
+        AutoForestryDesignation.ClearVehicleOptimizations();
     }
 
     private void unsubscribeWorldEvents()
@@ -240,6 +267,8 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
         if (m_simLoopEvents != null)
         {
             try { m_simLoopEvents.BeforeSave.RemoveNonSaveable(this, beforeSave); }
+            catch { }
+            try { m_simLoopEvents.UpdateStart.RemoveNonSaveable(this, AutoForestryDesignation.VehicleOptimizationsUpdateStart); }
             catch { }
             m_simLoopEvents = null;
         }

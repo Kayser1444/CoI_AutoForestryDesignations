@@ -72,12 +72,12 @@
     "Raggruppa e bilancia automaticamente i camion assegnati tra tutte le raccoglitrici di alberi attive di questa torre."
   ],
   [
-    "AFD_KeepLoadedPlantersInTheFieldLabel",
-    "Mantieni le piantatrici cariche nel campo"
+    "AFD_ForestryVehicleOptimizationsLabel",
+    "Ottimizzazioni dei veicoli forestali"
   ],
   [
-    "AFD_KeepLoadedPlantersInTheFieldTip",
-    "Quando una piantatrice di alberi con piantine non riesce a trovare subito un obiettivo di piantagione valido, rimane vicino alla posizione attuale e riprova invece di tornare alla torre forestale. Questo evita lunghi viaggi di ritorno, ma può lasciare una piantatrice carica in attesa nel campo."
+    "AFD_ForestryVehicleOptimizationsTip",
+    "Sopprime le pause bagno obbligatorie imposte dal Sindacato dei Lavoratori Forestali. Le piantatrici e le mietitrici inattive restano nel campo e si spostano in anticipo verso i luoghi dove si prevede che compaia del lavoro."
   ],
   [
     "AFD_TruckPoolTitle",

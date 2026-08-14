@@ -72,12 +72,12 @@
     "Agrupe y equilibre automáticamente los camiones asignados en todos los recolectores de árboles activos de esta torre."
   ],
   [
-    "AFD_KeepLoadedPlantersInTheFieldLabel",
-    "Mantener las plantadoras cargadas en el campo"
+    "AFD_ForestryVehicleOptimizationsLabel",
+    "Optimizaciones de vehículos forestales"
   ],
   [
-    "AFD_KeepLoadedPlantersInTheFieldTip",
-    "Cuando una plantadora de árboles con plantones no encuentra inmediatamente un objetivo de plantación válido, permanece cerca de su ubicación actual y vuelve a intentarlo en lugar de regresar a su torre forestal. Esto evita viajes largos, pero puede dejar una plantadora cargada esperando en el campo."
+    "AFD_ForestryVehicleOptimizationsTip",
+    "Suprime las pausas para ir al baño impuestas por el Sindicato de Trabajadores Forestales. Las plantadoras y cosechadoras inactivas permanecen en el campo y se desplazan de forma preventiva a lugares donde se espera que aparezca trabajo."
   ],
   [
     "AFD_TruckPoolTitle",
