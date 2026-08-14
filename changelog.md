@@ -1,3 +1,5 @@
+v0.3.1 [unreleased]
+
 v0.3.0 [released]
 
 * Added the default-on world-level **Forestry vehicle optimizations** toggle. Assigned planters and harvesters now coordinate globally exclusive, same-tower future work claims, stage at vanilla working distance, and stay in the field instead of returning to the tower merely to wait.
