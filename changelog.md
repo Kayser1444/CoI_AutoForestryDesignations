@@ -1,3 +1,5 @@
+v0.4.1 [unreleased]
+
 v0.4.0 [released]
 
 * Moved **Override terrain designations** into the **Designation behaviors** world settings section, defaulting it off so existing terrain designations remain protected.
