@@ -1,3 +1,11 @@
+v0.4.0 | 2026-08-18
+* Added a world-level **Override terrain designations** setting in the **Designation behaviors** section, off by default
+* Added **Target yield** planning for sustainable wood production with ∞ meaning no target
+* Added **Avoid flat tiles** to preserve level ground for buildings
+* Improved large scans by slicing planning work and committing completed designations through the game's safe bulk command
+* Fixed: Flat, near-integer terrain is now distinguished from visibly uneven terrain using the game's surface-height tolerance
+* Fixed: Large scans no longer throw collection exceptions or fill slowly from one side when reachability filtering is changed
+
 v0.3.0 | 2026-08-14
 * Added the default-on world-level **Forestry vehicle optimizations** toggle, keeping assigned planters and harvesters in the field and staging them for expected forestry work
 * Added same-tower work coordination so active work takes priority and planters and harvesters avoid competing for the same future target

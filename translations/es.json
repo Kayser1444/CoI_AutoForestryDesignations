@@ -8,6 +8,14 @@
     "Información forestal"
   ],
   [
+    "AFD_ForestryDesignationsTitleTipFmt",
+    "Crear designaciones forestales automáticas. [Kayser's Automatic Forestry Designations v{0}]"
+  ],
+  [
+    "AFD_ForestryInformationTitleTipFmt",
+    "Árboles actuales y producción de madera proyectada en el área forestal de esta torre. [Kayser's Automatic Forestry Designations v{0}]"
+  ],
+  [
     "AFD_CreateDesignationsBtn",
     "Crear designaciones"
   ],
@@ -48,12 +56,32 @@
     "Cuando está activado, omite las casillas de designación que no sean accesibles por la navegación de vehículos desde el área de la torre."
   ],
   [
-    "AFD_AvoidTerrainDesignationsLabel",
-    "Evitar designaciones de terreno"
+    "AFD_OverrideTerrainDesignationsLabel",
+    "Sobrescribir designaciones del terreno"
   ],
   [
-    "AFD_AvoidTerrainDesignationsTip",
-    "Omite casillas que ya contengan alguna designación de terreno, incluidas minería, vertido o nivelación."
+    "AFD_OverrideTerrainDesignationsTip",
+    "Permite que las designaciones forestales reemplacen las designaciones de terreno existentes, incluidas las de extracción, vertido o nivelación. Desactivado por defecto."
+  ],
+  [
+    "AFD_AvoidFlatTilesLabel",
+    "Evitar casillas planas"
+  ],
+  [
+    "AFD_AvoidFlatTilesTip",
+    "Usar solo casillas irregulares y rugosas para la silvicultura. (Así se conservan las casillas planas para edificios.)"
+  ],
+  [
+    "AFD_TargetYieldLabel",
+    "Rendimiento objetivo"
+  ],
+  [
+    "AFD_TargetYieldTip",
+    "Producción sostenible de madera por mes de juego. 0 = sin objetivo (∞)."
+  ],
+  [
+    "AFD_TargetYieldLegacyTipFmt",
+    "Límite máximo de designaciones heredado conservado: {0}."
   ],
   [
     "AFD_MaxTilesLabel",

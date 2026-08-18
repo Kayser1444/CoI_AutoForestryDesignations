@@ -8,6 +8,14 @@
     "Skogsbruksinformation"
   ],
   [
+    "AFD_ForestryDesignationsTitleTipFmt",
+    "Skapa automatiska skogsbruksanvisningar. [Kayser's Automatic Forestry Designations v{0}]"
+  ],
+  [
+    "AFD_ForestryInformationTitleTipFmt",
+    "Aktuella träd och beräknad virkesproduktion i det här tornets skogsbruksområde. [Kayser's Automatic Forestry Designations v{0}]"
+  ],
+  [
     "AFD_CreateDesignationsBtn",
     "Skapa anvisningar"
   ],
@@ -48,12 +56,32 @@
     "Hoppa över anvisningsrutor som inte kan nås via fordonsvägar från tornets område."
   ],
   [
-    "AFD_AvoidTerrainDesignationsLabel",
-    "Undvik terränganvisningar"
+    "AFD_OverrideTerrainDesignationsLabel",
+    "Åsidosätt terränganvisningar"
   ],
   [
-    "AFD_AvoidTerrainDesignationsTip",
-    "Hoppa över rutor som redan har en terränganvisning, inklusive grävning, tippning eller utjämning."
+    "AFD_OverrideTerrainDesignationsTip",
+    "Tillåt skogsanvisningar att ersätta befintliga terränganvisningar, inklusive grävning, tippning eller utjämning. Av som standard."
+  ],
+  [
+    "AFD_AvoidFlatTilesLabel",
+    "Undvik plana rutor"
+  ],
+  [
+    "AFD_AvoidFlatTilesTip",
+    "Använd bara ojämna, kuperade rutor för skogsbruk. (Detta sparar plana rutor för byggnader.)"
+  ],
+  [
+    "AFD_TargetYieldLabel",
+    "Målproduktion"
+  ],
+  [
+    "AFD_TargetYieldTip",
+    "Mål för hållbar träproduktion per spelmånad. 0 = inget mål (∞)."
+  ],
+  [
+    "AFD_TargetYieldLegacyTipFmt",
+    "Äldre maxgräns för tilldelningar sparad: {0}."
   ],
   [
     "AFD_MaxTilesLabel",

@@ -1,4 +1,15 @@
-v0.3.1 [unreleased]
+v0.4.0 [unreleased]
+
+* Moved **Override terrain designations** into the **Designation behaviors** world settings section, defaulting it off so existing terrain designations remain protected.
+* Removed the obsolete per-tower terrain-designation override and migrated old `avoidMiningDesignations` values into the world-level inverted setting.
+* Made finite **Target yield** scans responsive with one incremental spatial capacity projection and 10 ms play / 30 ms paused frame budgets.
+* Fixed slow and unsafe multi-frame placement by planning under the frame budget, then committing through the game's simulation-safe bulk designation command; completed designations now appear together without a toast.
+* Fixed **Avoid flat tiles** unnecessarily running driving-distance search when **Reachable tiles only** was off.
+* Fixed **Avoid flat tiles** rejecting visibly rough terrain by replacing integer truncation with the game's `HeightTilesF` surface-height tolerance.
+* Added per-tower **Avoid flat tiles** filtering to preserve uneven ground for forestry and level ground for buildings.
+* Replaced the new-user-facing maximum-designations control with **Target yield**, a spacing-aware sustainable wood/month planning target with ∞ meaning no target.
+* Preserved legacy `MaxTiles` limits during migration and added save-backed persistence for the new settings.
+* Restored localization for the Forestry designations and Forestry information panel header tooltips across all supported languages.
 
 v0.3.0 [released]
 

@@ -15,6 +15,16 @@ namespace AutoForestryDesignations
             "Forestry information",
             "Title of the Forestry information inspector panel.");
 
+        public static LocStr ForestryDesignationsTitleTipFmt = Loc.Str(
+            "AFD_ForestryDesignationsTitleTipFmt",
+            "Create automatic forestry designations. [Kayser's Automatic Forestry Designations v{0}]",
+            "Tooltip on the Forestry designations inspector panel header. {0} = mod version.");
+
+        public static LocStr ForestryInformationTitleTipFmt = Loc.Str(
+            "AFD_ForestryInformationTitleTipFmt",
+            "Current trees and projected wood output in this tower's forestry area. [Kayser's Automatic Forestry Designations v{0}]",
+            "Tooltip on the Forestry information inspector panel header. {0} = mod version.");
+
         // --- Buttons ---
         public static LocStr CreateDesignationsBtn = Loc.Str(
             "AFD_CreateDesignationsBtn",
@@ -68,15 +78,40 @@ namespace AutoForestryDesignations
             "When enabled, skip designation tiles that are not reachable by vehicle pathability from the tower area.",
             "Tooltip for the Reachable Tiles Only toggle setting.");
 
-        public static LocStr AvoidTerrainDesignationsLabel = Loc.Str(
-            "AFD_AvoidTerrainDesignationsLabel",
-            "Avoid terrain designations",
-            "Label for the Avoid Terrain Designations toggle setting.");
+        public static LocStr OverrideTerrainDesignationsLabel = Loc.Str(
+            "AFD_OverrideTerrainDesignationsLabel",
+            "Override terrain designations",
+            "Label for the Override Terrain Designations toggle setting.");
 
-        public static LocStr AvoidTerrainDesignationsTip = Loc.Str(
-            "AFD_AvoidTerrainDesignationsTip",
-            "Skip tiles that already contain any terrain designation, including mining, dumping, or leveling.",
-            "Tooltip for the Avoid Terrain Designations toggle setting.");
+        public static LocStr OverrideTerrainDesignationsTip = Loc.Str(
+            "AFD_OverrideTerrainDesignationsTip",
+            "Allow forestry designations to replace existing terrain designations, including mining, dumping, or leveling. Default: off.",
+            "Tooltip for the Override Terrain Designations toggle setting.");
+
+        public static LocStr AvoidFlatTilesLabel = Loc.Str(
+            "AFD_AvoidFlatTilesLabel",
+            "Avoid flat tiles",
+            "Label for the Avoid flat tiles toggle setting.");
+
+        public static LocStr AvoidFlatTilesTip = Loc.Str(
+            "AFD_AvoidFlatTilesTip",
+            "Use only uneven, rough tiles for forestry. (This preserves flat tiles for buildings.)",
+            "Tooltip for the Avoid flat tiles toggle setting.");
+
+        public static LocStr TargetYieldLabel = Loc.Str(
+            "AFD_TargetYieldLabel",
+            "Target yield",
+            "Label for the Target yield step setting.");
+
+        public static LocStr TargetYieldTip = Loc.Str(
+            "AFD_TargetYieldTip",
+            "Target sustainable wood production per in-game month. ∞ = no target (stored as 0).",
+            "Tooltip for the Target yield step setting. Zero is displayed as infinity.");
+
+        public static LocStr TargetYieldLegacyTipFmt = Loc.Str(
+            "AFD_TargetYieldLegacyTipFmt",
+            "Legacy maximum designations retained: {0}.",
+            "Additional Target yield tooltip line shown when a migrated legacy Max tiles limit is still active. {0} = tile count.");
 
         public static LocStr MaxTilesLabel = Loc.Str(
             "AFD_MaxTilesLabel",
@@ -251,7 +286,7 @@ namespace AutoForestryDesignations
         public static LocStr SettingsHeadingDesignationDefaults = Loc.Str(
             "AFD_SettingsHeadingDesignationDefaults",
             "Designation behaviors",
-            "Section heading for game-level designation settings (harvest, avoid-trees).");
+            "Section heading for game-level designation settings (terrain overrides, harvest, avoid-trees).");
 
         public static LocStr SettingsHeadingScanPerformance = Loc.Str(
             "AFD_SettingsHeadingScanPerformance",

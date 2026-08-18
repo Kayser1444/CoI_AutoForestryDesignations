@@ -27,10 +27,12 @@ public sealed class AfdConsoleCommands
         sb.AppendLine("[AFD] Current settings:");
         sb.AppendLine($"  OnlyFertileTiles         = {AutoForestryDesignationsMod.OnlyFertileTiles}");
         sb.AppendLine($"  AvoidTilesWithTrees      = {AutoForestryDesignationsMod.AvoidTilesWithTrees}");
-        sb.AppendLine($"  AvoidMiningDesignations  = {AutoForestryDesignationsMod.AvoidMiningDesignations}");
+        sb.AppendLine($"  OverrideTerrainDesignations = {AutoForestryDesignationsMod.OverrideTerrainDesignations}");
+        sb.AppendLine($"  AvoidFlatTiles           = {AutoForestryDesignationsMod.AvoidFlatTiles}");
         sb.AppendLine($"  OnlyReachableTiles       = {AutoForestryDesignationsMod.OnlyReachableTiles}");
         sb.AppendLine($"  PathabilityTargetSize    = {AutoForestryDesignationsMod.PathabilityTargetSize} (n*n, clamped 1..9)");
-        sb.AppendLine($"  MaxTiles                 = {AutoForestryDesignationsMod.MaxTiles} (0 = no limit)");
+        sb.AppendLine($"  TargetYield              = {AutoForestryDesignationsMod.TargetYield} (0 = no target)");
+        sb.AppendLine($"  LegacyMaxTiles           = {AutoForestryDesignationsMod.MaxTiles} (0 = no limit)");
         sb.AppendLine($"  MarkHarvestReadyForHarvest = {AutoForestryDesignationsMod.MarkHarvestReadyForHarvest}");
         sb.AppendLine($"  ForestryPanelCollapsed   = {AutoForestryDesignationsMod.ForestryDesignationsPanelCollapsed}");
         sb.Append(    $"  ForestryInfoPanelCollapsed = {AutoForestryDesignationsMod.ForestryInformationPanelCollapsed}");
@@ -51,11 +53,18 @@ public sealed class AfdConsoleCommands
         return $"[AFD] AvoidTilesWithTrees set to {AutoForestryDesignationsMod.AvoidTilesWithTrees}.";
     }
 
-    [ConsoleCommand(false, false, "Sets whether existing terrain designations are skipped (true/false).", null)]
-    private string afdSetAvoidMiningDesignations(bool value)
+    [ConsoleCommand(false, false, "Sets whether forestry designations may replace existing terrain designations (true/false).", null)]
+    private string afdSetOverrideTerrainDesignations(bool value)
     {
-        AutoForestryDesignationsMod.SetAvoidMiningDesignations(value);
-        return $"[AFD] AvoidMiningDesignations set to {AutoForestryDesignationsMod.AvoidMiningDesignations}.";
+        AutoForestryDesignationsMod.SetOverrideTerrainDesignations(value);
+        return $"[AFD] OverrideTerrainDesignations set to {AutoForestryDesignationsMod.OverrideTerrainDesignations}.";
+    }
+
+    [ConsoleCommand(false, false, "Sets whether flat 4x4 tiles are skipped (true/false).", null)]
+    private string afdSetAvoidFlatTiles(bool value)
+    {
+        AutoForestryDesignationsMod.SetAvoidFlatTiles(value);
+        return $"[AFD] AvoidFlatTiles set to {AutoForestryDesignationsMod.AvoidFlatTiles}.";
     }
 
     [ConsoleCommand(false, false, "Sets whether unreachable tiles are skipped by vehicle pathability (true/false).", null)]
@@ -65,11 +74,18 @@ public sealed class AfdConsoleCommands
         return $"[AFD] OnlyReachableTiles set to {AutoForestryDesignationsMod.OnlyReachableTiles}.";
     }
 
-    [ConsoleCommand(false, false, "Sets the global default max designation tiles per run (0 = no limit).", null)]
+    [ConsoleCommand(false, false, "Sets the global sustainable wood target per in-game month (0 = no target).", null)]
+    private string afdSetTargetYield(int value)
+    {
+        AutoForestryDesignationsMod.SetTargetYield(value);
+        return $"[AFD] TargetYield set to {AutoForestryDesignationsMod.TargetYield}.";
+    }
+
+    [ConsoleCommand(false, false, "Legacy compatibility command: sets the hidden max designation tiles per run (0 = no limit).", null)]
     private string afdSetMaxTiles(int value)
     {
         AutoForestryDesignationsMod.SetMaxTiles(value);
-        return $"[AFD] MaxTiles set to {AutoForestryDesignationsMod.MaxTiles}.";
+        return $"[AFD] LegacyMaxTiles set to {AutoForestryDesignationsMod.MaxTiles}.";
     }
 
     [ConsoleCommand(false, false, "Sets hidden reachability target square size n (n*n, clamped 1..9).", null)]

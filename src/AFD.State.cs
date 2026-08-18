@@ -15,6 +15,7 @@ using Mafi.Core;
 using Mafi.Core.Buildings.Forestry;
 using Mafi.Core.Buildings.Towers;
 using Mafi.Core.Entities;
+using Mafi.Core.Input;
 using Mafi.Core.PathFinding;
 using Mafi.Core.Products;
 using Mafi.Core.Prototypes;
@@ -46,16 +47,16 @@ namespace AutoForestryDesignations
         private static WorldMapManager? s_worldMapManager;
         private static IEntitiesManager? s_entitiesManager;
         private static ISimLoopEvents? s_simLoopEvents;
+        private static IInputScheduler? s_inputScheduler;
         internal static IVehiclePathFindingManager? s_vehiclePathFindingManager;
         internal static VehiclePathFindingParams? s_standardVehiclePathFindingParams;
         private static string? s_modRootDirectoryPath;
 
         private const int BATCH_SIZE = 30;
         private const int MAX_BATCH_SIZE = 200;
-        private const int PAUSED_BATCH_MULTIPLIER = 4;
         private static int s_batchSize = BATCH_SIZE;
 
-        /// <summary>Number of designations placed per coroutine frame. Clamped 1..200.</summary>
+        /// <summary>Legacy persisted batch setting retained for settings compatibility.</summary>
         public static int BatchSize => ClampBatchSize(s_batchSize);
 
         public static void SetBatchSize(int value) => s_batchSize = ClampBatchSize(value);
@@ -64,8 +65,9 @@ namespace AutoForestryDesignations
         {
             public bool OnlyFertileTiles { get; private set; }
             public bool AvoidTilesWithTrees { get; private set; }
-            public bool AvoidMiningDesignations { get; private set; }
+            public bool AvoidFlatTiles { get; private set; }
             public bool OnlyReachableTiles { get; private set; }
+            public int TargetYield { get; private set; }
             public int MaxTiles { get; private set; }
             public bool MarkHarvestReadyForHarvest { get; private set; }
             public bool ForestryDesignationsPanelCollapsed { get; private set; }
@@ -76,8 +78,9 @@ namespace AutoForestryDesignations
             {
                 OnlyFertileTiles = AutoForestryDesignationsMod.OnlyFertileTiles;
                 AvoidTilesWithTrees = AutoForestryDesignationsMod.AvoidTilesWithTrees;
-                AvoidMiningDesignations = AutoForestryDesignationsMod.AvoidMiningDesignations;
+                AvoidFlatTiles = AutoForestryDesignationsMod.AvoidFlatTiles;
                 OnlyReachableTiles = AutoForestryDesignationsMod.OnlyReachableTiles;
+                TargetYield = AutoForestryDesignationsMod.TargetYield;
                 MaxTiles = AutoForestryDesignationsMod.MaxTiles;
                 MarkHarvestReadyForHarvest = AutoForestryDesignationsMod.MarkHarvestReadyForHarvest;
                 ForestryDesignationsPanelCollapsed = AutoForestryDesignationsMod.ForestryDesignationsPanelCollapsed;
@@ -89,9 +92,18 @@ namespace AutoForestryDesignations
 
             public void SetOnlyFertileTiles(bool value) => OnlyFertileTiles = value;
             public void SetAvoidTilesWithTrees(bool value) => AvoidTilesWithTrees = value;
-            public void SetAvoidMiningDesignations(bool value) => AvoidMiningDesignations = value;
+            public void SetAvoidFlatTiles(bool value) => AvoidFlatTiles = value;
             public void SetOnlyReachableTiles(bool value) => OnlyReachableTiles = value;
-            public void SetMaxTiles(int value) => MaxTiles = Math.Max(0, value);
+            public void SetTargetYield(int value)
+            {
+                TargetYield = Math.Max(0, value);
+                MaxTiles = 0;
+            }
+            public void SetMaxTiles(int value)
+            {
+                MaxTiles = Math.Max(0, value);
+                TargetYield = 0;
+            }
             public void SetMarkHarvestReadyForHarvest(bool value) => MarkHarvestReadyForHarvest = value;
             public void SetForestryDesignationsPanelCollapsed(bool value) => ForestryDesignationsPanelCollapsed = value;
             public void SetForestryInformationPanelCollapsed(bool value) => ForestryInformationPanelCollapsed = value;
@@ -101,8 +113,9 @@ namespace AutoForestryDesignations
             {
                 return OnlyFertileTiles == AutoForestryDesignationsMod.OnlyFertileTiles
                     && AvoidTilesWithTrees == AutoForestryDesignationsMod.AvoidTilesWithTrees
-                    && AvoidMiningDesignations == AutoForestryDesignationsMod.AvoidMiningDesignations
+                    && AvoidFlatTiles == AutoForestryDesignationsMod.AvoidFlatTiles
                     && OnlyReachableTiles == AutoForestryDesignationsMod.OnlyReachableTiles
+                    && TargetYield == AutoForestryDesignationsMod.TargetYield
                     && MaxTiles == AutoForestryDesignationsMod.MaxTiles
                     && MarkHarvestReadyForHarvest == AutoForestryDesignationsMod.MarkHarvestReadyForHarvest
                     && ForestryDesignationsPanelCollapsed == AutoForestryDesignationsMod.ForestryDesignationsPanelCollapsed
@@ -185,14 +198,15 @@ namespace AutoForestryDesignations
         internal static bool GetTowerAvoidTilesWithTrees(IAreaManagingTower tower) => GetTowerSettingsOrDefaults(tower).AvoidTilesWithTrees;
         internal static void SetTowerAvoidTilesWithTrees(IAreaManagingTower tower, bool value) => UpdateTowerSettings(tower, settings => settings.SetAvoidTilesWithTrees(value));
 
-        internal static bool GetTowerAvoidMiningDesignations(IAreaManagingTower tower) => GetTowerSettingsOrDefaults(tower).AvoidMiningDesignations;
-        internal static void SetTowerAvoidMiningDesignations(IAreaManagingTower tower, bool value) => UpdateTowerSettings(tower, settings => settings.SetAvoidMiningDesignations(value));
+        internal static bool GetTowerAvoidFlatTiles(IAreaManagingTower tower) => GetTowerSettingsOrDefaults(tower).AvoidFlatTiles;
+        internal static void SetTowerAvoidFlatTiles(IAreaManagingTower tower, bool value) => UpdateTowerSettings(tower, settings => settings.SetAvoidFlatTiles(value));
 
         internal static bool GetTowerOnlyReachableTiles(IAreaManagingTower tower) => GetTowerSettingsOrDefaults(tower).OnlyReachableTiles;
         internal static void SetTowerOnlyReachableTiles(IAreaManagingTower tower, bool value) => UpdateTowerSettings(tower, settings => settings.SetOnlyReachableTiles(value));
 
-        internal static int GetTowerMaxTiles(IAreaManagingTower tower) => GetTowerSettingsOrDefaults(tower).MaxTiles;
-        internal static void SetTowerMaxTiles(IAreaManagingTower tower, int value) => UpdateTowerSettings(tower, settings => settings.SetMaxTiles(value));
+        internal static int GetTowerTargetYield(IAreaManagingTower tower) => GetTowerSettingsOrDefaults(tower).TargetYield;
+        internal static void SetTowerTargetYield(IAreaManagingTower tower, int value) => UpdateTowerSettings(tower, settings => settings.SetTargetYield(value));
+        internal static int GetTowerLegacyMaxTiles(IAreaManagingTower tower) => GetTowerSettingsOrDefaults(tower).MaxTiles;
 
         internal static bool GetTowerMarkHarvestReadyForHarvest(IAreaManagingTower tower) => GetTowerSettingsOrDefaults(tower).MarkHarvestReadyForHarvest;
         internal static void SetTowerMarkHarvestReadyForHarvest(IAreaManagingTower tower, bool value) => UpdateTowerSettings(tower, settings => settings.SetMarkHarvestReadyForHarvest(value));
@@ -242,7 +256,8 @@ namespace AutoForestryDesignations
             MonoBehaviour coroutineHost,
             IEntitiesManager entitiesManager,
             ISimLoopEvents? simLoopEvents = null,
-            IVehiclePathFindingManager? vehiclePathFindingManager = null)
+            IVehiclePathFindingManager? vehiclePathFindingManager = null,
+            IInputScheduler? inputScheduler = null)
         {
             // Load defaults after logging is initialized so diagnostics are visible.
             LoadSettingsFromJson();
@@ -253,6 +268,7 @@ namespace AutoForestryDesignations
             s_worldMapManager = worldMapManager as WorldMapManager;
             s_entitiesManager = entitiesManager;
             s_simLoopEvents = simLoopEvents;
+            s_inputScheduler = inputScheduler;
             s_vehiclePathFindingManager = vehiclePathFindingManager;
             s_standardVehiclePathFindingParams = FindStandardVehiclePathFindingParams(protosDb);
 

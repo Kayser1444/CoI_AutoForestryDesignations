@@ -8,6 +8,14 @@
     "Forestry information"
   ],
   [
+    "AFD_ForestryDesignationsTitleTipFmt",
+    "Create automatic forestry designations. [Kayser's Automatic Forestry Designations v{0}]"
+  ],
+  [
+    "AFD_ForestryInformationTitleTipFmt",
+    "Current trees and projected wood output in this tower's forestry area. [Kayser's Automatic Forestry Designations v{0}]"
+  ],
+  [
     "AFD_CreateDesignationsBtn",
     "Create designations"
   ],
@@ -48,12 +56,32 @@
     "When enabled, skip designation tiles that are not reachable by vehicle pathability from the tower area."
   ],
   [
-    "AFD_AvoidTerrainDesignationsLabel",
-    "Avoid terrain designations"
+    "AFD_OverrideTerrainDesignationsLabel",
+    "Override terrain designations"
   ],
   [
-    "AFD_AvoidTerrainDesignationsTip",
-    "Skip tiles that already contain any terrain designation, including mining, dumping, or leveling."
+    "AFD_OverrideTerrainDesignationsTip",
+    "Allow forestry designations to replace existing terrain designations, including mining, dumping, or leveling. Default: off."
+  ],
+  [
+    "AFD_AvoidFlatTilesLabel",
+    "Avoid flat tiles"
+  ],
+  [
+    "AFD_AvoidFlatTilesTip",
+    "Use only uneven, rough tiles for forestry. (This preserves flat tiles for buildings.)"
+  ],
+  [
+    "AFD_TargetYieldLabel",
+    "Target yield"
+  ],
+  [
+    "AFD_TargetYieldTip",
+    "Target sustainable wood production per in-game month. ∞ = no target (stored as 0)."
+  ],
+  [
+    "AFD_TargetYieldLegacyTipFmt",
+    "Legacy maximum designations retained: {0}."
   ],
   [
     "AFD_MaxTilesLabel",

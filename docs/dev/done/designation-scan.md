@@ -4,7 +4,7 @@
 
 `AFD.Scan.cs` implements the coroutine-driven scan pipeline that discovers
 candidate forestry tiles within a tower's area and places designations according
-to per-tower settings.
+to world and per-tower settings.
 
 ## Source files
 
@@ -41,10 +41,15 @@ saved overrides.
 |---|---|---|
 | `OnlyFertileTiles` | `AFDsettings.json` | Skip tiles that do not support tree growth |
 | `AvoidTilesWithTrees` | `AFDsettings.json` | Skip tiles that already contain a tree |
-| `AvoidMiningDesignations` | `AFDsettings.json` | Skip tiles with an existing mining/dumping/leveling designation |
+| `AvoidFlatTiles` | `AFDsettings.json` | Skip 4×4 candidates whose four `HeightTilesF` corner heights are within the game's 0.0625-tile surface tolerance of one integer height |
 | `OnlyReachableTiles` | `AFDsettings.json` | Run pathability BFS; skip unreachable tiles |
-| `MaxTiles` | `AFDsettings.json` | Cap the number of designations placed; `0` = no cap |
+| `TargetYield` | `AFDsettings.json` | Fill toward projected sustainable wood/month; `0` = no target |
+| `MaxTiles` | legacy settings | Hidden cap retained for old saves until Target yield is explicitly changed |
 | `MarkHarvestReadyForHarvest` | `AFDsettings.json` | Set harvest-ready flag on mature-enough trees |
+
+`OverrideTerrainDesignations` is a world setting stored in the mod cache. It
+allows forestry designations to replace existing mining, dumping, or leveling
+designations and defaults to `false`.
 
 Tower settings are persisted through CoI AutoHelpers' JSON state storage using
 the vanilla mod config save chunk. The saved root object currently contains
@@ -71,18 +76,27 @@ on the stored `s_coroutineHost`.
 
 The scan has two operating modes selected at runtime:
 
-**Direct placement** (no `MaxTiles` cap, `OnlyReachableTiles` = false):
+**Direct candidate collection** (no reachability or finite-target planning):
 
-- Each eligible tile is placed immediately as it is scanned.
-- No `candidates` list is allocated.
+- Eligible tiles are collected as pending `DesignationData` while the scan is
+  sliced by the 10/30 ms planning budget.
+- The pending set is committed through vanilla's bulk input command after
+  planning completes.
 
-**Candidate pipeline** (`MaxTiles > 0` or `OnlyReachableTiles` = true):
+**Candidate pipeline** (finite `TargetYield`, legacy `MaxTiles > 0`,
+`OnlyReachableTiles` = true, or `AvoidFlatTiles` = true):
 
 - All eligible tiles are collected into a `List<DesignationCandidate>`.
 - After the scan loop, candidates are sorted by `DrivingDistanceToTower`
   (ascending), falling back to `DistanceSqrToTower` for tiles where the driving
   distance is unavailable.
-- The sorted list is then placed up to the `MaxTiles` cap (or fully if no cap).
+- With a finite Target yield, the planner builds one spacing-aware sustainable-
+  yield projection from existing managed capacity. It selects candidates in
+  priority order and updates that projection incrementally after each selected
+  designation. Planning stops as soon as the target is reached; only unavoidable
+  single-designation granularity may overshoot.
+- With a legacy Max tiles cap, the sorted list is placed up to that cap. With no
+  finite target or legacy cap, all eligible candidates are placed.
 
 ### Tile filtering
 
@@ -91,24 +105,37 @@ Each scanned tile is checked in order:
 1. **Bounding box**: must be within the tower's `Area.BoundingBoxMin/Max`.
 2. **Designation grid alignment**: only origins that align to the 4×4 designation
    grid are considered.
-3. **Existing designation**: tiles that already have any designation are skipped.
+3. **Existing designation**: tiles that already have any designation are skipped
+   unless the world-level `OverrideTerrainDesignations` setting is enabled.
 4. **Fertile tiles only** (if enabled): `TerrainManager.IsFertile(origin)`.
 5. **Avoid tiles with trees** (if enabled): `TreesManager` is queried.
-6. **Avoid mining designations** (if enabled): checks all four corners of the
-   tile for non-forestry terrain designations.
+6. **Terrain designations**: skips tiles with existing non-forestry terrain
+   designations unless the world-level `OverrideTerrainDesignations` setting is
+   enabled.
+7. **Avoid flat tiles** (if enabled): the four `HeightTilesF` designation-corner
+   heights must not all be within the game's surface-height tolerance of one
+   shared integer height.
 
-### Batching
+Target-yield planning is fail-closed when the sustainable-yield estimate cannot
+be evaluated. Its estimator builds one spatially indexed capacity projection,
+then updates it as each designation is selected for the pending plan; it never falls back to
+unlimited placement. The setting is only read when Create designations is
+explicitly invoked, and the scan never removes existing designations.
 
-The coroutine yields every `s_batchSize` tiles scanned to avoid frame spikes:
+### Slicing and commit
+
+Candidate scanning, pathability work, and finite-target estimation use elapsed-
+time budgets per rendered frame:
 
 ```
-BATCH_SIZE = 30          default; used when the game simulation is running
-MAX_BATCH_SIZE = 200     hard ceiling
-PAUSED_BATCH_MULTIPLIER = 4   batch size multiplier when the game is paused
+TARGET_PLANNING_PLAY_BUDGET_MS = 10
+TARGET_PLANNING_PAUSED_BUDGET_MS = 30
 ```
 
-The effective batch size at any given moment is `BATCH_SIZE × multiplier`,
-clamped to `MAX_BATCH_SIZE`.
+After planning, AFD submits the complete set through vanilla's
+`AddTerrainDesignationsCmd`. This applies mutations at the simulation-safe input
+boundary instead of changing designation collections from a coroutine between
+simulation ticks. The finished set appears together without a progress toast.
 
 ---
 

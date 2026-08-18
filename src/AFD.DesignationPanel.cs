@@ -39,11 +39,12 @@ namespace AutoForestryDesignations
             public Func<IAreaManagingTower?> GetTower { get; }
             public Mafi.Unity.Ui.Library.Display OnlyFertileDisplay { get; }
             public Mafi.Unity.Ui.Library.Display AvoidWithTreesDisplay { get; }
-            public Mafi.Unity.Ui.Library.Display AvoidMiningDisplay { get; }
+            public Mafi.Unity.Ui.Library.Display AvoidFlatDisplay { get; }
             public Mafi.Unity.Ui.Library.Display OnlyReachableDisplay { get; }
-            public Mafi.Unity.Ui.Library.Display MaxTilesDisplay { get; }
+            public Mafi.Unity.Ui.Library.Display TargetYieldDisplay { get; }
             public Mafi.Unity.Ui.Library.Display MarkHarvestReadyDisplay { get; }
             public Mafi.Unity.Ui.Library.Display TruckPoolingDisplay { get; }
+            public Action RefreshTargetYieldTooltip { get; }
             public PanelWithHeader Panel { get; }
 
             public Bindings(
@@ -51,21 +52,23 @@ namespace AutoForestryDesignations
                 PanelWithHeader panel,
                 Mafi.Unity.Ui.Library.Display onlyFertileDisplay,
                 Mafi.Unity.Ui.Library.Display avoidWithTreesDisplay,
-                Mafi.Unity.Ui.Library.Display avoidMiningDisplay,
+                Mafi.Unity.Ui.Library.Display avoidFlatDisplay,
                 Mafi.Unity.Ui.Library.Display onlyReachableDisplay,
-                Mafi.Unity.Ui.Library.Display maxTilesDisplay,
+                Mafi.Unity.Ui.Library.Display targetYieldDisplay,
                 Mafi.Unity.Ui.Library.Display markHarvestReadyDisplay,
-                Mafi.Unity.Ui.Library.Display truckPoolingDisplay)
+                Mafi.Unity.Ui.Library.Display truckPoolingDisplay,
+                Action refreshTargetYieldTooltip)
             {
                 GetTower = getTower;
                 Panel = panel;
                 OnlyFertileDisplay = onlyFertileDisplay;
                 AvoidWithTreesDisplay = avoidWithTreesDisplay;
-                AvoidMiningDisplay = avoidMiningDisplay;
+                AvoidFlatDisplay = avoidFlatDisplay;
                 OnlyReachableDisplay = onlyReachableDisplay;
-                MaxTilesDisplay = maxTilesDisplay;
+                TargetYieldDisplay = targetYieldDisplay;
                 MarkHarvestReadyDisplay = markHarvestReadyDisplay;
                 TruckPoolingDisplay = truckPoolingDisplay;
+                RefreshTargetYieldTooltip = refreshTargetYieldTooltip;
             }
         }
 
@@ -88,9 +91,10 @@ namespace AutoForestryDesignations
             if (tower == null) return;
             b.OnlyFertileDisplay.SetValue(BoolText(AutoForestryDesignation.GetTowerOnlyFertileTiles(tower)));
             b.AvoidWithTreesDisplay.SetValue(BoolText(AutoForestryDesignation.GetTowerAvoidTilesWithTrees(tower)));
-            b.AvoidMiningDisplay.SetValue(BoolText(AutoForestryDesignation.GetTowerAvoidMiningDesignations(tower)));
+            b.AvoidFlatDisplay.SetValue(BoolText(AutoForestryDesignation.GetTowerAvoidFlatTiles(tower)));
             b.OnlyReachableDisplay.SetValue(BoolText(AutoForestryDesignation.GetTowerOnlyReachableTiles(tower)));
-            b.MaxTilesDisplay.SetValue(new LocStrFormatted(MaxTilesText(AutoForestryDesignation.GetTowerMaxTiles(tower))));
+            b.TargetYieldDisplay.SetValue(new LocStrFormatted(TargetYieldText(AutoForestryDesignation.GetTowerTargetYield(tower))));
+            b.RefreshTargetYieldTooltip();
             b.MarkHarvestReadyDisplay.SetValue(BoolText(AutoForestryDesignation.GetTowerMarkHarvestReadyForHarvest(tower)));
             b.TruckPoolingDisplay.SetValue(BoolText(AutoForestryDesignation.GetTowerTruckPoolingEnabled(tower)));
             b.Panel.Collapsed(AutoForestryDesignation.GetTowerForestryDesignationsPanelCollapsed(tower));
@@ -154,7 +158,9 @@ namespace AutoForestryDesignations
 
             var panel = new PanelWithHeader()
                 .Title(AfdLocalization.ForestryDesignationsTitle,
-                       new LocStrFormatted($"Create automatic forestry designations. [Kayser's Automatic Forestry Designations v{AutoForestryDesignationsMod.ModVersion}]"));
+                       new LocStrFormatted(string.Format(
+                           AfdLocalization.ForestryDesignationsTitleTipFmt.TranslatedString,
+                           AutoForestryDesignationsMod.ModVersion)));
             var initialTower = getTower();
             panel.Collapsed(initialTower != null
                 ? AutoForestryDesignation.GetTowerForestryDesignationsPanelCollapsed(initialTower)
@@ -220,54 +226,60 @@ namespace AutoForestryDesignations
                     onlyReachableDisplay.SetValue(BoolText(false));
                 }));
 
-            // --- Avoid mining designations ---
-            bool initAvoidMining = initialTower != null
-                ? AutoForestryDesignation.GetTowerAvoidMiningDesignations(initialTower)
-                : AutoForestryDesignationsMod.AvoidMiningDesignations;
-            var avoidMiningDisplay = new Mafi.Unity.Ui.Library.Display(BoolText(initAvoidMining))
+            // --- Avoid flat tiles ---
+            bool initAvoidFlat = initialTower != null
+                ? AutoForestryDesignation.GetTowerAvoidFlatTiles(initialTower)
+                : AutoForestryDesignationsMod.AvoidFlatTiles;
+            var avoidFlatDisplay = new Mafi.Unity.Ui.Library.Display(BoolText(initAvoidFlat))
                 .MinDigits(3).AlignSelfStretch().MarginTopBottom(2.px());
             panel.BodyAdd(BuildToggleRow(
-                AfdLocalization.AvoidTerrainDesignationsLabel,
-                AfdLocalization.AvoidTerrainDesignationsTip,
-                avoidMiningDisplay,
+                AfdLocalization.AvoidFlatTilesLabel,
+                AfdLocalization.AvoidFlatTilesTip,
+                avoidFlatDisplay,
                 (Action)delegate
                 {
                     var tower = getTower(); if (tower == null) return;
-                    AutoForestryDesignation.SetTowerAvoidMiningDesignations(tower, true);
-                    avoidMiningDisplay.SetValue(BoolText(true));
+                    AutoForestryDesignation.SetTowerAvoidFlatTiles(tower, true);
+                    avoidFlatDisplay.SetValue(BoolText(true));
                 },
                 (Action)delegate
                 {
                     var tower = getTower(); if (tower == null) return;
-                    AutoForestryDesignation.SetTowerAvoidMiningDesignations(tower, false);
-                    avoidMiningDisplay.SetValue(BoolText(false));
+                    AutoForestryDesignation.SetTowerAvoidFlatTiles(tower, false);
+                    avoidFlatDisplay.SetValue(BoolText(false));
                 }));
 
-            // --- Max tiles ---
-            int initMaxTiles = initialTower != null
-                ? AutoForestryDesignation.GetTowerMaxTiles(initialTower)
-                : AutoForestryDesignationsMod.MaxTiles;
-            var maxTilesDisplay = new Mafi.Unity.Ui.Library.Display(new LocStrFormatted(MaxTilesText(initMaxTiles)))
+            // --- Target yield ---
+            int initTargetYield = initialTower != null
+                ? AutoForestryDesignation.GetTowerTargetYield(initialTower)
+                : AutoForestryDesignationsMod.TargetYield;
+            var targetYieldDisplay = new Mafi.Unity.Ui.Library.Display(new LocStrFormatted(TargetYieldText(initTargetYield)))
                 .MinDigits(3).AlignSelfStretch().MarginTopBottom(2.px());
+            Action refreshTargetYieldTooltip = () => { };
             panel.BodyAdd(BuildStepRow(
-                AfdLocalization.MaxTilesLabel,
-                AfdLocalization.MaxTilesTip,
-                maxTilesDisplay,
+                AfdLocalization.TargetYieldLabel,
+                TargetYieldTooltip(initialTower),
+                targetYieldDisplay,
                 (Action)delegate
                 {
                     var tower = getTower(); if (tower == null) return;
-                    int cur = AutoForestryDesignation.GetTowerMaxTiles(tower);
-                    AutoForestryDesignation.SetTowerMaxTiles(tower, cur == 0 ? ModifierStepSize() : cur + ModifierStepSize());
-                    maxTilesDisplay.SetValue(new LocStrFormatted(MaxTilesText(AutoForestryDesignation.GetTowerMaxTiles(tower))));
+                    int cur = AutoForestryDesignation.GetTowerTargetYield(tower);
+                    int next = cur >= int.MaxValue - ModifierStepSize()
+                        ? int.MaxValue
+                        : cur + ModifierStepSize();
+                    AutoForestryDesignation.SetTowerTargetYield(tower, next);
+                    targetYieldDisplay.SetValue(new LocStrFormatted(TargetYieldText(AutoForestryDesignation.GetTowerTargetYield(tower))));
+                    refreshTargetYieldTooltip();
                 },
                 (Action)delegate
                 {
                     var tower = getTower(); if (tower == null) return;
-                    int cur = AutoForestryDesignation.GetTowerMaxTiles(tower);
-                    if (cur > 0)
-                        AutoForestryDesignation.SetTowerMaxTiles(tower, Math.Max(0, cur - ModifierStepSize()));
-                    maxTilesDisplay.SetValue(new LocStrFormatted(MaxTilesText(AutoForestryDesignation.GetTowerMaxTiles(tower))));
-                }));
+                    int cur = AutoForestryDesignation.GetTowerTargetYield(tower);
+                    AutoForestryDesignation.SetTowerTargetYield(tower, Math.Max(0, cur - ModifierStepSize()));
+                    targetYieldDisplay.SetValue(new LocStrFormatted(TargetYieldText(AutoForestryDesignation.GetTowerTargetYield(tower))));
+                    refreshTargetYieldTooltip();
+                },
+                label => refreshTargetYieldTooltip = () => label.Tooltip(TargetYieldTooltip(getTower()))));
 
             // --- Mark harvest-ready trees for harvest ---
             bool initMarkHarvestReady = initialTower != null
@@ -299,7 +311,7 @@ namespace AutoForestryDesignations
                     truckPoolingDisplay.SetValue(BoolText(false));
                 }));
 
-            s_bindings[key] = new Bindings(getTower, panel, onlyFertileDisplay, avoidWithTreesDisplay, avoidMiningDisplay, onlyReachableDisplay, maxTilesDisplay, markHarvestReadyDisplay, truckPoolingDisplay);
+            s_bindings[key] = new Bindings(getTower, panel, onlyFertileDisplay, avoidWithTreesDisplay, avoidFlatDisplay, onlyReachableDisplay, targetYieldDisplay, markHarvestReadyDisplay, truckPoolingDisplay, refreshTargetYieldTooltip);
             return panel;
         }
 
@@ -308,14 +320,17 @@ namespace AutoForestryDesignations
             LocStrFormatted tooltip,
             Mafi.Unity.Ui.Library.Display display,
             Action onPlus,
-            Action onMinus)
+            Action onMinus,
+            Action<Label>? configureLabel = null)
         {
             var plusBtn = new ButtonIcon(Button.General, "Assets/Unity/UserInterface/General/Plus128.png")
                 .Compact().IconSize(14.px()).OnClick(onPlus, allowKeyPresses: true);
             var minusBtn = new ButtonIcon(Button.General, "Assets/Unity/UserInterface/General/Minus128.png")
                 .Compact().IconSize(14.px()).OnClick(onMinus, allowKeyPresses: true);
             var row = new Row().MarginTop(1.pt());
-            row.Add(new Label(label).Tooltip(tooltip));
+            var labelControl = new Label(label).Tooltip(tooltip);
+            configureLabel?.Invoke(labelControl);
+            row.Add(labelControl);
             row.Add(new UiComponent().FlexGrow(1f));
             row.Add(minusBtn);
             row.Add(display);
@@ -351,6 +366,22 @@ namespace AutoForestryDesignations
         }
 
         private static LocStrFormatted BoolText(bool value) => value ? AfdLocalization.BoolYes : AfdLocalization.BoolNo;
-        private static string MaxTilesText(int value) => value == 0 ? "\u221e" : value.ToString();
+        private static string TargetYieldText(int value) => value == 0 ? "\u221e" : value.ToString();
+
+        private static LocStrFormatted TargetYieldTooltip(IAreaManagingTower? tower)
+        {
+            int legacyMaxTiles = tower != null
+                ? AutoForestryDesignation.GetTowerLegacyMaxTiles(tower)
+                : AutoForestryDesignationsMod.MaxTiles;
+            if (legacyMaxTiles > 0)
+            {
+                return new LocStrFormatted(string.Format(
+                    "{0}\n{1}",
+                    AfdLocalization.TargetYieldTip.TranslatedString,
+                    string.Format(AfdLocalization.TargetYieldLegacyTipFmt.TranslatedString, legacyMaxTiles)));
+            }
+
+            return AfdLocalization.TargetYieldTip;
+        }
     }
 }

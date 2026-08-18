@@ -22,7 +22,7 @@ namespace AutoForestryDesignations
     {
         internal const string TowerSettingsConfigKey = "afdTowerSettingsStateJson";
 
-        private const int TowerSettingsConfigSchemaVersion = 1;
+        private const int TowerSettingsConfigSchemaVersion = 3;
 
         internal static void LoadTowerSettingsFromJsonStore(IModStateJsonStore store)
         {
@@ -73,10 +73,14 @@ namespace AutoForestryDesignations
             AppendJsonBool(sb, AutoForestryDesignationsMod.OnlyFertileTiles);
             sb.Append(",\"avoidTilesWithTrees\":");
             AppendJsonBool(sb, AutoForestryDesignationsMod.AvoidTilesWithTrees);
-            sb.Append(",\"avoidMiningDesignations\":");
-            AppendJsonBool(sb, AutoForestryDesignationsMod.AvoidMiningDesignations);
+            sb.Append(",\"overrideTerrainDesignations\":");
+            AppendJsonBool(sb, AutoForestryDesignationsMod.OverrideTerrainDesignations);
+            sb.Append(",\"avoidFlatTiles\":");
+            AppendJsonBool(sb, AutoForestryDesignationsMod.AvoidFlatTiles);
             sb.Append(",\"onlyReachableTiles\":");
             AppendJsonBool(sb, AutoForestryDesignationsMod.OnlyReachableTiles);
+            sb.Append(",\"targetYield\":");
+            sb.Append(AutoForestryDesignationsMod.TargetYield.ToString(CultureInfo.InvariantCulture));
             sb.Append(",\"maxTiles\":");
             sb.Append(AutoForestryDesignationsMod.MaxTiles.ToString(CultureInfo.InvariantCulture));
             sb.Append(",\"markHarvestReadyForHarvest\":");
@@ -127,8 +131,9 @@ namespace AutoForestryDesignations
                 sb.Append(entityId.Value.ToString(CultureInfo.InvariantCulture));
                 AppendBoolOverride(sb, "onlyFertileTiles", settings.OnlyFertileTiles, AutoForestryDesignationsMod.OnlyFertileTiles);
                 AppendBoolOverride(sb, "avoidTilesWithTrees", settings.AvoidTilesWithTrees, AutoForestryDesignationsMod.AvoidTilesWithTrees);
-                AppendBoolOverride(sb, "avoidMiningDesignations", settings.AvoidMiningDesignations, AutoForestryDesignationsMod.AvoidMiningDesignations);
+                AppendBoolOverride(sb, "avoidFlatTiles", settings.AvoidFlatTiles, AutoForestryDesignationsMod.AvoidFlatTiles);
                 AppendBoolOverride(sb, "onlyReachableTiles", settings.OnlyReachableTiles, AutoForestryDesignationsMod.OnlyReachableTiles);
+                AppendIntOverride(sb, "targetYield", settings.TargetYield, AutoForestryDesignationsMod.TargetYield);
                 AppendIntOverride(sb, "maxTiles", settings.MaxTiles, AutoForestryDesignationsMod.MaxTiles);
                 AppendBoolOverride(sb, "markHarvestReadyForHarvest", settings.MarkHarvestReadyForHarvest, AutoForestryDesignationsMod.MarkHarvestReadyForHarvest);
                 AppendBoolOverride(sb, "forestryDesignationsPanelCollapsed", settings.ForestryDesignationsPanelCollapsed, AutoForestryDesignationsMod.ForestryDesignationsPanelCollapsed);
@@ -165,7 +170,7 @@ namespace AutoForestryDesignations
             }
 
             if (!TryGetInt(root, "schemaVersion", out int schemaVersion)
-                || schemaVersion != TowerSettingsConfigSchemaVersion)
+                || (schemaVersion != 1 && schemaVersion != 2 && schemaVersion != TowerSettingsConfigSchemaVersion))
             {
                 s_log.Warning($"Persistence: unsupported tower settings schema version '{schemaVersion}'.");
                 return false;
@@ -178,12 +183,22 @@ namespace AutoForestryDesignations
                     AutoForestryDesignationsMod.SetOnlyFertileTiles(onlyFertileTiles);
                 if (TryGetBool(worldSettings, "avoidTilesWithTrees", out bool avoidTilesWithTrees))
                     AutoForestryDesignationsMod.SetAvoidTilesWithTrees(avoidTilesWithTrees);
-                if (TryGetBool(worldSettings, "avoidMiningDesignations", out bool avoidMiningDesignations))
-                    AutoForestryDesignationsMod.SetAvoidMiningDesignations(avoidMiningDesignations);
+                if (TryGetBool(worldSettings, "overrideTerrainDesignations", out bool overrideTerrainDesignations))
+                    AutoForestryDesignationsMod.SetOverrideTerrainDesignations(overrideTerrainDesignations);
+                else if (TryGetBool(worldSettings, "avoidMiningDesignations", out bool legacyAvoidMiningDesignations))
+                    AutoForestryDesignationsMod.SetOverrideTerrainDesignations(!legacyAvoidMiningDesignations);
+                if (TryGetBool(worldSettings, "avoidFlatTiles", out bool avoidFlatTiles))
+                    AutoForestryDesignationsMod.SetAvoidFlatTiles(avoidFlatTiles);
                 if (TryGetBool(worldSettings, "onlyReachableTiles", out bool onlyReachableTiles))
                     AutoForestryDesignationsMod.SetOnlyReachableTiles(onlyReachableTiles);
-                if (TryGetInt(worldSettings, "maxTiles", out int maxTiles))
+                bool hasLegacyMaxTiles = TryGetInt(worldSettings, "maxTiles", out int maxTiles);
+                if (hasLegacyMaxTiles)
                     AutoForestryDesignationsMod.SetMaxTiles(maxTiles);
+                if (TryGetInt(worldSettings, "targetYield", out int targetYield))
+                {
+                    bool preserveLegacyMaxTiles = targetYield == 0 && hasLegacyMaxTiles && maxTiles > 0;
+                    AutoForestryDesignationsMod.LoadTargetYield(targetYield, preserveLegacyMaxTiles);
+                }
                 if (TryGetBool(worldSettings, "markHarvestReadyForHarvest", out bool markHarvestReadyForHarvest))
                     AutoForestryDesignationsMod.SetMarkHarvestReadyForHarvest(markHarvestReadyForHarvest);
                 if (TryGetBool(worldSettings, "forestryDesignationsPanelCollapsed", out bool forestryDesignationsPanelCollapsed))
@@ -220,12 +235,14 @@ namespace AutoForestryDesignations
                     settings.SetOnlyFertileTiles(onlyFertileTiles);
                 if (TryGetBool(entry, "avoidTilesWithTrees", out bool avoidTilesWithTrees))
                     settings.SetAvoidTilesWithTrees(avoidTilesWithTrees);
-                if (TryGetBool(entry, "avoidMiningDesignations", out bool avoidMiningDesignations))
-                    settings.SetAvoidMiningDesignations(avoidMiningDesignations);
+                if (TryGetBool(entry, "avoidFlatTiles", out bool avoidFlatTiles))
+                    settings.SetAvoidFlatTiles(avoidFlatTiles);
                 if (TryGetBool(entry, "onlyReachableTiles", out bool onlyReachableTiles))
                     settings.SetOnlyReachableTiles(onlyReachableTiles);
                 if (TryGetInt(entry, "maxTiles", out int maxTiles))
                     settings.SetMaxTiles(maxTiles);
+                if (TryGetInt(entry, "targetYield", out int targetYield))
+                    settings.SetTargetYield(targetYield);
                 if (TryGetBool(entry, "markHarvestReadyForHarvest", out bool markHarvestReadyForHarvest))
                     settings.SetMarkHarvestReadyForHarvest(markHarvestReadyForHarvest);
                 if (TryGetBool(entry, "forestryDesignationsPanelCollapsed", out bool forestryDesignationsPanelCollapsed))

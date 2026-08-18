@@ -12,10 +12,11 @@ The mod also adds a live **Forestry information** panel to the tower inspector, 
 - 🌱 **Create designations** - scan the tower area and place forestry designations automatically.
 - 🗑️ **Clear designations** - remove forestry designations in the selected tower area without touching other designation types.
 - 🚚 **Reachable tiles only** - skip candidate tiles not reachable by vehicle pathfinding.
-- 📐 **Avoid terrain designations** - skip tiles that already have mining, dumping, or leveling designations.
+- 📐 **Override terrain designations** - optionally allow forestry designations to replace existing mining, dumping, or leveling designations.
+- 🪨 **Avoid flat tiles** - use uneven, rough ground for forestry to preserve flat tiles for buildings.
 - 🍃 **Fertile tiles only** - place designations only where the ground supports tree growth.
 - 📍 **Closest tiles first** - fill reachable candidates by driving distance from the selected tower.
-- 🔢 **Maximum number of designations** - cap the number of designations placed per run, with Shift/Ctrl step controls.
+- 🎯 **Target yield** - request a sustainable wood-per-month output instead of guessing a designation count; ∞ means no target.
 - 📊 **Forestry information panel** - inspect tree count, estimated capacity, maturity, sustainable yield, and growth buckets.
 - 🏗️ **Vehicle enqueueing** - order vehicle construction directly from the forestry tower's assignment UI, automatically routed to the closest depot by driving distance. Ordered vehicles are pre-assigned and will automatically join the tower once completed.
 - 🔧 **Configurable defaults** - edit `AFDsettings.json` for startup defaults; most options are also adjustable per tower in the inspector.

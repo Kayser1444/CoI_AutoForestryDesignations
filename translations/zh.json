@@ -8,6 +8,14 @@
     "林业信息"
   ],
   [
+    "AFD_ForestryDesignationsTitleTipFmt",
+    "创建自动林业规划。[Kayser's Automatic Forestry Designations v{0}]"
+  ],
+  [
+    "AFD_ForestryInformationTitleTipFmt",
+    "该塔林业区域中的当前树木和预计木材产量。[Kayser's Automatic Forestry Designations v{0}]"
+  ],
+  [
     "AFD_CreateDesignationsBtn",
     "生成规划"
   ],
@@ -48,12 +56,32 @@
     "启用后，跳过车辆无法从林业塔区域通过寻路到达的规划地块。"
   ],
   [
-    "AFD_AvoidTerrainDesignationsLabel",
-    "避开地形规划"
+    "AFD_OverrideTerrainDesignationsLabel",
+    "覆盖地形指示"
   ],
   [
-    "AFD_AvoidTerrainDesignationsTip",
-    "跳过已经包含任何地形规划的地块，包括采矿、倾倒或平整。"
+    "AFD_OverrideTerrainDesignationsTip",
+    "允许林业指示替换现有的地形指示，包括采矿、倾倒或整平指示。默认关闭。"
+  ],
+  [
+    "AFD_AvoidFlatTilesLabel",
+    "避免平坦地块"
+  ],
+  [
+    "AFD_AvoidFlatTilesTip",
+    "仅在不平整、崎岖的地块上进行林业作业。（这样可以为建筑保留平坦地块。）"
+  ],
+  [
+    "AFD_TargetYieldLabel",
+    "目标产量"
+  ],
+  [
+    "AFD_TargetYieldTip",
+    "每个游戏月的可持续木材产量目标。0 = 无目标（∞）。"
+  ],
+  [
+    "AFD_TargetYieldLegacyTipFmt",
+    "已保留旧版最大指定数量限制：{0}。"
   ],
   [
     "AFD_MaxTilesLabel",

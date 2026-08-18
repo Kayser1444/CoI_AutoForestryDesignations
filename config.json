@@ -1,6 +1,6 @@
 {
   "afdTowerSettingsStateJson": {
-    "default": "{\"schemaVersion\":1,\"worldSettings\":{\"forestryVehicleOptimizations\":true},\"towerSettings\":[]}",
+    "default": "{\"schemaVersion\":3,\"worldSettings\":{\"overrideTerrainDesignations\":false,\"avoidFlatTiles\":false,\"targetYield\":0,\"forestryVehicleOptimizations\":true},\"towerSettings\":[]}",
     "description": "Internal saved state for Auto Forestry Designations tower settings."
   },
   "afdPendingVehicleAllocations": {

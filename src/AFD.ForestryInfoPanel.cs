@@ -123,7 +123,9 @@ namespace AutoForestryDesignations
 
             var panel = new PanelWithHeader()
                 .Title(AfdLocalization.ForestryInformationTitle,
-                       new LocStrFormatted($"Current trees and projected wood output in this tower's forestry area. [Kayser's Automatic Forestry Designations v{AutoForestryDesignationsMod.ModVersion}]"));
+                       new LocStrFormatted(string.Format(
+                           AfdLocalization.ForestryInformationTitleTipFmt.TranslatedString,
+                           AutoForestryDesignationsMod.ModVersion)));
 
             var refreshButton = new ButtonIcon(Button.General,
                 "Assets/Unity/UserInterface/General/Repeat.svg",
@@ -275,65 +277,334 @@ namespace AutoForestryDesignations
             return new ForestryStats(treeCount, treeCapacity, averageMaturityPercent, averageAgeYears, averageMaxAgeYears, woodReserve, capacityPerYear, maxAgeYears, growthBuckets, bucketTrees);
         }
 
-        private static int EstimateTreeCapacity(ForestryTower tower, TreesManager treesManager, int liveManagedTreeCount)
+        internal static bool TryEstimateProjectedYield(
+            ForestryTower tower,
+            TreesManager treesManager,
+            IEnumerable<Tile2i>? additionalDesignationOrigins,
+            out int sustainableWoodPerMonth)
         {
-            if (tower.TreeTypes.Count == 0)
-                return liveManagedTreeCount;
+            sustainableWoodPerMonth = 0;
+            int liveManagedTreeCount = CountManagedTrees(tower, treesManager);
+            if (tower.TreeTypes.Count == 0 && liveManagedTreeCount == 0)
+                return false;
 
-            int spacing = GetEstimatedPlantingSpacing(tower, treesManager);
-            if (spacing <= 0)
-                return liveManagedTreeCount;
+            var work = new ProjectedYieldEstimateWork(
+                tower,
+                treesManager,
+                liveManagedTreeCount,
+                additionalDesignationOrigins);
+            while (!work.IsComplete)
+                work.Step(int.MaxValue);
 
-            var candidates = new List<PlantingCandidate>();
-            var seenTiles = new HashSet<Tile2i>();
-            Tile2i towerTile = tower.Position2f.Tile2i;
+            if (!work.Succeeded)
+                return false;
 
-            foreach (TerrainDesignation designation in tower.ManagedDesignations)
+            sustainableWoodPerMonth = work.SustainableWoodPerMonth;
+            return true;
+        }
+
+        internal static ProjectedYieldEstimateWork BeginProjectedYieldEstimate(
+            ForestryTower tower,
+            TreesManager treesManager,
+            IEnumerable<Tile2i>? additionalDesignationOrigins)
+        {
+            return new ProjectedYieldEstimateWork(
+                tower,
+                treesManager,
+                CountManagedTrees(tower, treesManager),
+                additionalDesignationOrigins);
+        }
+
+        private static int CountManagedTrees(ForestryTower tower, TreesManager treesManager)
+        {
+            var managedTiles = GetManagedDesignationTiles(tower);
+            int count = 0;
+            foreach (TreeId treeId in tower.Trees)
             {
-                if (!designation.IsForestry || !designation.IsFulfilled)
-                    continue;
+                if (managedTiles.Contains(treeId.Position) && treesManager.Trees.ContainsKey(treeId))
+                    count++;
+            }
+            return count;
+        }
 
-                Tile2i origin = designation.OriginTileCoord;
+        private static int EstimateTreeCapacity(
+            ForestryTower tower,
+            TreesManager treesManager,
+            int liveManagedTreeCount,
+            IEnumerable<Tile2i>? additionalDesignationOrigins = null)
+        {
+            var work = new ProjectedYieldEstimateWork(
+                tower,
+                treesManager,
+                liveManagedTreeCount,
+                additionalDesignationOrigins);
+            while (!work.IsComplete)
+                work.Step(int.MaxValue);
+            return work.TreeCapacity;
+        }
+
+        /// <summary>
+        /// Resumable form of the spacing-aware capacity projection. Work is split
+        /// across planting-candidate generation and spatially indexed spacing
+        /// selection so target-yield scans can yield without changing the shared
+        /// estimate.
+        /// </summary>
+        internal sealed class ProjectedYieldEstimateWork
+        {
+            private enum Phase
+            {
+                CollectCandidates,
+                SelectFutureTrees,
+                Complete
+            }
+
+            private readonly ForestryTower m_tower;
+            private readonly TreesManager m_treesManager;
+            private readonly int m_liveManagedTreeCount;
+            private readonly int m_spacing;
+            private readonly Tile2i m_towerTile;
+            private readonly float m_yieldPerTreePerYear;
+            private readonly List<Tile2i> m_designationOrigins = new List<Tile2i>();
+            private readonly HashSet<Tile2i> m_seenTiles = new HashSet<Tile2i>();
+            private readonly SortedDictionary<long, List<Tile2i>> m_candidatesByDistance =
+                new SortedDictionary<long, List<Tile2i>>();
+            private readonly FutureTreeSpacingIndex? m_futureTreeSpacingIndex;
+            private int m_validCandidateCount;
+
+            private Phase m_phase;
+            private int m_originIndex;
+            private int m_originX;
+            private int m_originY;
+            private IEnumerator<KeyValuePair<long, List<Tile2i>>>? m_distanceGroups;
+            private List<Tile2i>? m_currentDistanceGroup;
+            private int m_currentDistanceGroupIndex;
+
+            public bool IsComplete { get; private set; }
+            public bool Succeeded { get; private set; }
+            public bool CanAddDesignations => m_futureTreeSpacingIndex != null;
+            public int TreeCapacity { get; private set; }
+            public int SustainableWoodPerMonth { get; private set; }
+
+            public ProjectedYieldEstimateWork(
+                ForestryTower tower,
+                TreesManager treesManager,
+                int liveManagedTreeCount,
+                IEnumerable<Tile2i>? additionalDesignationOrigins)
+            {
+                m_tower = tower;
+                m_treesManager = treesManager;
+                m_liveManagedTreeCount = liveManagedTreeCount;
+                m_towerTile = tower.Position2f.Tile2i;
+                m_spacing = tower.TreeTypes.Count == 0
+                    ? 0
+                    : GetEstimatedPlantingSpacing(tower, treesManager);
+                m_yieldPerTreePerYear = EstimateCapacityPerYear(
+                    tower,
+                    treesManager,
+                    effectiveTreeCapacity: 1,
+                    logResult: false);
+                if (m_spacing > 0)
+                    m_futureTreeSpacingIndex = new FutureTreeSpacingIndex(m_spacing);
+
+                if (m_tower.TreeTypes.Count == 0 && m_liveManagedTreeCount == 0)
+                {
+                    IsComplete = true;
+                    Succeeded = false;
+                    return;
+                }
+
+                foreach (TerrainDesignation designation in tower.ManagedDesignations)
+                {
+                    if (designation.IsForestry)
+                        m_designationOrigins.Add(designation.OriginTileCoord);
+                }
+
+                if (additionalDesignationOrigins != null)
+                {
+                    foreach (Tile2i origin in additionalDesignationOrigins)
+                        m_designationOrigins.Add(origin);
+                }
+
+                m_phase = m_tower.TreeTypes.Count == 0 || m_spacing <= 0
+                    ? Phase.Complete
+                    : Phase.CollectCandidates;
+                if (m_phase == Phase.Complete)
+                    CompleteProjection();
+            }
+
+            public void Step(int workBudget)
+            {
+                if (IsComplete)
+                    return;
+
+                int remainingWork = Math.Max(1, workBudget);
+                while (remainingWork > 0 && !IsComplete)
+                {
+                    if (m_phase == Phase.CollectCandidates)
+                    {
+                        if (m_originIndex >= m_designationOrigins.Count)
+                        {
+                            m_distanceGroups = m_candidatesByDistance.GetEnumerator();
+                            m_phase = Phase.SelectFutureTrees;
+                            continue;
+                        }
+
+                        Tile2i tile = m_designationOrigins[m_originIndex] +
+                            new RelTile2i(m_originX, m_originY);
+                        if (m_seenTiles.Add(tile)
+                            && m_tower.Area.ContainsTile(tile)
+                            && m_treesManager.IsValidTileForPlanting(tile, m_spacing))
+                        {
+                            long distance = tile.DistanceSqrTo(m_towerTile);
+                            if (!m_candidatesByDistance.TryGetValue(distance, out List<Tile2i>? group))
+                            {
+                                group = new List<Tile2i>();
+                                m_candidatesByDistance[distance] = group;
+                            }
+                            group.Add(tile);
+                            m_validCandidateCount++;
+                        }
+
+                        AdvanceOriginCursor();
+                        remainingWork--;
+                        continue;
+                    }
+
+                    if (m_phase == Phase.SelectFutureTrees)
+                    {
+                        if (!TryMoveToNextCandidate(out Tile2i candidate))
+                        {
+                            m_phase = Phase.Complete;
+                            continue;
+                        }
+
+                        m_futureTreeSpacingIndex!.TryAdd(candidate);
+                        remainingWork--;
+                        continue;
+                    }
+
+                    CompleteProjection();
+                }
+            }
+
+            /// <summary>
+            /// Adds one newly placed 4x4 forestry designation to a completed
+            /// projection without rebuilding the existing candidate set.
+            /// </summary>
+            public bool TryAddDesignation(Tile2i origin)
+            {
+                if (!IsComplete || !Succeeded || m_futureTreeSpacingIndex == null)
+                    return false;
+
+                var candidates = new List<Tile2i>(TerrainDesignation.SIZE_TILES * TerrainDesignation.SIZE_TILES);
                 for (int y = 0; y < TerrainDesignation.SIZE_TILES; y++)
                 {
                     for (int x = 0; x < TerrainDesignation.SIZE_TILES; x++)
                     {
-                        var tile = origin + new RelTile2i(x, y);
-                        if (!seenTiles.Add(tile))
-                            continue;
-
-                        if (tower.Area.ContainsTile(tile) && treesManager.IsValidTileForPlanting(tile, spacing))
-                            candidates.Add(new PlantingCandidate(tile, tile.DistanceSqrTo(towerTile)));
+                        Tile2i tile = origin + new RelTile2i(x, y);
+                        if (m_seenTiles.Add(tile)
+                            && m_tower.Area.ContainsTile(tile)
+                            && m_treesManager.IsValidTileForPlanting(tile, m_spacing))
+                        {
+                            candidates.Add(tile);
+                            m_validCandidateCount++;
+                        }
                     }
                 }
-            }
 
-            candidates.Sort((a, b) => a.DistanceSqrToTower.CompareTo(b.DistanceSqrToTower));
-
-            var futureTrees = new List<Tile2i>();
-            long requiredFutureSpacing = spacing * 2L;
-            long requiredFutureSpacingSqr = requiredFutureSpacing * requiredFutureSpacing;
-            foreach (PlantingCandidate candidate in candidates)
-            {
-                bool hasEnoughFutureSpacing = true;
-                foreach (Tile2i futureTree in futureTrees)
+                candidates.Sort((left, right) =>
                 {
-                    if (candidate.Tile.DistanceSqrTo(futureTree) < requiredFutureSpacingSqr)
-                    {
-                        hasEnoughFutureSpacing = false;
-                        break;
-                    }
-                }
+                    int byDistance = left.DistanceSqrTo(m_towerTile)
+                        .CompareTo(right.DistanceSqrTo(m_towerTile));
+                    if (byDistance != 0)
+                        return byDistance;
+                    int byY = left.Y.CompareTo(right.Y);
+                    return byY != 0 ? byY : left.X.CompareTo(right.X);
+                });
 
-                if (hasEnoughFutureSpacing)
-                    futureTrees.Add(candidate.Tile);
+                foreach (Tile2i candidate in candidates)
+                    m_futureTreeSpacingIndex.TryAdd(candidate);
+
+                RefreshProjection(logResult: false);
+                return Succeeded;
             }
 
-            AutoForestryDesignation.LogDebug(string.Format(
-                "EstimateTreeCapacity: live={0} spacing={1} validNow={2} future={3} => capacity={4}",
-                liveManagedTreeCount, spacing, candidates.Count, futureTrees.Count,
-                liveManagedTreeCount + futureTrees.Count));
-            return liveManagedTreeCount + futureTrees.Count;
+            private void AdvanceOriginCursor()
+            {
+                m_originX++;
+                if (m_originX < TerrainDesignation.SIZE_TILES)
+                    return;
+
+                m_originX = 0;
+                m_originY++;
+                if (m_originY < TerrainDesignation.SIZE_TILES)
+                    return;
+
+                m_originY = 0;
+                m_originIndex++;
+            }
+
+            private bool TryMoveToNextCandidate(out Tile2i candidate)
+            {
+                while (true)
+                {
+                    if (m_currentDistanceGroup != null
+                        && m_currentDistanceGroupIndex < m_currentDistanceGroup.Count)
+                    {
+                        candidate = m_currentDistanceGroup[m_currentDistanceGroupIndex++];
+                        return true;
+                    }
+
+                    if (m_distanceGroups == null || !m_distanceGroups.MoveNext())
+                    {
+                        candidate = default(Tile2i);
+                        return false;
+                    }
+
+                    m_currentDistanceGroup = m_distanceGroups.Current.Value;
+                    m_currentDistanceGroupIndex = 0;
+                }
+            }
+
+            private void CompleteProjection()
+            {
+                if (IsComplete)
+                    return;
+
+                RefreshProjection(logResult: true);
+                IsComplete = true;
+            }
+
+            private void RefreshProjection(bool logResult)
+            {
+                TreeCapacity = m_liveManagedTreeCount
+                    + (m_futureTreeSpacingIndex?.Count ?? 0);
+                float capacityPerYear = logResult
+                    ? EstimateCapacityPerYear(
+                        m_tower,
+                        m_treesManager,
+                        TreeCapacity,
+                        logResult: true)
+                    : TreeCapacity * m_yieldPerTreePerYear;
+                if (float.IsNaN(capacityPerYear) || float.IsInfinity(capacityPerYear))
+                {
+                    Succeeded = false;
+                    return;
+                }
+
+                SustainableWoodPerMonth = (int)Math.Max(0, Math.Floor(capacityPerYear / 12f));
+                if (logResult)
+                {
+                    AutoForestryDesignation.LogDebug(string.Format(
+                        "EstimateTreeCapacity: live={0} spacing={1} validNow={2} future={3} => capacity={4}",
+                        m_liveManagedTreeCount,
+                        m_spacing,
+                        m_validCandidateCount,
+                        m_futureTreeSpacingIndex?.Count ?? 0,
+                        TreeCapacity));
+                }
+                Succeeded = true;
+            }
         }
 
         private static int GetEstimatedPlantingSpacing(ForestryTower tower, TreesManager treesManager)
@@ -379,11 +650,16 @@ namespace AutoForestryDesignations
             return TreeProto.MAX_TREE_SPACING;
         }
 
-        private static float EstimateCapacityPerYear(ForestryTower tower, TreesManager treesManager, int effectiveTreeCapacity)
+        private static float EstimateCapacityPerYear(
+            ForestryTower tower,
+            TreesManager treesManager,
+            int effectiveTreeCapacity,
+            bool logResult = true)
         {
             if (effectiveTreeCapacity <= 0)
             {
-                AutoForestryDesignation.LogDebug("EstimateCapacityPerYear: effectiveTreeCapacity=0, returning 0");
+                if (logResult)
+                    AutoForestryDesignation.LogDebug("EstimateCapacityPerYear: effectiveTreeCapacity=0, returning 0");
                 return 0f;
             }
 
@@ -399,12 +675,15 @@ namespace AutoForestryDesignations
                 weightedYieldPerTreePerYear = EstimateCurrentYieldPerTreePerYear(tower, treesManager, harvestGrowth01);
 
             float capacity = effectiveTreeCapacity * weightedYieldPerTreePerYear;
-            AutoForestryDesignation.LogDebug(string.Format(
-                "EstimateCapacityPerYear: effectiveCap={0} harvestDisabled={1} harvestGrowth={2:P0} yieldPerTree/y={3:F2} (fallback={4}) => capacity/y={5:F1}",
-                effectiveTreeCapacity,
-                harvestDisabled, harvestGrowth01,
-                weightedYieldPerTreePerYear, usedFallback, capacity));
-            AutoForestryDesignation.LogDebug(string.Format("NOTE: capacity/month={0:F1} (capacity/y={1:F1})", capacity / 12f, capacity));
+            if (logResult)
+            {
+                AutoForestryDesignation.LogDebug(string.Format(
+                    "EstimateCapacityPerYear: effectiveCap={0} harvestDisabled={1} harvestGrowth={2:P0} yieldPerTree/y={3:F2} (fallback={4}) => capacity/y={5:F1}",
+                    effectiveTreeCapacity,
+                    harvestDisabled, harvestGrowth01,
+                    weightedYieldPerTreePerYear, usedFallback, capacity));
+                AutoForestryDesignation.LogDebug(string.Format("NOTE: capacity/month={0:F1} (capacity/y={1:F1})", capacity / 12f, capacity));
+            }
             return capacity;
         }
 
@@ -794,18 +1073,6 @@ namespace AutoForestryDesignations
         private static UiComponent BuildMatureTreeIcon(int sizePx)
         {
             return TreeIcon.BuildMature(sizePx);
-        }
-
-        private readonly struct PlantingCandidate
-        {
-            public Tile2i Tile { get; }
-            public long DistanceSqrToTower { get; }
-
-            public PlantingCandidate(Tile2i tile, long distanceSqrToTower)
-            {
-                Tile = tile;
-                DistanceSqrToTower = distanceSqrToTower;
-            }
         }
 
         private readonly struct ForestryStats

@@ -8,6 +8,14 @@
     "Forstinformationen"
   ],
   [
+    "AFD_ForestryDesignationsTitleTipFmt",
+    "Automatische Forstgebiete erstellen. [Kayser's Automatic Forestry Designations v{0}]"
+  ],
+  [
+    "AFD_ForestryInformationTitleTipFmt",
+    "Aktueller Baumbestand und prognostizierter Holzertrag im Forstgebiet dieses Turms. [Kayser's Automatic Forestry Designations v{0}]"
+  ],
+  [
     "AFD_CreateDesignationsBtn",
     "Gebiete erstellen"
   ],
@@ -48,12 +56,32 @@
     "Überspringt Gebietsfelder, die vom Turmbereich aus nicht über Fahrzeugwege erreichbar sind."
   ],
   [
-    "AFD_AvoidTerrainDesignationsLabel",
-    "Geländegebiete vermeiden"
+    "AFD_OverrideTerrainDesignationsLabel",
+    "Geländemarkierungen überschreiben"
   ],
   [
-    "AFD_AvoidTerrainDesignationsTip",
-    "Überspringt Felder, die bereits ein Geländegebiet enthalten, einschließlich Bergbaugebiet, Verkippungsgebiet oder Planierungsgebiet."
+    "AFD_OverrideTerrainDesignationsTip",
+    "Ermöglicht es Forstmarkierungen, bestehende Geländemarkierungen einschließlich Abbau, Kippen oder Einebnen zu ersetzen. Standard: aus."
+  ],
+  [
+    "AFD_AvoidFlatTilesLabel",
+    "Flache Felder vermeiden"
+  ],
+  [
+    "AFD_AvoidFlatTilesTip",
+    "Nur unebene, raue Felder für Forstwirtschaft verwenden. (So bleiben flache Felder für Gebäude erhalten.)"
+  ],
+  [
+    "AFD_TargetYieldLabel",
+    "Zielertrag"
+  ],
+  [
+    "AFD_TargetYieldTip",
+    "Nachhaltige Holzproduktion pro Spielmonat. 0 = kein Ziel (∞)."
+  ],
+  [
+    "AFD_TargetYieldLegacyTipFmt",
+    "Alte maximale Gebietsbegrenzung beibehalten: {0}."
   ],
   [
     "AFD_MaxTilesLabel",

@@ -69,6 +69,8 @@ Shift-Alt-click the + button to bypass the free vehicles and directly order a ve
 
 ### 🧭 Forestry vehicle optimizations
 
+![image.png](/content-images/26783cf2c3e7297f8cf8028071611568271be7779265afe92622e07a3ae9be49/image.png)
+
 *Keep assigned forestry vehicles working in the field instead of making unnecessary return trips.*
 
 Enable the default-on **Forestry vehicle optimizations** toggle in the world-level mod settings to coordinate planters and harvesters:

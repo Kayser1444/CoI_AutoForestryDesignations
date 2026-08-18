@@ -38,9 +38,16 @@ The `ForestryTowerInspector` constructor gained `ForestryDesignationController`,
 | 2.1 | Forestry tower with a non-empty area → trigger AFD scan. | Forestry designations placed on fertile, unoccupied tiles within the area. |
 | 2.2 | Enable `OnlyFertileTiles = true` → scan. | Non-fertile tiles skipped. |
 | 2.3 | Enable `AvoidTilesWithTrees = true` → scan area containing existing trees. | Tiles already occupied by a tree are skipped. |
-| 2.4 | Enable `AvoidMiningDesignations = true` → scan area with existing terrain designations. | Tiles with terrain (mining/dumping) designations are skipped. |
-| 2.5 | Enable `OnlyReachableTiles = true` → scan with an isolated area. | Tiles unreachable by vehicle pathability (`IVehiclePathFindingManager.PathabilityProvider`) are skipped. No null-ref or skip warning. |
-| 2.6 | Set `MaxTiles = 10` → scan. | At most 10 designations placed, sorted by proximity to tower. |
+| 2.4 | Leave **Override terrain designations** off and scan an area with existing terrain designations. | Tiles with mining, dumping, or leveling designations are skipped. |
+| 2.5 | Enable **Override terrain designations** in the mod settings and scan the same area. | Forestry designations may replace the existing mining, dumping, or leveling designations. |
+| 2.6 | Enable `OnlyReachableTiles = true` → scan with an isolated area. | Tiles unreachable by vehicle pathability (`IVehiclePathFindingManager.PathabilityProvider`) are skipped. No null-ref or skip warning. |
+| 2.7 | Set `Target yield` to a finite value → scan. | Designations are added in existing reachable/distance priority until projected sustainable yield reaches the target or unavoidable single-designation granularity overshoots it. |
+| 2.8 | Use a target close to the yield of the existing forestry area, then scan. | AFD stops after the first designation that reaches the target; any overshoot is limited to that atomic 4×4 designation, and committed designations are not removed. |
+| 2.9 | Scan a large tower area with a finite target while observing the game. | Candidate collection, pathability, and yield estimation are spread across computational slices; once planning finishes, the completed designation set appears together through the vanilla bulk command. |
+| 2.10 | Enable **Avoid flat tiles** and scan fully flat, near-integer, and visibly uneven areas. | Candidates whose four `HeightTilesF` vertices are all within the game's `0.0625`-tile surface tolerance of one integer are skipped; a vertex outside that tolerance remains eligible. |
+| 2.11 | Run a large finite-target scan while playing, then while paused. | The game remains responsive; target planning uses approximately 10 ms per rendered frame while playing and 30 ms while paused, then the designations appear together without a progress toast. |
+| 2.12 | Enable **Avoid flat tiles**, disable **Reachable tiles only**, leave Target yield at ∞, and scan a large area while playing. | AFD applies the flatness filter directly without running driving-distance/pathability search; the designation set appears promptly through the vanilla input command and does not throw `Set changed while enumerating`. |
+| 2.13 | Repeat a large scan while playing with **Reachable tiles only** first enabled, then disabled. | Both modes commit promptly without filling slowly from one side and without `InvalidOperationException: Set changed while enumerating` in the game log. |
 
 ---
 
@@ -77,6 +84,6 @@ AFD patches `ForestryTower.SetCutAtPercentage` to trigger a forestry info refres
 
 | # | Steps | Expected |
 |---|-------|----------|
-| 6.1 | Change one setting on a single forestry tower, save, quit to desktop, and reload. | The changed setting is restored for that tower only. Other towers continue using the global defaults. |
+| 6.1 | Change **Target yield** and **Avoid flat tiles** on a single forestry tower, save, quit to desktop, and reload. | Both settings are restored for that tower only. Other towers continue using the global defaults. |
 | 6.2 | Collapse or expand the Forestry designations and Forestry information panels on one tower, save, quit, and reload. | Each panel restores its per-tower collapsed state. |
 | 6.3 | Reset a customized tower back to the current global defaults, save, and inspect/reload. | The tower no longer needs a saved override record; after reload it still follows the current defaults. |

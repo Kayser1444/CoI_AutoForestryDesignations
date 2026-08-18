@@ -23,9 +23,13 @@ other API method from early-init code.
 void CreateDesignationsForTower(IAreaManagingTower tower)
 ```
 
-Scans the tower's area and creates forestry designations according to the tower's
-current per-tower settings (fertile tiles only, avoid terrain designations, max
-tiles, etc.). The scan runs as a coroutine and may span multiple frames.
+Scans the tower's area and creates forestry designations according to the world
+designation behavior setting and the tower's current per-tower settings (fertile
+tiles only, avoid flat tiles, target yield, and so on). The scan runs as a
+coroutine and may span multiple frames. A finite target plans toward the tower's
+projected sustainable wood output; ∞ means no target. Existing designations are
+not removed unless the world-level **Override terrain designations** setting is
+enabled.
 
 ```csharp
 void ClearDesignationsForTower(IAreaManagingTower tower)

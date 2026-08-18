@@ -19,6 +19,7 @@ using Mafi.Core.Vehicles.Trucks;
 using Mafi.Core.Entities;
 using Mafi.Core.Game;
 using Mafi.Core.GameLoop;
+using Mafi.Core.Input;
 using Mafi.Core.Mods;
 using Mafi.Core.Simulation;
 using Mafi.Core.Prototypes;
@@ -98,9 +99,13 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
     public static bool AvoidTilesWithTrees { get; private set; } = false;
     public static void SetAvoidTilesWithTrees(bool value) => AvoidTilesWithTrees = value;
 
-    /// <summary>Skip tiles that already have terrain designations. Default: true.</summary>
-    public static bool AvoidMiningDesignations { get; private set; } = true;
-    public static void SetAvoidMiningDesignations(bool value) => AvoidMiningDesignations = value;
+    /// <summary>Allow forestry designations to replace existing terrain designations. Default: false.</summary>
+    public static bool OverrideTerrainDesignations { get; private set; } = false;
+    public static void SetOverrideTerrainDesignations(bool value) => OverrideTerrainDesignations = value;
+
+    /// <summary>Skip flat 4x4 designation tiles. Default: false.</summary>
+    public static bool AvoidFlatTiles { get; private set; } = false;
+    public static void SetAvoidFlatTiles(bool value) => AvoidFlatTiles = value;
 
     /// <summary>When enabled, create designations only on candidates reachable by vehicle pathability.</summary>
     public static bool OnlyReachableTiles { get; private set; } = true;
@@ -113,9 +118,31 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
     public static int PathabilityTargetSize { get; private set; } = 3;
     public static void SetPathabilityTargetSize(int value) => PathabilityTargetSize = Math.Max(1, Math.Min(9, value));
 
-    /// <summary>Maximum number of forestry designation tiles to place per run. 0 = no limit.</summary>
+    /// <summary>Sustainable wood target per in-game month. 0 = no target.</summary>
+    public static int TargetYield { get; private set; } = 0;
+    public static void SetTargetYield(int value)
+    {
+        TargetYield = Math.Max(0, value);
+        // Setting the new control, including infinity/no target, adopts the new
+        // policy and removes the hidden legacy cap from the global defaults.
+        MaxTiles = 0;
+    }
+
+    /// <summary>Legacy maximum designation tiles per run retained for old settings. 0 = no limit.</summary>
     public static int MaxTiles { get; private set; } = 0;
-    public static void SetMaxTiles(int value) => MaxTiles = Math.Max(0, value);
+    public static void SetMaxTiles(int value)
+    {
+        MaxTiles = Math.Max(0, value);
+        // Keep the old console/config command meaningful if it is still used.
+        TargetYield = 0;
+    }
+
+    internal static void LoadTargetYield(int value, bool preserveLegacyMaxTiles)
+    {
+        TargetYield = Math.Max(0, value);
+        if (!preserveLegacyMaxTiles)
+            MaxTiles = 0;
+    }
 
     /// <summary>After placing designations, mark harvest-ready trees in the area for harvest.</summary>
     public static bool MarkHarvestReadyForHarvest { get; private set; } = false;
@@ -153,9 +180,11 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
     {
         SetOnlyFertileTiles(true);
         SetAvoidTilesWithTrees(false);
-        SetAvoidMiningDesignations(true);
+        SetOverrideTerrainDesignations(false);
+        SetAvoidFlatTiles(false);
         SetOnlyReachableTiles(true);
         SetMaxTiles(0);
+        SetTargetYield(0);
         SetMarkHarvestReadyForHarvest(false);
         SetForestryDesignationsPanelCollapsed(false);
         SetForestryInformationPanelCollapsed(false);
@@ -191,7 +220,15 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
             m_entitiesManager.EntityRemoved.AddNonSaveable(this, onEntityRemoved);
 
             AutoForestryDesignation.SetModRootDirectoryPath(Manifest.RootDirectoryPath);
-            AutoForestryDesignation.Initialize(desigManager, protosDb, worldMapManager, ticker, entitiesManager, m_simLoopEvents, vehiclePathFindingManager);
+            AutoForestryDesignation.Initialize(
+                desigManager,
+                protosDb,
+                worldMapManager,
+                ticker,
+                entitiesManager,
+                m_simLoopEvents,
+                vehiclePathFindingManager,
+                resolver.Resolve<IInputScheduler>());
             AutoForestryDesignation.InitializeVehicleOptimizations(
                 resolver.Resolve<ITreesManager>(),
                 resolver.Resolve<TreeHarvestingJob.Factory>(),

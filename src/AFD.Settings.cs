@@ -187,9 +187,19 @@ namespace AutoForestryDesignations
                 if (avoidTilesWithTrees.HasValue)
                     AutoForestryDesignationsMod.SetAvoidTilesWithTrees(avoidTilesWithTrees.Value);
 
-                bool? avoidMiningDesignations = ParseBool(json, "avoidMiningDesignations");
-                if (avoidMiningDesignations.HasValue)
-                    AutoForestryDesignationsMod.SetAvoidMiningDesignations(avoidMiningDesignations.Value);
+                bool? overrideTerrainDesignations = ParseBool(json, "overrideTerrainDesignations");
+                if (overrideTerrainDesignations.HasValue)
+                    AutoForestryDesignationsMod.SetOverrideTerrainDesignations(overrideTerrainDesignations.Value);
+                else
+                {
+                    bool? legacyAvoidMiningDesignations = ParseBool(json, "avoidMiningDesignations");
+                    if (legacyAvoidMiningDesignations.HasValue)
+                        AutoForestryDesignationsMod.SetOverrideTerrainDesignations(!legacyAvoidMiningDesignations.Value);
+                }
+
+                bool? avoidFlatTiles = ParseBool(json, "avoidFlatTiles");
+                if (avoidFlatTiles.HasValue)
+                    AutoForestryDesignationsMod.SetAvoidFlatTiles(avoidFlatTiles.Value);
 
                 bool? onlyReachableTiles = ParseBool(json, "onlyReachableTiles");
                 if (onlyReachableTiles.HasValue)
@@ -202,6 +212,16 @@ namespace AutoForestryDesignations
                 int? maxTiles = ParseInt(json, "maxTiles");
                 if (maxTiles.HasValue)
                     AutoForestryDesignationsMod.SetMaxTiles(maxTiles.Value);
+
+                int? targetYield = ParseInt(json, "targetYield");
+                if (targetYield.HasValue)
+                {
+                    // An old settings file may be rewritten with the new field
+                    // while retaining its legacy cap. Preserve that cap until
+                    // the player explicitly changes Target yield in-game.
+                    bool preserveLegacyMaxTiles = targetYield.Value == 0 && maxTiles.HasValue && maxTiles.Value > 0;
+                    AutoForestryDesignationsMod.LoadTargetYield(targetYield.Value, preserveLegacyMaxTiles);
+                }
 
                 bool? markHarvestReadyForHarvest = ParseBool(json, "markHarvestReadyForHarvest");
                 if (markHarvestReadyForHarvest.HasValue)
@@ -290,9 +310,9 @@ namespace AutoForestryDesignations
             sb.AppendLine("{");
             sb.AppendLine($"  \"settingsVersion\": \"{AutoForestryDesignationsMod.ModVersion}\",");
             sb.AppendLine();
-            sb.AppendLine("  \"_comment\": \"AutoForestryDesignations settings. These values set the defaults loaded at game start. Most settings can also be changed per forestry tower in-game via the tower inspector.\",");
+            sb.AppendLine("  \"_comment\": \"AutoForestryDesignations settings. These values set the world defaults loaded at game start. Tower-specific settings are saved in the mod cache.\",");
             sb.AppendLine();
-            sb.AppendLine("  \"_comment_batchSize\": \"How many designations are placed per coroutine frame before yielding to the game. Lower values keep the game more responsive during large scans; higher values complete scans faster. While paused, the effective batch size is boosted by x4 and clamped. Absolute max: 200. Default: 30.\",");
+            sb.AppendLine("  \"_comment_batchSize\": \"Legacy compatibility setting. Scans now use 10 ms play / 30 ms paused planning budgets and commit with the game's bulk designation command.\",");
             sb.AppendLine($"  \"batchSize\": {s_batchSize},");
             sb.AppendLine();
             sb.AppendLine("  \"_comment_onlyFertileTiles\": \"Default for new tower panels. When true, Create designations places designations only where the ground is fertile for tree growth. Default: true.\",");
@@ -301,8 +321,11 @@ namespace AutoForestryDesignations
             sb.AppendLine("  \"_comment_avoidTilesWithTrees\": \"Default for new tower panels. When true, Create designations skips tiles that already contain a tree. Default: false.\",");
             sb.AppendLine($"  \"avoidTilesWithTrees\": {BoolToJsonStr(AutoForestryDesignationsMod.AvoidTilesWithTrees)},");
             sb.AppendLine();
-            sb.AppendLine("  \"_comment_avoidMiningDesignations\": \"Default for new tower panels. When true, Create designations skips tiles that already contain any terrain designation, including mining, dumping, or leveling. Default: true.\",");
-            sb.AppendLine($"  \"avoidMiningDesignations\": {BoolToJsonStr(AutoForestryDesignationsMod.AvoidMiningDesignations)},");
+            sb.AppendLine("  \"_comment_overrideTerrainDesignations\": \"World setting. When true, Create designations may replace existing terrain designations, including mining, dumping, or leveling. Default: false.\",");
+            sb.AppendLine($"  \"overrideTerrainDesignations\": {BoolToJsonStr(AutoForestryDesignationsMod.OverrideTerrainDesignations)},");
+            sb.AppendLine();
+            sb.AppendLine("  \"_comment_avoidFlatTiles\": \"Default for new tower panels. When true, Create designations skips flat 4x4 tiles whose four corner HeightTilesF values are within the game's 0.0625-tile surface-height tolerance of the same integer height. Default: false.\",");
+            sb.AppendLine($"  \"avoidFlatTiles\": {BoolToJsonStr(AutoForestryDesignationsMod.AvoidFlatTiles)},");
             sb.AppendLine();
             sb.AppendLine("  \"_comment_onlyReachableTiles\": \"Default for new tower panels. When true, Create designations skips candidate tiles that are not reachable by vehicle pathability from the tower area. Default: true.\",");
             sb.AppendLine($"  \"onlyReachableTiles\": {BoolToJsonStr(AutoForestryDesignationsMod.OnlyReachableTiles)},");
@@ -310,7 +333,10 @@ namespace AutoForestryDesignations
             sb.AppendLine("  \"_comment_pathabilityTargetSize\": \"Hidden tuning parameter for reachability matching. Interpreted as n*n area around each candidate center (for example 3 = 3x3). Larger values are more permissive and reduce holes; smaller values are stricter. Clamped to 1..9. Default: 3.\",");
             sb.AppendLine($"  \"pathabilityTargetSize\": {AutoForestryDesignationsMod.PathabilityTargetSize},");
             sb.AppendLine();
-            sb.AppendLine("  \"_comment_maxTiles\": \"Default maximum number of forestry designation tiles to place per run. 0 = no limit. Default: 0.\",");
+            sb.AppendLine("  \"_comment_targetYield\": \"Default sustainable wood production target per in-game month for new tower panels. 0 = no target (∞). Default: 0.\",");
+            sb.AppendLine($"  \"targetYield\": {AutoForestryDesignationsMod.TargetYield},");
+            sb.AppendLine();
+            sb.AppendLine("  \"_comment_maxTiles\": \"Legacy maximum number of forestry designation tiles to place per run. Retained for old settings and hidden once Target yield is adopted. 0 = no limit.\",");
             sb.AppendLine($"  \"maxTiles\": {AutoForestryDesignationsMod.MaxTiles},");
             sb.AppendLine();
             sb.AppendLine("  \"_comment_markHarvestReadyForHarvest\": \"Default for new tower panels. When true, trees that match the tower's harvesting options are marked for harvest after creating designations. Default: false.\",");

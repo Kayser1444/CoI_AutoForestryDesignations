@@ -83,10 +83,10 @@ namespace AutoForestryDesignations
                 refreshers));
 
             content.Add(BuildToggleRow(
-                AfdLocalization.AvoidTerrainDesignationsLabel.AsFormatted,
-                AfdLocalization.AvoidTerrainDesignationsTip.AsFormatted,
-                () => AutoForestryDesignationsMod.AvoidMiningDesignations,
-                value => AutoForestryDesignationsMod.SetAvoidMiningDesignations(value),
+                AfdLocalization.AvoidFlatTilesLabel.AsFormatted,
+                AfdLocalization.AvoidFlatTilesTip.AsFormatted,
+                () => AutoForestryDesignationsMod.AvoidFlatTiles,
+                value => AutoForestryDesignationsMod.SetAvoidFlatTiles(value),
                 refreshers));
 
             content.Add(BuildToggleRow(
@@ -104,17 +104,25 @@ namespace AutoForestryDesignations
                 refreshers));
 
             content.Add(BuildIntStepRow(
-                AfdLocalization.MaxTilesLabel.AsFormatted,
-                AfdLocalization.MaxTilesTip.AsFormatted,
-                () => AutoForestryDesignationsMod.MaxTiles,
-                value => AutoForestryDesignationsMod.SetMaxTiles(value),
+                AfdLocalization.TargetYieldLabel.AsFormatted,
+                AfdLocalization.TargetYieldTip.AsFormatted,
+                () => AutoForestryDesignationsMod.TargetYield,
+                value => AutoForestryDesignationsMod.SetTargetYield(value),
                 FormatNoLimitZero,
-                refreshers));
+                refreshers,
+                TargetYieldDefaultTooltip));
         }
 
         private static void AddDesignationBehaviorsSection(Column content, List<Action> refreshers)
         {
             content.Add(BuildSectionHeading(AfdLocalization.SettingsHeadingDesignationDefaults.AsFormatted));
+
+            content.Add(BuildToggleRow(
+                AfdLocalization.OverrideTerrainDesignationsLabel.AsFormatted,
+                AfdLocalization.OverrideTerrainDesignationsTip.AsFormatted,
+                () => AutoForestryDesignationsMod.OverrideTerrainDesignations,
+                value => AutoForestryDesignationsMod.SetOverrideTerrainDesignations(value),
+                refreshers));
 
             content.Add(BuildToggleRow(
                 AfdLocalization.SettingsAvoidTilesWithTreesLabel.AsFormatted,
@@ -169,18 +177,32 @@ namespace AutoForestryDesignations
             Func<int> getValue,
             Action<int> setValue,
             Func<int, string> format,
-            List<Action> refreshers)
+            List<Action> refreshers,
+            Func<LocStrFormatted>? getDynamicTooltip = null)
         {
             var display = new Display(L(format(getValue()))).MinDigits(4).AlignSelfStretch().MarginTopBottom(2.px());
-            void Refresh() => display.SetValue(L(format(getValue())));
+            Label? labelControl = null;
+            void Refresh()
+            {
+                display.SetValue(L(format(getValue())));
+                if (labelControl != null && getDynamicTooltip != null)
+                    labelControl.Tooltip(getDynamicTooltip());
+            }
             refreshers.Add(Refresh);
 
             return BuildStepRow(
                 label,
-                tooltip,
+                getDynamicTooltip != null ? getDynamicTooltip() : tooltip,
                 display,
-                () => { setValue(getValue() + ModifierStepSize()); Refresh(); },
-                () => { setValue(Math.Max(0, getValue() - ModifierStepSize())); Refresh(); });
+                () =>
+                {
+                    int current = getValue();
+                    int step = ModifierStepSize();
+                    setValue(current >= int.MaxValue - step ? int.MaxValue : current + step);
+                    Refresh();
+                },
+                () => { setValue(Math.Max(0, getValue() - ModifierStepSize())); Refresh(); },
+                control => labelControl = control);
         }
 
         private static Row BuildToggleRow(
@@ -206,14 +228,17 @@ namespace AutoForestryDesignations
             LocStrFormatted tooltip,
             Display display,
             Action onPlus,
-            Action onMinus)
+            Action onMinus,
+            Action<Label>? configureLabel = null)
         {
             var plusBtn = new ButtonIcon(Button.General, "Assets/Unity/UserInterface/General/Plus128.png")
                 .Compact().IconSize(14.px()).OnClick(onPlus, allowKeyPresses: true);
             var minusBtn = new ButtonIcon(Button.General, "Assets/Unity/UserInterface/General/Minus128.png")
                 .Compact().IconSize(14.px()).OnClick(onMinus, allowKeyPresses: true);
             var row = new Row().MarginTop(1.pt()).AlignItemsCenter();
-            row.Add(new Label(label).Tooltip(tooltip));
+            var labelControl = new Label(label).Tooltip(tooltip);
+            configureLabel?.Invoke(labelControl);
+            row.Add(labelControl);
             row.Add(new UiComponent().FlexGrow(1f));
             row.Add(minusBtn);
             row.Add(display);
@@ -251,13 +276,26 @@ namespace AutoForestryDesignations
 
         private static int ModifierStepSize()
         {
-            if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) return 10;
-            if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) return 5;
+            if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) return 100;
+            if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) return 10;
             return 1;
         }
 
         private static string FormatNoLimitZero(int value)
             => value <= 0 ? "\u221e" : value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+
+        private static LocStrFormatted TargetYieldDefaultTooltip()
+        {
+            if (AutoForestryDesignationsMod.MaxTiles > 0)
+            {
+                return new LocStrFormatted(string.Format(
+                    "{0}\n{1}",
+                    AfdLocalization.TargetYieldTip.TranslatedString,
+                    string.Format(AfdLocalization.TargetYieldLegacyTipFmt.TranslatedString, AutoForestryDesignationsMod.MaxTiles)));
+            }
+
+            return AfdLocalization.TargetYieldTip.AsFormatted;
+        }
 
         private static LocStrFormatted L(string text)
             => new LocStrFormatted(text ?? string.Empty);

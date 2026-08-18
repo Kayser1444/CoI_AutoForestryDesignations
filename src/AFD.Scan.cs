@@ -10,10 +10,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.Diagnostics;
 using Mafi;
+using Mafi.Collections.ImmutableCollections;
 using Mafi.Core.Buildings.Forestry;
 using Mafi.Core.Buildings.Towers;
 using Mafi.Core.Entities;
+using Mafi.Core.Input;
 using Mafi.Core.PathFinding;
 using Mafi.Core.Terrain;
 using Mafi.Core.Terrain.Designation;
@@ -42,6 +45,9 @@ namespace AutoForestryDesignations
 
         private const int PATHABILITY_SEARCH_MARGIN_TILES = 96;
         private const int MAX_PATHABILITY_SEARCH_TILES = 250000;
+        private const int TARGET_ESTIMATE_STEP_CHUNK = 64;
+        private const int TARGET_PLANNING_PLAY_BUDGET_MS = 10;
+        private const int TARGET_PLANNING_PAUSED_BUDGET_MS = 30;
         private static readonly RelTile2i[] s_pathabilitySearchDirections =
         {
             new RelTile2i(1, 0),
@@ -62,9 +68,10 @@ namespace AutoForestryDesignations
             var towerSettings = GetOrCreateTowerSettings(tower);
             bool onlyFertile = towerSettings.OnlyFertileTiles;
             bool avoidWithTrees = towerSettings.AvoidTilesWithTrees;
-            bool avoidMiningDesignations = towerSettings.AvoidMiningDesignations;
+            bool avoidFlatTiles = towerSettings.AvoidFlatTiles;
             bool onlyReachableTiles = towerSettings.OnlyReachableTiles;
-            int maxTiles = towerSettings.MaxTiles;
+            int targetYield = towerSettings.TargetYield;
+            int legacyMaxTiles = targetYield > 0 ? 0 : towerSettings.MaxTiles;
             bool markHarvestReady = towerSettings.MarkHarvestReadyForHarvest;
 
             var bbMin = TerrainDesignation.GetOrigin(area.BoundingBoxMin);
@@ -75,8 +82,15 @@ namespace AutoForestryDesignations
             int designCount = 0;
             int scanCount = 0;
             Tile2i towerPosition = GetTowerPosition(tower, bbMin, bbMax);
-            bool useCandidatePipeline = maxTiles > 0 || onlyReachableTiles;
+            // Avoid-flat is an eligibility filter and does not require candidate
+            // collection, driving-distance search, or deferred placement by itself.
+            bool useCandidatePipeline = ShouldUseCandidatePipeline(
+                targetYield,
+                legacyMaxTiles,
+                onlyReachableTiles);
             List<DesignationCandidate>? candidates = useCandidatePipeline ? new List<DesignationCandidate>() : null;
+            var pendingDesignations = new List<DesignationData>();
+            Stopwatch candidateScanSlice = Stopwatch.StartNew();
 
             for (int y = bbMin.Y; y <= bbMax.Y; y += 4)
             {
@@ -88,7 +102,16 @@ namespace AutoForestryDesignations
                         for (int dx = 0; dx < 4 && inArea; dx++)
                             if (!area.ContainsTile(new Tile2i(x + dx, y + dy)))
                                 inArea = false;
-                    if (!inArea) { scanCount++; continue; }
+                    if (!inArea)
+                    {
+                        scanCount++;
+                        if (ShouldYieldDesignationScan(candidateScanSlice, scanCount))
+                        {
+                            yield return null;
+                            candidateScanSlice.Restart();
+                        }
+                        continue;
+                    }
 
                     // Check fertility and tree presence across all sub-tiles
                     bool allFertile = true;
@@ -106,19 +129,49 @@ namespace AutoForestryDesignations
                                 anyTree = true;
                         }
                     }
-                    if (!allFertile || anyTree) { scanCount++; continue; }
-
-                    var tile = new Tile2i(x, y);
-                    if (avoidMiningDesignations && HasTerrainDesignationAt(tile))
+                    if (!allFertile || anyTree)
                     {
                         scanCount++;
+                        if (ShouldYieldDesignationScan(candidateScanSlice, scanCount))
+                        {
+                            yield return null;
+                            candidateScanSlice.Restart();
+                        }
                         continue;
                     }
 
-                    int hNW = (int)terrMgr.GetHeight(tile).Value.ToFloat();
-                    int hNE = (int)terrMgr.GetHeight(tile.AddX(4)).Value.ToFloat();
-                    int hSE = (int)terrMgr.GetHeight(tile.AddXy(4)).Value.ToFloat();
-                    int hSW = (int)terrMgr.GetHeight(tile.AddY(4)).Value.ToFloat();
+                    var tile = new Tile2i(x, y);
+                    if (!AutoForestryDesignationsMod.OverrideTerrainDesignations && HasTerrainDesignationAt(tile))
+                    {
+                        scanCount++;
+                        if (ShouldYieldDesignationScan(candidateScanSlice, scanCount))
+                        {
+                            yield return null;
+                            candidateScanSlice.Restart();
+                        }
+                        continue;
+                    }
+
+                    HeightTilesF heightNW = terrMgr.GetHeight(tile);
+                    HeightTilesF heightNE = terrMgr.GetHeight(tile.AddX(4));
+                    HeightTilesF heightSE = terrMgr.GetHeight(tile.AddXy(4));
+                    HeightTilesF heightSW = terrMgr.GetHeight(tile.AddY(4));
+
+                    if (avoidFlatTiles && IsFlatAtIntegerHeight(heightNW, heightNE, heightSE, heightSW))
+                    {
+                        scanCount++;
+                        if (ShouldYieldDesignationScan(candidateScanSlice, scanCount))
+                        {
+                            yield return null;
+                            candidateScanSlice.Restart();
+                        }
+                        continue;
+                    }
+
+                    int hNW = (int)heightNW.Value.ToFloat();
+                    int hNE = (int)heightNE.Value.ToFloat();
+                    int hSE = (int)heightSE.Value.ToFloat();
+                    int hSW = (int)heightSW.Value.ToFloat();
 
                     var data = new DesignationData(tile,
                         new HeightTilesI(hNW), new HeightTilesI(hNE),
@@ -128,34 +181,48 @@ namespace AutoForestryDesignations
                     {
                         candidates.Add(new DesignationCandidate(tile, data, tile.DistanceSqrTo(towerPosition)));
                     }
-                    else if (s_desigManager.AddOrReplaceDesignation(s_forestryProto, data))
+                    else
                     {
-                        designCount++;
+                        pendingDesignations.Add(data);
                     }
 
                     scanCount++;
-                    if (scanCount % GetEffectiveBatchSize() == 0)
+                    if (ShouldYieldDesignationScan(candidateScanSlice, scanCount))
+                    {
                         yield return null;
+                            candidateScanSlice.Restart();
+                    }
                 }
             }
 
             if (candidates != null)
             {
-                AssignDrivingDistances(candidates, towerPosition, bbMin, bbMax);
+                yield return AssignDrivingDistancesCoroutine(
+                    candidates,
+                    towerPosition,
+                    bbMin,
+                    bbMax);
                 candidates.Sort(CompareCandidatesByDistance);
                 bool canEvaluateReachability = s_vehiclePathFindingManager != null && s_standardVehiclePathFindingParams != null;
                 bool filterUnreachableCandidates = onlyReachableTiles && canEvaluateReachability;
                 int filteredOutCount = 0;
                 var placedOrigins = new HashSet<Tile2i>();
                 List<DesignationCandidate>? unreachableCandidates =
-                    (filterUnreachableCandidates && maxTiles == 0) ? new List<DesignationCandidate>() : null;
+                    (filterUnreachableCandidates && targetYield == 0 && legacyMaxTiles == 0) ? new List<DesignationCandidate>() : null;
+
+                ForestryTower? forestryTower = tower as ForestryTower;
+                int projectedYield = 0;
+                List<DesignationCandidate>? targetCandidates =
+                    targetYield > 0 ? new List<DesignationCandidate>() : null;
 
                 if (onlyReachableTiles && !canEvaluateReachability)
                     Log.Warning("[AFD] Reachable tiles only is enabled, but pathfinding is unavailable; skipping reachability filter for this run.");
 
+                int filteredCandidateCount = 0;
+                Stopwatch filterSlice = Stopwatch.StartNew();
                 foreach (DesignationCandidate candidate in candidates)
                 {
-                    if (maxTiles > 0 && designCount >= maxTiles)
+                    if (legacyMaxTiles > 0 && pendingDesignations.Count >= legacyMaxTiles)
                         break;
 
                     if (filterUnreachableCandidates && !candidate.DrivingDistanceToTower.HasValue)
@@ -163,16 +230,103 @@ namespace AutoForestryDesignations
                         filteredOutCount++;
                         if (unreachableCandidates != null)
                             unreachableCandidates.Add(candidate);
+                        filteredCandidateCount++;
+                        if (ShouldYieldCandidatePipeline(
+                            filterSlice,
+                            targetYield,
+                            filteredCandidateCount))
+                        {
+                            yield return null;
+                            filterSlice.Restart();
+                        }
                         continue;
                     }
 
-                    if (s_desigManager.AddOrReplaceDesignation(s_forestryProto, candidate.Data))
+                    if (targetYield > 0)
                     {
-                        designCount++;
+                        targetCandidates!.Add(candidate);
+                    }
+                    else
+                    {
+                        pendingDesignations.Add(candidate.Data);
                         placedOrigins.Add(candidate.Origin);
                     }
-                    if (designCount % GetEffectiveBatchSize() == 0)
+                    filteredCandidateCount++;
+                    if (ShouldYieldCandidatePipeline(
+                        filterSlice,
+                        targetYield,
+                        filteredCandidateCount))
+                    {
                         yield return null;
+                        filterSlice.Restart();
+                    }
+                }
+
+                if (targetYield > 0 && forestryTower == null)
+                {
+                    Log.Warning("[AFD] Target yield is set, but the tower is not a forestry tower; no designations were placed for this run.");
+                }
+                else if (targetYield > 0 && targetCandidates!.Count > 0)
+                {
+                    var baselineResult = new ProjectedYieldEstimateResult();
+                    yield return RunProjectedYieldEstimate(
+                        forestryTower!,
+                        treesManager,
+                        null,
+                        baselineResult);
+                    if (!baselineResult.Succeeded)
+                    {
+                        Log.Warning("[AFD] Target yield could not be estimated for this tower; no designations were placed for this run.");
+                    }
+                    else
+                    {
+                        projectedYield = baselineResult.SustainableWoodPerMonth;
+                        ForestryInfoPanel.ProjectedYieldEstimateWork projection = baselineResult.Work!;
+                        int placementSlices = 0;
+                        double placementProcessingMilliseconds = 0d;
+                        Stopwatch placementSlice = Stopwatch.StartNew();
+
+                        if (projectedYield < targetYield && !projection.CanAddDesignations)
+                        {
+                            Log.Warning("[AFD] Target yield cannot be increased because no planting tree type is configured; no designations were placed for this run.");
+                        }
+                        else
+                        {
+                            foreach (DesignationCandidate candidate in targetCandidates)
+                            {
+                                if (projectedYield >= targetYield)
+                                    break;
+                                if (!projection.TryAddDesignation(candidate.Origin))
+                                {
+                                    Log.Warning("[AFD] Target yield projection failed while planning a designation; stopping below target.");
+                                    break;
+                                }
+                                pendingDesignations.Add(candidate.Data);
+                                placedOrigins.Add(candidate.Origin);
+                                projectedYield = projection.SustainableWoodPerMonth;
+
+                                if (placementSlice.ElapsedMilliseconds
+                                    >= GetTargetPlanningSliceBudgetMilliseconds())
+                                {
+                                    placementSlice.Stop();
+                                    placementProcessingMilliseconds += placementSlice.Elapsed.TotalMilliseconds;
+                                    placementSlices++;
+                                    yield return null;
+                                    placementSlice.Restart();
+                                }
+                            }
+                        }
+
+                        placementSlice.Stop();
+                        placementProcessingMilliseconds += placementSlice.Elapsed.TotalMilliseconds;
+                        LogDebug(string.Format(
+                            "Target yield planner performance: baselineMs={0:F1} placementMs={1:F1} slices={2} candidates={3} capacity={4}",
+                            baselineResult.ProcessingMilliseconds,
+                            placementProcessingMilliseconds,
+                            baselineResult.Slices + placementSlices,
+                            targetCandidates.Count,
+                            projection.TreeCapacity));
+                    }
                 }
 
                 if (unreachableCandidates != null && unreachableCandidates.Count > 0)
@@ -183,12 +337,9 @@ namespace AutoForestryDesignations
                         if (!IsInteriorHoleCandidate(candidate.Origin, placedOrigins))
                             continue;
 
-                        if (s_desigManager.AddOrReplaceDesignation(s_forestryProto, candidate.Data))
-                        {
-                            designCount++;
-                            filledHoleCount++;
-                            placedOrigins.Add(candidate.Origin);
-                        }
+                        pendingDesignations.Add(candidate.Data);
+                        filledHoleCount++;
+                        placedOrigins.Add(candidate.Origin);
                     }
 
                     if (filledHoleCount > 0)
@@ -197,7 +348,14 @@ namespace AutoForestryDesignations
 
                 if (filterUnreachableCandidates && filteredOutCount > 0)
                     LogDebug(string.Format("Skipped {0} unreachable designation candidates", filteredOutCount));
+
+                if (targetYield > 0)
+                    LogDebug(string.Format("Target yield planning: target={0} projected={1} newDesignations={2}", targetYield, projectedYield, pendingDesignations.Count));
             }
+
+            designCount = pendingDesignations.Count;
+            if (designCount > 0)
+                yield return CommitDesignationsCoroutine(pendingDesignations);
 
             LogDebug(string.Format("Created {0} forestry designations", designCount));
 
@@ -205,6 +363,92 @@ namespace AutoForestryDesignations
                 MarkHarvestReadyTreesForHarvest(tower, treesManager, area, bbMin, bbMax);
 
             QueueForestryInfoRefresh(tower);
+        }
+
+        private sealed class ProjectedYieldEstimateResult
+        {
+            public bool Succeeded { get; set; }
+            public int SustainableWoodPerMonth { get; set; }
+            public ForestryInfoPanel.ProjectedYieldEstimateWork? Work { get; set; }
+            public double ProcessingMilliseconds { get; set; }
+            public int Slices { get; set; }
+        }
+
+        private static IEnumerator RunProjectedYieldEstimate(
+            ForestryTower tower,
+            TreesManager treesManager,
+            IEnumerable<Tile2i>? additionalDesignationOrigins,
+            ProjectedYieldEstimateResult result)
+        {
+            ForestryInfoPanel.ProjectedYieldEstimateWork work =
+                ForestryInfoPanel.BeginProjectedYieldEstimate(
+                    tower,
+                    treesManager,
+                    additionalDesignationOrigins);
+            while (!work.IsComplete)
+            {
+                Stopwatch sliceTimer = Stopwatch.StartNew();
+                do
+                {
+                    work.Step(TARGET_ESTIMATE_STEP_CHUNK);
+                }
+                while (!work.IsComplete
+                    && sliceTimer.ElapsedMilliseconds
+                        < GetTargetPlanningSliceBudgetMilliseconds());
+                sliceTimer.Stop();
+                result.ProcessingMilliseconds += sliceTimer.Elapsed.TotalMilliseconds;
+                result.Slices++;
+                if (!work.IsComplete)
+                    yield return null;
+            }
+
+            result.Succeeded = work.Succeeded;
+            result.SustainableWoodPerMonth = work.SustainableWoodPerMonth;
+            result.Work = work;
+        }
+
+        private static int GetTargetPlanningSliceBudgetMilliseconds()
+            => Time.timeScale <= 0f
+                ? TARGET_PLANNING_PAUSED_BUDGET_MS
+                : TARGET_PLANNING_PLAY_BUDGET_MS;
+
+        private static bool ShouldUseCandidatePipeline(
+            int targetYield,
+            int legacyMaxTiles,
+            bool onlyReachableTiles)
+            => targetYield > 0 || legacyMaxTiles > 0 || onlyReachableTiles;
+
+        private static bool ShouldYieldDesignationScan(
+            Stopwatch? planningSlice,
+            int scanCount)
+            => planningSlice != null
+                && planningSlice.ElapsedMilliseconds
+                    >= GetTargetPlanningSliceBudgetMilliseconds();
+
+        private static bool ShouldYieldCandidatePipeline(
+            Stopwatch planningSlice,
+            int targetYield,
+            int processedCandidateCount)
+            => planningSlice.ElapsedMilliseconds
+                >= GetTargetPlanningSliceBudgetMilliseconds();
+
+        private static IEnumerator CommitDesignationsCoroutine(List<DesignationData> designations)
+        {
+            if (s_forestryProto == null || designations.Count == 0)
+                yield break;
+
+            if (s_inputScheduler != null)
+            {
+                AddTerrainDesignationsCmd command = s_inputScheduler.ScheduleInputCmd(
+                    new AddTerrainDesignationsCmd(
+                        s_forestryProto.Id,
+                        designations.ToImmutableArray()));
+                while (!command.IsProcessed)
+                    yield return null;
+                yield break;
+            }
+
+            Log.Error("[AFD] Input scheduler is unavailable; forestry designations were not committed.");
         }
 
         private static Tile2i GetTowerPosition(IAreaManagingTower tower, Tile2i bbMin, Tile2i bbMax)
@@ -224,14 +468,14 @@ namespace AutoForestryDesignations
             return a.DistanceSqrToTower.CompareTo(b.DistanceSqrToTower);
         }
 
-        private static void AssignDrivingDistances(
+        private static IEnumerator AssignDrivingDistancesCoroutine(
             List<DesignationCandidate> candidates,
             Tile2i towerPosition,
             Tile2i bbMin,
             Tile2i bbMax)
         {
             if (candidates.Count == 0 || s_vehiclePathFindingManager == null || s_standardVehiclePathFindingParams == null)
-                return;
+                yield break;
 
             IPathabilityProvider pathabilityProvider = s_vehiclePathFindingManager.PathabilityProvider;
             VehiclePathFindingParams pfParams = s_standardVehiclePathFindingParams;
@@ -245,9 +489,38 @@ namespace AutoForestryDesignations
             }
 
             if (!TryFindNearestPathableTile(pathabilityProvider, pfParams, towerPosition, out Tile2i start))
-                return;
+                yield break;
 
-            var candidateIndexesByTargetTile = BuildCandidateTargetMap(candidates, AutoForestryDesignationsMod.PathabilityTargetSize);
+            int targetSize = Math.Max(1, AutoForestryDesignationsMod.PathabilityTargetSize);
+            int lowOffset = (targetSize - 1) / 2;
+            int highOffset = targetSize / 2;
+            var candidateIndexesByTargetTile = new Dictionary<Tile2i, List<int>>();
+            Stopwatch sliceTimer = Stopwatch.StartNew();
+            for (int i = 0; i < candidates.Count; i++)
+            {
+                Tile2i center = candidates[i].Origin.AddXy(2);
+                for (int y = -lowOffset; y <= highOffset; y++)
+                {
+                    for (int x = -lowOffset; x <= highOffset; x++)
+                    {
+                        Tile2i target = center + new RelTile2i(x, y);
+                        if (!candidateIndexesByTargetTile.TryGetValue(target, out List<int>? indexes))
+                        {
+                            indexes = new List<int>();
+                            candidateIndexesByTargetTile[target] = indexes;
+                        }
+                        indexes.Add(i);
+                    }
+                }
+
+                if (sliceTimer.ElapsedMilliseconds
+                    >= GetTargetPlanningSliceBudgetMilliseconds())
+                {
+                    yield return null;
+                    sliceTimer.Restart();
+                }
+            }
+
             var candidateDistances = new int?[candidates.Count];
             int foundCount = 0;
 
@@ -261,6 +534,7 @@ namespace AutoForestryDesignations
             distances[start] = 0;
             queue.Enqueue(start);
 
+            int visitedSinceBudgetCheck = 0;
             while (queue.Count > 0 && distances.Count < MAX_PATHABILITY_SEARCH_TILES && foundCount < candidates.Count)
             {
                 Tile2i current = queue.Dequeue();
@@ -291,6 +565,16 @@ namespace AutoForestryDesignations
                     distances[next] = distance + 1;
                     queue.Enqueue(next);
                 }
+
+                visitedSinceBudgetCheck++;
+                if (visitedSinceBudgetCheck >= TARGET_ESTIMATE_STEP_CHUNK
+                    && sliceTimer.ElapsedMilliseconds
+                        >= GetTargetPlanningSliceBudgetMilliseconds())
+                {
+                    visitedSinceBudgetCheck = 0;
+                    yield return null;
+                    sliceTimer.Restart();
+                }
             }
 
             for (int i = 0; i < candidates.Count; i++)
@@ -304,35 +588,14 @@ namespace AutoForestryDesignations
                         candidate.DistanceSqrToTower,
                         candidateDistances[i]);
                 }
-            }
-        }
 
-        private static Dictionary<Tile2i, List<int>> BuildCandidateTargetMap(List<DesignationCandidate> candidates, int targetSize)
-        {
-            int size = Math.Max(1, targetSize);
-            int lowOffset = (size - 1) / 2;
-            int highOffset = size / 2;
-
-            var result = new Dictionary<Tile2i, List<int>>();
-            for (int i = 0; i < candidates.Count; i++)
-            {
-                // Use a configurable n*n area around the designation center to tune strictness.
-                Tile2i center = candidates[i].Origin.AddXy(2);
-                for (int y = -lowOffset; y <= highOffset; y++)
+                if (sliceTimer.ElapsedMilliseconds
+                    >= GetTargetPlanningSliceBudgetMilliseconds())
                 {
-                    for (int x = -lowOffset; x <= highOffset; x++)
-                    {
-                        Tile2i target = center + new RelTile2i(x, y);
-                        if (!result.TryGetValue(target, out List<int> indexes))
-                        {
-                            indexes = new List<int>();
-                            result[target] = indexes;
-                        }
-                        indexes.Add(i);
-                    }
+                    yield return null;
+                    sliceTimer.Restart();
                 }
             }
-            return result;
         }
 
         private static bool IsInteriorHoleCandidate(Tile2i origin, HashSet<Tile2i> placedOrigins)
@@ -416,6 +679,24 @@ namespace AutoForestryDesignations
             return s_desigManager.GetDesignationAt(origin).HasValue;
         }
 
+        /// <summary>
+        /// Matches the game's flat-surface heuristic: all designation vertices must be
+        /// within the vanilla surface tolerance of one shared integer height.
+        /// </summary>
+        internal static bool IsFlatAtIntegerHeight(
+            HeightTilesF heightNW,
+            HeightTilesF heightNE,
+            HeightTilesF heightSE,
+            HeightTilesF heightSW)
+        {
+            HeightTilesF integerHeight = heightNW.TilesHeightRounded.HeightTilesF;
+            HeightTilesF tolerance = TerrainDesignation.SURFACE_HEIGHT_TOLERANCE;
+            return heightNW.IsNear(integerHeight, tolerance)
+                && heightNE.IsNear(integerHeight, tolerance)
+                && heightSE.IsNear(integerHeight, tolerance)
+                && heightSW.IsNear(integerHeight, tolerance);
+        }
+
         internal static void CreateDesignationsForTower(IAreaManagingTower tower)
         {
             s_coroutineHost?.StartCoroutine(CreateDesignationsCoroutine(tower));
@@ -433,13 +714,5 @@ namespace AutoForestryDesignations
             return System.Math.Max(1, System.Math.Min(MAX_BATCH_SIZE, value));
         }
 
-        private static int GetEffectiveBatchSize()
-        {
-            int configuredBatchSize = ClampBatchSize(s_batchSize);
-            if (Time.timeScale > 0f)
-                return configuredBatchSize;
-            long boostedBatchSize = (long)configuredBatchSize * PAUSED_BATCH_MULTIPLIER;
-            return (int)System.Math.Min(MAX_BATCH_SIZE, boostedBatchSize);
-        }
     }
 }
