@@ -1,4 +1,4 @@
-v0.4.0 [unreleased]
+v0.4.0 [packaged]
 
 * Moved **Override terrain designations** into the **Designation behaviors** world settings section, defaulting it off so existing terrain designations remain protected.
 * Removed the obsolete per-tower terrain-designation override and migrated old `avoidMiningDesignations` values into the world-level inverted setting.
