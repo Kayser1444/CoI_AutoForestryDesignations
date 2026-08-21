@@ -66,6 +66,7 @@ namespace AutoForestryDesignations
             var terrMgr = s_desigManager.TerrainManager;
             var treesManager = s_desigManager.TreesManager;
             var towerSettings = GetOrCreateTowerSettings(tower);
+            ForestryTower? forestryTower = tower as ForestryTower;
             bool onlyFertile = towerSettings.OnlyFertileTiles;
             bool avoidWithTrees = towerSettings.AvoidTilesWithTrees;
             bool avoidFlatTiles = towerSettings.AvoidFlatTiles;
@@ -78,6 +79,8 @@ namespace AutoForestryDesignations
             var bbMax = TerrainDesignation.GetOrigin(area.BoundingBoxMax);
 
             LogDebug(string.Format("Scanning forestry area from {0} to {1} for planting zones...", bbMin, bbMax));
+            if (targetYield > 0 && forestryTower != null)
+                ForestryInfoPanel.LogTargetYieldSnapshot("scan-start", forestryTower, treesManager);
 
             int designCount = 0;
             int scanCount = 0;
@@ -210,13 +213,12 @@ namespace AutoForestryDesignations
                 List<DesignationCandidate>? unreachableCandidates =
                     (filterUnreachableCandidates && targetYield == 0 && legacyMaxTiles == 0) ? new List<DesignationCandidate>() : null;
 
-                ForestryTower? forestryTower = tower as ForestryTower;
                 int projectedYield = 0;
                 List<DesignationCandidate>? targetCandidates =
                     targetYield > 0 ? new List<DesignationCandidate>() : null;
 
                 if (onlyReachableTiles && !canEvaluateReachability)
-                    Log.Warning("[AFD] Reachable tiles only is enabled, but pathfinding is unavailable; skipping reachability filter for this run.");
+                    s_log.Warning("Reachable tiles only is enabled, but pathfinding is unavailable; skipping reachability filter for this run.");
 
                 int filteredCandidateCount = 0;
                 Stopwatch filterSlice = Stopwatch.StartNew();
@@ -264,7 +266,7 @@ namespace AutoForestryDesignations
 
                 if (targetYield > 0 && forestryTower == null)
                 {
-                    Log.Warning("[AFD] Target yield is set, but the tower is not a forestry tower; no designations were placed for this run.");
+                    s_log.Warning("Target yield is set, but the tower is not a forestry tower; no designations were placed for this run.");
                 }
                 else if (targetYield > 0 && targetCandidates!.Count > 0)
                 {
@@ -276,19 +278,24 @@ namespace AutoForestryDesignations
                         baselineResult);
                     if (!baselineResult.Succeeded)
                     {
-                        Log.Warning("[AFD] Target yield could not be estimated for this tower; no designations were placed for this run.");
+                        s_log.Warning("Target yield could not be estimated for this tower; no designations were placed for this run.");
                     }
                     else
                     {
                         projectedYield = baselineResult.SustainableWoodPerMonth;
                         ForestryInfoPanel.ProjectedYieldEstimateWork projection = baselineResult.Work!;
+                        ForestryInfoPanel.LogTargetYieldSnapshot(
+                            "scan-after-baseline-projection",
+                            forestryTower!,
+                            treesManager,
+                            projection);
                         int placementSlices = 0;
                         double placementProcessingMilliseconds = 0d;
                         Stopwatch placementSlice = Stopwatch.StartNew();
 
                         if (projectedYield < targetYield && !projection.CanAddDesignations)
                         {
-                            Log.Warning("[AFD] Target yield cannot be increased because no planting tree type is configured; no designations were placed for this run.");
+                            s_log.Warning("Target yield cannot be increased because no planting tree type is configured; no designations were placed for this run.");
                         }
                         else
                         {
@@ -298,7 +305,7 @@ namespace AutoForestryDesignations
                                     break;
                                 if (!projection.TryAddDesignation(candidate.Origin))
                                 {
-                                    Log.Warning("[AFD] Target yield projection failed while planning a designation; stopping below target.");
+                                    s_log.Warning("Target yield projection failed while planning a designation; stopping below target.");
                                     break;
                                 }
                                 pendingDesignations.Add(candidate.Data);
@@ -316,6 +323,12 @@ namespace AutoForestryDesignations
                                 }
                             }
                         }
+
+                        ForestryInfoPanel.LogTargetYieldSnapshot(
+                            "scan-after-target-planning",
+                            forestryTower!,
+                            treesManager,
+                            projection);
 
                         placementSlice.Stop();
                         placementProcessingMilliseconds += placementSlice.Elapsed.TotalMilliseconds;
@@ -356,6 +369,9 @@ namespace AutoForestryDesignations
             designCount = pendingDesignations.Count;
             if (designCount > 0)
                 yield return CommitDesignationsCoroutine(pendingDesignations);
+
+            if (targetYield > 0 && forestryTower != null)
+                ForestryInfoPanel.LogTargetYieldSnapshot("scan-after-commit", forestryTower, treesManager);
 
             LogDebug(string.Format("Created {0} forestry designations", designCount));
 
@@ -448,7 +464,7 @@ namespace AutoForestryDesignations
                 yield break;
             }
 
-            Log.Error("[AFD] Input scheduler is unavailable; forestry designations were not committed.");
+            s_log.Error("Input scheduler is unavailable; forestry designations were not committed.");
         }
 
         private static Tile2i GetTowerPosition(IAreaManagingTower tower, Tile2i bbMin, Tile2i bbMax)

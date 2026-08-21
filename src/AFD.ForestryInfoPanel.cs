@@ -181,7 +181,12 @@ namespace AutoForestryDesignations
             {
                 try
                 {
-                    if (ReferenceEquals(kvp.Value(), tower))
+                    IAreaManagingTower? resolvedTower = kvp.Value();
+                    if (ReferenceEquals(resolvedTower, tower)
+                        || (resolvedTower != null
+                            && tower.Id.IsValid
+                            && resolvedTower.Id.IsValid
+                            && resolvedTower.Id == tower.Id))
                         RefreshContent(kvp.Key);
                 }
                 catch { }
@@ -269,7 +274,8 @@ namespace AutoForestryDesignations
             float averageMaxAgeYears = treeCount > 0 ? maxAgeYearsSum / treeCount : 0f;
             int treeCapacity = EstimateTreeCapacity(tower, treesManager, treeCount);
             float capacityPerYear = EstimateCapacityPerYear(tower, treesManager, treeCapacity);
-            AutoForestryDesignation.LogDebug(string.Format("CollectStats: trees={0}/{1} woodReserve={2} maturity={3:F1}% avgAge={4:F1}y avgMaxAge={5:F1}y maxAge={6:F1}y buckets=[{7}] capacity/month={8:F1}",
+            AutoForestryDesignation.LogDebug(string.Format("CollectStats: tower={0} position={1} managedDesignations={2} towerTrees={3} trees={4}/{5} woodReserve={6} maturity={7:F1}% avgAge={8:F1}y avgMaxAge={9:F1}y maxAge={10:F1}y buckets=[{11}] capacity/month={12:F1}",
+                tower.Id, tower.Position2f.Tile2i, tower.ManagedDesignations.Count, tower.Trees.Count,
                 treeCount, treeCapacity, woodReserve, averageMaturityPercent, averageAgeYears, averageMaxAgeYears, maxAgeYears,
                 string.Join(",", growthBuckets), capacityPerYear / 12f));
             var bucketTrees = new TreeId[BUCKET_COUNT][];
@@ -313,6 +319,37 @@ namespace AutoForestryDesignations
                 treesManager,
                 CountManagedTrees(tower, treesManager),
                 additionalDesignationOrigins);
+        }
+
+        /// <summary>
+        /// Emits the state needed to compare the target planner's baseline with the
+        /// information panel and the post-commit tower state. This is intentionally
+        /// debug-gated and tagged so a captured runtime log can distinguish an empty
+        /// snapshot from a projection/counting mismatch without changing behavior.
+        /// </summary>
+        internal static void LogTargetYieldSnapshot(
+            string phase,
+            ForestryTower tower,
+            TreesManager treesManager,
+            ProjectedYieldEstimateWork? projection = null)
+        {
+            int managedTreeCount = CountManagedTrees(tower, treesManager);
+            AutoForestryDesignation.LogDebug(string.Format(
+                "[DEBUG-TY01] {0}: tower={1} position={2} areaMin={3} areaMax={4} managedDesignations={5} towerTrees={6} managedTrees={7} projectionBaselineTrees={8} projectionOrigins={9} projectionValidCandidates={10} projectionFutureTrees={11} projectionCapacity={12} projectionYield={13}",
+                phase,
+                tower.Id,
+                tower.Position2f.Tile2i,
+                tower.Area.BoundingBoxMin,
+                tower.Area.BoundingBoxMax,
+                tower.ManagedDesignations.Count,
+                tower.Trees.Count,
+                managedTreeCount,
+                projection == null ? -1 : projection.BaselineManagedTreeCount,
+                projection == null ? -1 : projection.DesignationOriginCount,
+                projection == null ? -1 : projection.ValidCandidateCount,
+                projection == null ? -1 : projection.FutureTreeCount,
+                projection == null ? -1 : projection.TreeCapacity,
+                projection == null ? -1 : projection.SustainableWoodPerMonth));
         }
 
         private static int CountManagedTrees(ForestryTower tower, TreesManager treesManager)
@@ -382,6 +419,10 @@ namespace AutoForestryDesignations
             public bool IsComplete { get; private set; }
             public bool Succeeded { get; private set; }
             public bool CanAddDesignations => m_futureTreeSpacingIndex != null;
+            internal int BaselineManagedTreeCount => m_liveManagedTreeCount;
+            internal int DesignationOriginCount => m_designationOrigins.Count;
+            internal int ValidCandidateCount => m_validCandidateCount;
+            internal int FutureTreeCount => m_futureTreeSpacingIndex?.Count ?? 0;
             public int TreeCapacity { get; private set; }
             public int SustainableWoodPerMonth { get; private set; }
 
