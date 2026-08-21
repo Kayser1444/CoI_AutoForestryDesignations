@@ -172,7 +172,9 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
         if (Interlocked.Exchange(ref s_forestryVehicleOptimizationsRequested, requested) == requested)
             return;
 
-        AutoForestryDesignation.s_log.Info($"Forestry vehicle optimizations {(value ? "enabled" : "disabled")}.");
+        AutoForestryDesignation.LogInfo(value
+            ? "Forestry vehicle optimizations enabled."
+            : "Forestry vehicle optimizations disabled.");
     }
 
     /// <summary>Resets all global defaults to their built-in values.</summary>
@@ -356,13 +358,14 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
         gameLoopEvents.RegisterRendererInitState(this, () =>
         {
             AutoForestryDesignation.s_log.Info($"AutoForestryDesignations v{ModVersion} | dll: {ModLogger.GetDllBuildTimestamp(typeof(AutoForestryDesignationsMod).Assembly)}");
-            AutoForestryDesignation.s_log.Info("Localization: late apply at renderer init state.");
+            AutoForestryDesignation.LogInfo($"Diagnostics: {AfdDiagnostics.Describe()}.");
+            AutoForestryDesignation.LogDebug("Localization: late apply at renderer init state.");
             ApplyLocalizedTextIfPresent();
             RegisterSettingsTabs(resolver);
             try
             {
                 AutoForestryDesignation.SetTreesRenderer(resolver.Resolve<TreesRenderer>());
-                AutoForestryDesignation.s_log.Info("TreesRenderer resolved successfully.");
+                AutoForestryDesignation.LogDebug("TreesRenderer resolved successfully.");
             }
             catch (Exception ex)
             {
@@ -373,7 +376,7 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
                 var audioDb = resolver.Resolve<Mafi.Unity.Audio.AudioDb>();
                 var clickSound = audioDb.GetSharedAudioUi("Assets/Unity/UserInterface/Audio/ButtonClick.prefab");
                 AutoForestryDesignation.SetClickSound(clickSound);
-                AutoForestryDesignation.s_log.Info("ButtonClick audio source resolved successfully.");
+                AutoForestryDesignation.LogDebug("ButtonClick audio source resolved successfully.");
             }
             catch (Exception ex)
             {
@@ -382,7 +385,7 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
             try
             {
                 AutoForestryDesignation.SetHarvestHighlightManager(resolver.Resolve<TreeHarvestingHighlightManager>());
-                AutoForestryDesignation.s_log.Info("TreeHarvestingHighlightManager resolved successfully.");
+                AutoForestryDesignation.LogDebug("TreeHarvestingHighlightManager resolved successfully.");
             }
             catch (Exception ex)
             {
@@ -411,7 +414,7 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
     private void ApplyLocalizedTextIfPresent()
     {
         string translationsDirectory = Path.Combine(Manifest.RootDirectoryPath, "translations");
-        AutoForestryDesignation.s_log.Info($"Localization: probing directory '{translationsDirectory}'.");
+        AutoForestryDesignation.LogDebug($"Localization: probing directory '{translationsDirectory}'.");
 
         if (!Directory.Exists(translationsDirectory))
         {
@@ -429,18 +432,18 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
         }
         else
         {
-            AutoForestryDesignation.s_log.Info($"Localization: discovered {jsonFiles.Length} file(s): {string.Join(", ", jsonFiles)}");
+            AutoForestryDesignation.LogDebug($"Localization: discovered {jsonFiles.Length} file(s): {string.Join(", ", jsonFiles)}");
         }
 
         string currentCulture = ResolveCurrentCultureCodeForLogging() ?? "<null>";
-        AutoForestryDesignation.s_log.Info($"Localization: current game culture before apply = '{currentCulture}'.");
+        AutoForestryDesignation.LogDebug($"Localization: current game culture before apply = '{currentCulture}'.");
 
         ModTranslationsApplyResult result = new ModTranslations().Apply(new ModTranslationsApplyOptions(
             translationsDirectory,
             typeof(AutoForestryDesignationsMod).Assembly,
             Array.Empty<string>()));
 
-        AutoForestryDesignation.s_log.Info(
+        AutoForestryDesignation.LogInfo(
             $"Localization: applied locale='{result.AppliedLocaleCode}', upserted={result.UpsertedEntryCount}, scannedFields={result.ScannedFieldCount}, reboundFields={result.ReboundFieldCount}, readonlySkipped={result.SkippedReadonlyFieldCount}, missingTranslationSkipped={result.SkippedMissingTranslationFieldCount}, failedWrites={result.FailedFieldCount}, diagnostics={result.Diagnostics.Count}.");
 
         foreach (TranslationDiagnostic diagnostic in result.Diagnostics)
@@ -448,7 +451,7 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
             string itemInfo = diagnostic.ItemIndex.HasValue ? $", itemIndex={diagnostic.ItemIndex.Value}" : string.Empty;
             string message = $"Localization diagnostic [{diagnostic.Severity}] source='{diagnostic.SourcePath}'{itemInfo}: {diagnostic.Message}";
             if (diagnostic.Severity == TranslationDiagnosticSeverity.Info)
-                AutoForestryDesignation.s_log.Info(message);
+                AutoForestryDesignation.LogDebug(message);
             else
                 AutoForestryDesignation.s_log.Warning(message);
         }

@@ -126,10 +126,20 @@ namespace AutoForestryDesignations
 
         private static readonly Dictionary<EntityId, AFDTowerSettings> s_towerSettingsByEntityId =
             new Dictionary<EntityId, AFDTowerSettings>();
+        internal static void LogInfo(string message)
+        {
+            AfdDiagnostics.Info(s_log, message);
+        }
+
         [System.Diagnostics.Conditional("DEBUG")]
         internal static void LogDebug(string message)
         {
-            s_log.Info(message);
+            AfdDiagnostics.Debug(s_log, message);
+        }
+
+        internal static void LogTrace(string message)
+        {
+            AfdDiagnostics.Trace(s_log, message);
         }
 
         private static bool TryGetTowerEntityId(IAreaManagingTower tower, out EntityId entityId)
@@ -275,7 +285,7 @@ namespace AutoForestryDesignations
             if (protosDb.TryGetProto(new Proto.ID("ForestryDesignator"), out TerrainDesignationProto proto))
                 s_forestryProto = proto;
             else
-                UnityEngine.Debug.Log("[AFD] ForestryDesignator proto not found");
+                s_log.Warning("ForestryDesignator proto not found");
 
             DesignationPanel.Initialize(s_protosDb);
         }

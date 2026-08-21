@@ -38,18 +38,18 @@ namespace AutoForestryDesignations
                         {
                             File.WriteAllText(genPath, BuildSettingsJson());
                             s_loadedSettingsPath = genPath;
-                            Log.Warning($"[AFD] {SETTINGS_FILE_NAME} not found - defaults written to: {genPath}");
+                            s_log.Warning($"{SETTINGS_FILE_NAME} not found - defaults written to: {genPath}");
                         }
                         catch (Exception writeEx)
                         {
                             s_loadedSettingsPath = null;
-                            Log.Warning($"[AFD] Could not write default {SETTINGS_FILE_NAME}: {writeEx.Message}");
+                            s_log.Warning($"Could not write default {SETTINGS_FILE_NAME}: {writeEx.Message}");
                         }
                     }
                     else
                     {
                         s_loadedSettingsPath = null;
-                        Log.Warning($"[AFD] {SETTINGS_FILE_NAME} not found and mod root path is unknown; using built-in defaults.");
+                        s_log.Warning($"{SETTINGS_FILE_NAME} not found and mod root path is unknown; using built-in defaults.");
                     }
                     return;
                 }
@@ -61,13 +61,13 @@ namespace AutoForestryDesignations
                 if (fileVersion != AutoForestryDesignationsMod.ModVersion)
                 {
                     if (TrySaveSettings(out string migratedPath))
-                        Log.Warning($"[AFD] {SETTINGS_FILE_NAME} migrated to version {AutoForestryDesignationsMod.ModVersion}: {migratedPath}");
+                        s_log.Warning($"{SETTINGS_FILE_NAME} migrated to version {AutoForestryDesignationsMod.ModVersion}: {migratedPath}");
                 }
             }
             catch (Exception ex)
             {
                 s_loadedSettingsPath = null;
-                Log.Warning($"[AFD] Failed to load {SETTINGS_FILE_NAME}: {ex.Message}");
+                s_log.Warning($"Failed to load {SETTINGS_FILE_NAME}: {ex.Message}");
             }
         }
 
@@ -177,6 +177,17 @@ namespace AutoForestryDesignations
             string? parsedVersion = null;
             try
             {
+                string? diagnosticLevel = ParseString(json, "diagnosticLevel");
+                if (diagnosticLevel != null
+                    && !AfdDiagnostics.TryApplyConfiguredLevel(
+                        diagnosticLevel,
+                        out string diagnosticLevelError))
+                {
+                    s_log.Warning(
+                        $"Invalid diagnosticLevel '{diagnosticLevel}' in {SETTINGS_FILE_NAME}. "
+                        + diagnosticLevelError + $" Using {AfdDiagnostics.Level}.");
+                }
+
                 s_batchSize = ClampBatchSize(ParseInt(json, "batchSize") ?? s_batchSize);
 
                 bool? onlyFertileTiles = ParseBool(json, "onlyFertileTiles");
@@ -247,7 +258,7 @@ namespace AutoForestryDesignations
             }
             catch (Exception ex)
             {
-                Log.Warning($"[AFD] Error parsing {SETTINGS_FILE_NAME}: {ex.Message}");
+                s_log.Warning($"Error parsing {SETTINGS_FILE_NAME}: {ex.Message}");
             }
             return parsedVersion;
         }
@@ -309,6 +320,9 @@ namespace AutoForestryDesignations
             var sb = new System.Text.StringBuilder();
             sb.AppendLine("{");
             sb.AppendLine($"  \"settingsVersion\": \"{AutoForestryDesignationsMod.ModVersion}\",");
+            sb.AppendLine();
+            sb.AppendLine("  \"_comment_diagnosticLevel\": \"Controls AFD diagnostic output. Default selects Debug in Debug builds and Info in Release builds. Warning keeps only warnings/errors; Info adds concise operational messages; Debug adds scan summaries and calculations; Trace adds per-vehicle claim and staging details. The afd_diagnostic_level command overrides this for the current session. Allowed: Default, Warning, Info, Debug, Trace.\",");
+            sb.AppendLine($"  \"diagnosticLevel\": \"{AfdDiagnostics.ConfiguredLevel}\",");
             sb.AppendLine();
             sb.AppendLine("  \"_comment\": \"AutoForestryDesignations settings. These values set the world defaults loaded at game start. Tower-specific settings are saved in the mod cache.\",");
             sb.AppendLine();
@@ -375,7 +389,7 @@ namespace AutoForestryDesignations
             if (target == null || target.Trim().Length == 0)
             {
                 savedPath = string.Empty;
-                Log.Warning($"[AFD] Cannot save {SETTINGS_FILE_NAME}: mod root path is unknown.");
+                s_log.Warning($"Cannot save {SETTINGS_FILE_NAME}: mod root path is unknown.");
                 return false;
             }
             string targetPath = target;
@@ -390,7 +404,7 @@ namespace AutoForestryDesignations
             catch (Exception ex)
             {
                 savedPath = string.Empty;
-                Log.Warning($"[AFD] Failed to save {SETTINGS_FILE_NAME}: {ex.Message}");
+                s_log.Warning($"Failed to save {SETTINGS_FILE_NAME}: {ex.Message}");
                 return false;
             }
         }

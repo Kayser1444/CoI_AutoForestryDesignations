@@ -127,7 +127,7 @@ namespace AutoForestryDesignations
                         if (tower == null) return;
                         AutoForestryDesignation.CreateDesignationsForTower(tower);
                     }
-                    catch (Exception ex) { Debug.Log($"[AFD] Create button EXCEPTION: {ex}"); }
+                    catch (Exception ex) { AutoForestryDesignation.s_log.Warning($"Create button exception: {ex}"); }
                 });
             createBtn.Tooltip(AfdLocalization.CreateDesignationsBtnTip);
             createBtn.Icon.Size(Px.Auto, 24.px());
@@ -143,7 +143,7 @@ namespace AutoForestryDesignations
                         if (tower == null) return;
                         AutoForestryDesignation.ClearDesignationsForTower(tower);
                     }
-                    catch (Exception ex) { Debug.Log($"[AFD] Clear button EXCEPTION: {ex}"); }
+                    catch (Exception ex) { AutoForestryDesignation.s_log.Warning($"Clear button exception: {ex}"); }
                 })
                 .Tooltip(AfdLocalization.ClearDesignationsBtnTip);
 

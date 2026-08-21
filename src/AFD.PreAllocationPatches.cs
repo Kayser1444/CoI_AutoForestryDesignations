@@ -94,7 +94,7 @@ namespace AutoForestryDesignations
                 }
                 else
                 {
-                    Log.Warning("[AFD] VehicleProtoAssignerUi constructor not found.");
+                    AutoForestryDesignation.s_log.Warning("VehicleProtoAssignerUi constructor not found.");
                 }
 
                 // Patch concrete closed VehicleDepotInspector constructor
@@ -108,7 +108,7 @@ namespace AutoForestryDesignations
                 }
                 else
                 {
-                    Log.Warning("[AFD] VehicleDepotInspector constructor not found.");
+                    AutoForestryDesignation.s_log.Warning("VehicleDepotInspector constructor not found.");
                 }
 
                 // Patch VehicleDepotBase.AddVehicleToBuildQueue
@@ -144,7 +144,7 @@ namespace AutoForestryDesignations
             }
             catch (Exception ex)
             {
-                Log.Error("[AFD] Exception applying pre-allocation patches: " + ex);
+                AutoForestryDesignation.s_log.Error("Exception applying pre-allocation patches: " + ex);
             }
         }
 
@@ -286,7 +286,7 @@ namespace AutoForestryDesignations
             }
             catch (Exception ex)
             {
-                Log.Error("[AFD] Error in VehicleProtoAssignerUi constructor postfix: " + ex);
+                AutoForestryDesignation.s_log.Error("Error in VehicleProtoAssignerUi constructor postfix: " + ex);
             }
         }
 
@@ -392,7 +392,7 @@ namespace AutoForestryDesignations
                 }
             }
             if (logSelection)
-                AutoForestryDesignation.s_log.Info($"Vehicle order depot selection: tower={tower.Id.Value} proto={proto.Id.Value} eligible={eligibleCount} method=StraightLine result={(closestDepot == null ? "None" : closestDepot.Id.Value.ToString())} distanceSqr={(closestDepot == null ? "n/a" : minDistanceSqr.ToString("F3"))}");
+                AutoForestryDesignation.LogDebug($"Vehicle order depot selection: tower={tower.Id.Value} proto={proto.Id.Value} eligible={eligibleCount} method=StraightLine result={(closestDepot == null ? "None" : closestDepot.Id.Value.ToString())} distanceSqr={(closestDepot == null ? "n/a" : minDistanceSqr.ToString("F3"))}");
             return closestDepot;
         }
 
@@ -467,7 +467,7 @@ namespace AutoForestryDesignations
                             PendingVehicleAllocations.Enqueue(closestDepot.Id, tower.Id, proto.Id);
                         }
                         AutoForestryDesignation.PlayClickSound();
-                        AutoForestryDesignation.LogDebug($"Queued {count} vehicle(s) {proto.Id.Value} at depot {closestDepot.Id.Value} for tower {tower.Id.Value}");
+                        AutoForestryDesignation.LogInfo($"Queued {count} vehicle(s) {proto.Id.Value} at depot {closestDepot.Id.Value} for tower {tower.Id.Value}");
                     }
                     else
                     {
@@ -541,7 +541,7 @@ namespace AutoForestryDesignations
 
             if (cancelled > 0)
             {
-                AutoForestryDesignation.LogDebug($"Cancelled {cancelled} enqueued vehicle(s) for tower {tower.Id.Value}");
+                AutoForestryDesignation.LogInfo($"Cancelled {cancelled} enqueued vehicle(s) for tower {tower.Id.Value}");
             }
             else
             {
@@ -683,7 +683,7 @@ namespace AutoForestryDesignations
             }
             catch (Exception ex)
             {
-                Log.Error("[AFD] Error in VehicleDepotInspector constructor postfix: " + ex);
+                AutoForestryDesignation.s_log.Error("Error in VehicleDepotInspector constructor postfix: " + ex);
             }
         }
 
@@ -703,7 +703,7 @@ namespace AutoForestryDesignations
             }
             catch (Exception ex)
             {
-                Log.Error("[AFD] Error in VehicleDepotBase.AddVehicleToBuildQueue postfix: " + ex);
+                AutoForestryDesignation.s_log.Error("Error in VehicleDepotBase.AddVehicleToBuildQueue postfix: " + ex);
             }
         }
 
@@ -728,7 +728,7 @@ namespace AutoForestryDesignations
                             if (!tower.IsDestroyed && tower.CanVehicleBeAssigned(vehicle.Prototype))
                             {
                                 tower.AssignVehicle(vehicle);
-                                AutoForestryDesignation.s_log.Info($"Assigned newly built vehicle {vehicle.Id.Value} ({vehicle.Prototype.Id.Value}) to tower {tower.Id.Value}.");
+                                AutoForestryDesignation.LogInfo($"Assigned newly built vehicle {vehicle.Id.Value} ({vehicle.Prototype.Id.Value}) to tower {tower.Id.Value}.");
                             }
                             else
                             {
@@ -744,7 +744,7 @@ namespace AutoForestryDesignations
             }
             catch (Exception ex)
             {
-                Log.Error("[AFD] Error in VehicleDepotBase.TryBuildVehicle postfix: " + ex);
+                AutoForestryDesignation.s_log.Error("Error in VehicleDepotBase.TryBuildVehicle postfix: " + ex);
             }
         }
 
@@ -761,7 +761,7 @@ namespace AutoForestryDesignations
             }
             catch (Exception ex)
             {
-                Log.Error("[AFD] Error in VehicleDepotBase.RemoveVehicleFromBuildOrReplaceQueue prefix: " + ex);
+                AutoForestryDesignation.s_log.Error("Error in VehicleDepotBase.RemoveVehicleFromBuildOrReplaceQueue prefix: " + ex);
             }
         }
     }

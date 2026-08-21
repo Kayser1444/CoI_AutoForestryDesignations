@@ -36,7 +36,7 @@ namespace AutoForestryDesignations
         {
             if (tower == null)
             {
-                Log.Warning("[AFD API] CreateDesignationsForTower called with null tower.");
+                AutoForestryDesignation.s_log.Warning("API: CreateDesignationsForTower called with null tower.");
                 return;
             }
             AutoForestryDesignation.CreateDesignationsForTower(tower);
@@ -49,7 +49,7 @@ namespace AutoForestryDesignations
         {
             if (tower == null)
             {
-                Log.Warning("[AFD API] ClearDesignationsForTower called with null tower.");
+                AutoForestryDesignation.s_log.Warning("API: ClearDesignationsForTower called with null tower.");
                 return;
             }
             AutoForestryDesignation.ClearDesignationsForTower(tower);

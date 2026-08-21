@@ -187,7 +187,7 @@ public static partial class AutoForestryDesignation
         }
         catch (Exception ex)
         {
-            s_log.Warning($"[AFD] Forestry vehicle optimization patches failed: {ex.Message}");
+            s_log.Warning($"Forestry vehicle optimization patches failed: {ex.Message}");
         }
     }
 
@@ -195,7 +195,7 @@ public static partial class AutoForestryDesignation
     {
         if (method == null)
         {
-            s_log.Warning($"[AFD] Forestry optimization target '{patchName}' was not found.");
+            s_log.Warning($"Forestry optimization target '{patchName}' was not found.");
             return;
         }
 
@@ -243,7 +243,7 @@ public static partial class AutoForestryDesignation
         if (TryMaintainHarvestClaim(harvester, tower))
             __result = true;
         else if (s_futureHarvestByHarvester.TryGetValue(harvester.Id, out FutureHarvestClaim? claim))
-            LogDebug($"[DEBUG-HVST] Harvester {harvester.Id} retained claim {claim.Tree} but did not receive staging; position={harvester.Position2f}, currentJob={harvester.CurrentJob.ValueOrNull?.GetType().Name}.");
+            LogTrace($"[DEBUG-HVST] Harvester {harvester.Id} retained claim {claim.Tree} but did not receive staging; position={harvester.Position2f}, currentJob={harvester.CurrentJob.ValueOrNull?.GetType().Name}.");
     }
 
     public static void TreeHarvestingJobEnqueuedPostfix(TreeHarvester harvester, TreeId tree, Option<ForestryTower> tower)
@@ -523,7 +523,7 @@ public static partial class AutoForestryDesignation
         s_futureHarvestByTree[claim.Tree] = claim;
         EnsurePlantingClaim(tower, harvester, claim.Tree, activeHarvest: false);
         LogDebug($"Future harvest claim: harvester {harvester.Id} -> tree {claim.Tree}.");
-        LogDebug($"[DEBUG-HVST] Future claim details: harvester={harvester.Id}, tree={claim.Tree}, growth={bestGrowth}, threshold={tower.TargetHarvestPercent}, scoreTicks={bestScore}, straightDistance={bestDistance}.");
+        LogTrace($"[DEBUG-HVST] Future claim details: harvester={harvester.Id}, tree={claim.Tree}, growth={bestGrowth}, threshold={tower.TargetHarvestPercent}, scoreTicks={bestScore}, straightDistance={bestDistance}.");
         return claim;
     }
 
@@ -633,17 +633,17 @@ public static partial class AutoForestryDesignation
             return false;
         if (s_treeGoalFactory == null || s_navigateToJobFactory == null)
         {
-            LogDebug($"[DEBUG-HVST] Staging unavailable because navigation factories are missing: harvester={claim.Harvester.Id}, tree={claim.Tree}.");
+            LogTrace($"[DEBUG-HVST] Staging unavailable because navigation factories are missing: harvester={claim.Harvester.Id}, tree={claim.Tree}.");
             return false;
         }
         if (!IsValidFutureHarvestClaim(claim))
         {
-            LogDebug($"[DEBUG-HVST] Staging rejected because future claim is invalid: harvester={claim.Harvester.Id}, tree={claim.Tree}.");
+            LogTrace($"[DEBUG-HVST] Staging rejected because future claim is invalid: harvester={claim.Harvester.Id}, tree={claim.Tree}.");
             return false;
         }
         if (s_vehicleUnreachablesManager != null && s_vehicleUnreachablesManager.GetUnreachableTreesFor(claim.Harvester).Contains(claim.Tree))
         {
-            LogDebug($"[DEBUG-HVST] Staging rejected as unreachable: harvester={claim.Harvester.Id}, tree={claim.Tree}.");
+            LogTrace($"[DEBUG-HVST] Staging rejected as unreachable: harvester={claim.Harvester.Id}, tree={claim.Tree}.");
             ReleaseFutureHarvestClaim(claim.Harvester.Id);
             return false;
         }
@@ -656,14 +656,14 @@ public static partial class AutoForestryDesignation
 
         if (claim.Harvester.Position2f.DistanceSqrTo(claim.Tree.Position.CenterTile2f) <= (2 * claim.Harvester.Prototype.TreeHarvestDistance).Squared)
         {
-            LogDebug($"[DEBUG-HVST] Staging skipped because harvester is already near tree: harvester={claim.Harvester.Id}, tree={claim.Tree}, position={claim.Harvester.Position2f}.");
+            LogTrace($"[DEBUG-HVST] Staging skipped because harvester is already near tree: harvester={claim.Harvester.Id}, tree={claim.Tree}, position={claim.Harvester.Position2f}.");
             return false;
         }
 
         TreeVehicleGoal goal = s_treeGoalFactory.Create(claim.Tree, claim.Harvester.Prototype.TreeHarvestDistance);
         NavigateToJob job = s_navigateToJobFactory.EnqueueJob(claim.Harvester, goal, navigateClosebyIsSufficient: false, asTrueJob: false);
         s_stagingJobsByVehicle[claim.Harvester.Id] = job;
-        LogDebug($"[DEBUG-HVST] Staging enqueued: harvester={claim.Harvester.Id}, tree={claim.Tree}, from={claim.Harvester.Position2f}, job={job.Id}.");
+        LogTrace($"[DEBUG-HVST] Staging enqueued: harvester={claim.Harvester.Id}, tree={claim.Tree}, from={claim.Harvester.Position2f}, job={job.Id}.");
         return true;
     }
 

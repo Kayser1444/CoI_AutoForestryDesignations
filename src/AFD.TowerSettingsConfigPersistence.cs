@@ -36,7 +36,7 @@ namespace AutoForestryDesignations
             {
                 if (TryApplyTowerSettingsStateJson(json, out int loadedCount))
                 {
-                    s_log.Info($"Persistence: loaded {loadedCount} tower setting record(s) from {store.StorageKind}.");
+                    LogInfo($"Persistence: loaded {loadedCount} tower setting record(s) from {store.StorageKind}.");
                 }
             }
             catch (Exception ex)
@@ -55,7 +55,7 @@ namespace AutoForestryDesignations
                 return;
             }
 
-            s_log.Info($"Persistence: staged {savedCount} tower setting override record(s) in {store.StorageKind}.");
+            LogInfo($"Persistence: staged {savedCount} tower setting override record(s) in {store.StorageKind}.");
         }
 
         internal static string BuildTowerSettingsStateJsonForConfig()

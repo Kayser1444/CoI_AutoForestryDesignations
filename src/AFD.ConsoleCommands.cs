@@ -25,6 +25,7 @@ public sealed class AfdConsoleCommands
     {
         var sb = new StringBuilder();
         sb.AppendLine("[AFD] Current settings:");
+        sb.AppendLine($"  DiagnosticLevel          = {AfdDiagnostics.Describe()}");
         sb.AppendLine($"  OnlyFertileTiles         = {AutoForestryDesignationsMod.OnlyFertileTiles}");
         sb.AppendLine($"  AvoidTilesWithTrees      = {AutoForestryDesignationsMod.AvoidTilesWithTrees}");
         sb.AppendLine($"  OverrideTerrainDesignations = {AutoForestryDesignationsMod.OverrideTerrainDesignations}");
@@ -37,6 +38,18 @@ public sealed class AfdConsoleCommands
         sb.AppendLine($"  ForestryPanelCollapsed   = {AutoForestryDesignationsMod.ForestryDesignationsPanelCollapsed}");
         sb.Append(    $"  ForestryInfoPanelCollapsed = {AutoForestryDesignationsMod.ForestryInformationPanelCollapsed}");
         return sb.ToString();
+    }
+
+    [ConsoleCommand(false, false, "Gets or sets the session-only AFD diagnostic level. Allowed: default, warning, info, debug, trace.", "afd_diagnostic_level")]
+    private string afdDiagnosticLevel(string value = "")
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            return ReportCurrentValue($"Diagnostic level: {AfdDiagnostics.Describe()}.");
+
+        if (!AfdDiagnostics.TrySetSessionLevel(value, out string error))
+            return $"[AFD] Invalid diagnostic level '{value}'. {error}";
+
+        return $"[AFD] Diagnostic level set for this session: {AfdDiagnostics.Describe()}.";
     }
 
     [ConsoleCommand(false, false, "Sets whether fertile-only tiles are targeted (true/false).", null)]
@@ -122,5 +135,11 @@ public sealed class AfdConsoleCommands
         if (AutoForestryDesignation.TrySaveSettings(out string path))
             return $"[AFD] Settings saved to: {path}";
         return "[AFD] Failed to save settings. Check the log for details.";
+    }
+
+    private static string ReportCurrentValue(string message)
+    {
+        AutoForestryDesignation.LogInfo(message);
+        return $"[AFD] {message}";
     }
 }

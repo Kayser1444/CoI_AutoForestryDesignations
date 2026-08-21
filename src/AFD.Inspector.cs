@@ -48,7 +48,7 @@ namespace AutoForestryDesignations
                 var inspectorType = assembly.GetType("Mafi.Unity.Ui.Inspectors.ForestryTowerInspector");
                 if (inspectorType == null)
                 {
-                    Log.Warning("[AFD] ForestryTowerInspector type not found");
+                    AutoForestryDesignation.s_log.Warning("ForestryTowerInspector type not found");
                     return;
                 }
 
@@ -75,7 +75,7 @@ namespace AutoForestryDesignations
                 }
                 catch (Exception ex2)
                 {
-                    Log.Warning($"[AFD] EXCEPTION patching OnActivated: {ex2}");
+                    AutoForestryDesignation.s_log.Warning($"Exception patching OnActivated: {ex2}");
                 }
 
                 try
@@ -88,7 +88,7 @@ namespace AutoForestryDesignations
                 }
                 catch (Exception ex3)
                 {
-                    Log.Warning($"[AFD] EXCEPTION patching OnDeactivated: {ex3}");
+                    AutoForestryDesignation.s_log.Warning($"Exception patching OnDeactivated: {ex3}");
                 }
 
                 try
@@ -101,7 +101,7 @@ namespace AutoForestryDesignations
                 }
                 catch (Exception ex3)
                 {
-                    Log.Warning($"[AFD] EXCEPTION patching SetCutAtPercentage: {ex3}");
+                    AutoForestryDesignation.s_log.Warning($"Exception patching SetCutAtPercentage: {ex3}");
                 }
 
                 // Patch ForestryTower vehicle assignment methods
@@ -164,13 +164,13 @@ namespace AutoForestryDesignations
                 }
                 catch (Exception ex4)
                 {
-                    Log.Warning($"[AFD] EXCEPTION patching ForestryTower vehicle methods: {ex4}");
+                    AutoForestryDesignation.s_log.Warning($"Exception patching ForestryTower vehicle methods: {ex4}");
                 }
 
             }
             catch (Exception ex)
             { 
-                Log.Warning($"[AFD] Apply EXCEPTION: {ex}");
+                AutoForestryDesignation.s_log.Warning($"Apply exception: {ex}");
             }
         }
 
@@ -344,7 +344,7 @@ namespace AutoForestryDesignations
 
                 if (entityProp == null)
                 {
-                    Log.Warning("[AFD] Entity property not found on inspector");
+                    AutoForestryDesignation.s_log.Warning("Entity property not found on inspector");
                     return;
                 }
 
@@ -374,15 +374,15 @@ namespace AutoForestryDesignations
                     }
                     else
                     {
-                        Log.Warning("[AFD] MainBody field is not a Column");
+                        AutoForestryDesignation.s_log.Warning("MainBody field is not a Column");
                     }
                 }
                 else
                 {
-                    Log.Warning("[AFD] MainBody field not found");
+                    AutoForestryDesignation.s_log.Warning("MainBody field not found");
                 }
             }
-            catch (Exception ex) { Debug.Log($"[AFD] InspectorCtorPostfix EXCEPTION: {ex}"); }
+            catch (Exception ex) { AutoForestryDesignation.s_log.Warning($"InspectorCtorPostfix exception: {ex}"); }
         }
 
         private static UiComponent? FindVehicleAssignerUi(UiComponent component)

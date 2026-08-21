@@ -81,7 +81,7 @@ namespace AutoForestryDesignations
                 }
                 else
                 {
-                    AutoForestryDesignation.s_log.Info($"Pending allocations: Expired stale pending ticket for proto {ticket.ProtoId.Value} at depot {ticket.DepotId.Value}.");
+                    AutoForestryDesignation.LogInfo($"Pending allocations: Expired stale pending ticket for proto {ticket.ProtoId.Value} at depot {ticket.DepotId.Value}.");
                 }
             }
             while (temp.Count > 0)
@@ -134,7 +134,7 @@ namespace AutoForestryDesignations
 
                 if (matchedTicket != null)
                 {
-                    AutoForestryDesignation.s_log.Info($"Pending allocations: Discarded ticket for {protoId.Value} at depot {depotId.Value} due to AddVehicleToBuildQueue failure.");
+                    AutoForestryDesignation.LogInfo($"Pending allocations: Discarded ticket for {protoId.Value} at depot {depotId.Value} due to AddVehicleToBuildQueue failure.");
                 }
             }
         }
@@ -497,7 +497,7 @@ namespace AutoForestryDesignations
                         }
                     }
                 }
-                AutoForestryDesignation.s_log.Info($"Pending allocations: loaded from {store.StorageKind}.");
+                AutoForestryDesignation.LogInfo($"Pending allocations: loaded from {store.StorageKind}.");
             }
             catch (Exception ex)
             {
@@ -552,7 +552,7 @@ namespace AutoForestryDesignations
                     AutoForestryDesignation.s_log.Warning($"Pending allocations: failed to stage in {result.StorageKind}: {result.ErrorMessage}");
                     return;
                 }
-                AutoForestryDesignation.s_log.Info($"Pending allocations: staged in {store.StorageKind}.");
+                AutoForestryDesignation.LogInfo($"Pending allocations: staged in {store.StorageKind}.");
             }
             catch (Exception ex)
             {
