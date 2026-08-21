@@ -37,7 +37,7 @@ Scan the selected Forestry Tower's area and place forestry designations automati
 - 🍃 **Fertile tiles only** — Place designations only where the ground supports tree growth.
 - 🚚 **Reachable tiles only** — Skip candidate tiles that vehicles cannot reach.
 - 📐 **Avoid terrain designations** — Skip tiles that already have mining, dumping, or leveling designations.
-- 🔢 **Max number of designations** — Cap the number placed per run, with Shift and Ctrl step controls. Tiles are filled by driving distance from the tower.
+- 🎯 **Target yield** — Set the desired sustainable wood production per in-game month. A scan adds eligible designations until the projected total reaches the target; ∞ means no target.
 - 🗑️ **Clear designations** — Clear forestry designations instantly without affecting terrain designations.
 
 ### 📊 Forestry Information panel
