@@ -26,6 +26,8 @@ For automated mining designations, see [Automatic Terrain Designations](https://
 
 [🚚 **Truck pooling**](#truck-pooling)
 
+[⚙️ **Additional settings**](#additional-settings)
+
 ### 🌱 Create designations
 
 ![image.png](/content-images/b46ea422d98d7706b6d696e6d47785347c2b1a0aa8096118e43472f56f668b0f/image.png)
@@ -36,7 +38,6 @@ Scan the selected Forestry Tower's area and place forestry designations automati
 
 - 🍃 **Fertile tiles only** — Place designations only where the ground supports tree growth.
 - 🚚 **Reachable tiles only** — Skip candidate tiles that vehicles cannot reach.
-- 📐 **Avoid terrain designations** — Skip tiles that already have mining, dumping, or leveling designations.
 - 🎯 **Target yield** — Set the desired sustainable wood production per in-game month. A scan adds eligible designations until the projected total reaches the target; ∞ means no target.
 - 🗑️ **Clear designations** — Clear forestry designations instantly without affecting terrain designations.
 
@@ -87,6 +88,21 @@ Enable the default-on **Forestry vehicle optimizations** toggle in the world-lev
 *Pooled trucks balanced across the tower's active Tree Harvesters.*
 
 Enable **Truck pooling** to manage trucks at the tower level. Trucks assigned to the Forestry Tower are pooled and automatically distributed to active Tree Harvesters based on capacity and physical footprint. Pausing, unpausing, or changing the harvester setup dynamically rebalances allocations.
+
+### ⚙️ Additional settings
+
+[insert screenshot here]
+
+*AFD's Mod Settings tab provides world-wide behavior, tower defaults, and interface preferences.*
+
+Open the AFD tab in the Mod Settings window for controls that are not available from an individual Forestry Tower:
+
+- **Override terrain designations** — Allow forestry designations to replace existing mining, dumping, or leveling designations. Disabled by default.
+- **Avoid tiles with trees** — Skip tiles that already contain trees when creating designations.
+- **Mark harvest-ready trees** — Automatically mark trees that meet the tower's harvest threshold after creating designations.
+- **Forestry vehicle optimizations** — Enable or disable coordinated field waiting and predictive positioning for Tree Planters and Tree Harvesters.
+- **Tower panel defaults** — Choose whether the Forestry Designations and Forestry Information panels start collapsed.
+- **Tower settings defaults** — Set the initial fertility, flat-terrain, reachability, Truck pooling, and Target yield preferences, then optionally save them as the configuration for new games.
 
 ---
 
