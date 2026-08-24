@@ -1,3 +1,6 @@
+v0.4.1 | 2026-08-24
+* Fixed: Truck pooling now cancels stale jobs when reallocating trucks between tree harvesters, preventing trucks from becoming stuck at an old harvester
+
 v0.4.0 | 2026-08-18
 * Added a world-level **Override terrain designations** setting in the **Designation behaviors** section, off by default
 * Added **Target yield** planning for sustainable wood production with ∞ meaning no target

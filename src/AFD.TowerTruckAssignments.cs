@@ -577,7 +577,10 @@ namespace AutoForestryDesignations
 
                         if (best != null)
                         {
-                            best.AssignVehicle(truck, doNotCancelJobs: true);
+                            // A free truck may still have a job from its previous role. The
+                            // job can reference an owner-specific queue, so assigning it to a
+                            // harvester must use vanilla's cancel-on-assignment semantics.
+                            best.AssignVehicle(truck, doNotCancelJobs: false);
                             currentTrucksByHarvester[best].Add(truck);
                             currentPoolCount[best]++;
                             if (protoCountPerHarvester.ContainsKey(best))
@@ -625,10 +628,14 @@ namespace AutoForestryDesignations
                             var truck = stealable[stealable.Count - 1];
                             stealable.RemoveAt(stealable.Count - 1);
 
-                            donor.UnassignVehicle(truck, cancelJobs: false);
+                            // Jobs issued by the donor can reference its truck queue. Cancel
+                            // them before changing ownership so the truck cannot retain a job
+                            // for a harvester to which it is no longer assigned.
+                            donor.UnassignVehicle(truck, cancelJobs: true);
                             currentTrucksByHarvester[donor].Remove(truck);
                             currentPoolCount[donor]--;
 
+                            // Unassignment above already requested cancellation.
                             h.AssignVehicle(truck, doNotCancelJobs: true);
                             currentTrucksByHarvester[h].Add(truck);
                             currentPoolCount[h]++;
@@ -648,7 +655,9 @@ namespace AutoForestryDesignations
                         var truck = currentList[i];
                         if (poolTruckIdSet.Contains(truck.Id))
                         {
-                            h.UnassignVehicle(truck, cancelJobs: false);
+                            // Disabled harvesters must release both the truck and any job tied
+                            // to their queue before the truck is assigned elsewhere.
+                            h.UnassignVehicle(truck, cancelJobs: true);
                             currentList.RemoveAt(i);
                             currentPoolCount[h]--;
 
@@ -666,6 +675,7 @@ namespace AutoForestryDesignations
                             }
                             if (best != null)
                             {
+                                // Unassignment above already requested cancellation.
                                 best.AssignVehicle(truck, doNotCancelJobs: true);
                                 currentTrucksByHarvester[best].Add(truck);
                                 currentPoolCount[best]++;

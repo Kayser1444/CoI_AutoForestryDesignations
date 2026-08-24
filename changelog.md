@@ -1,5 +1,7 @@
 v0.4.1 [unreleased]
 
+* Fixed truck pooling retaining jobs tied to a previous tree harvester when reallocating a truck, preventing pooled trucks from becoming stuck at the old harvester.
+
 v0.4.0 [released]
 
 * Moved **Override terrain designations** into the **Designation behaviors** world settings section, defaulting it off so existing terrain designations remain protected.
