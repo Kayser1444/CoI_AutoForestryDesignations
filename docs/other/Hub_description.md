@@ -83,15 +83,13 @@ Enable the default-on **Forestry vehicle optimizations** toggle in the world-lev
 
 *Truck pooling controls in the Forestry Tower inspector.*
 
-![image.png](/content-images/a32e5c6de86060d96a4862834955f583b5112a07140070e871374e8f0ccabf97/image.png)
-
-*Pooled trucks balanced across the tower's active Tree Harvesters.*
+![image.png](/content-images/a32e5c6de86060d96a4862834955f583b5112a07140070e871374e8f0ccabf97/image.png)*Pooled trucks balanced across the tower's active Tree Harvesters.*
 
 Enable **Truck pooling** to manage trucks at the tower level. Trucks assigned to the Forestry Tower are pooled and automatically distributed to active Tree Harvesters based on capacity and physical footprint. Pausing, unpausing, or changing the harvester setup dynamically rebalances allocations.
 
 ### ⚙️ Additional settings
 
-*Configure world-wide behavior, tower defaults, and interface preferences in AFD's Mod Settings.*
+![image.png](/content-images/01947ee4e2249fd9281945cc4c9594a6d67b23b288547503237a5d7c903ab668/image.png)*Configure world-wide behavior, tower defaults, and interface preferences in AFD's Mod Settings.*
 
 Open the AFD tab in the Mod Settings window for controls that are not available from an individual Forestry Tower:
 
