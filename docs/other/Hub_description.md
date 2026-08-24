@@ -91,9 +91,7 @@ Enable **Truck pooling** to manage trucks at the tower level. Trucks assigned to
 
 ### ⚙️ Additional settings
 
-\[insert screenshot here\]
-
-*AFD's Mod Settings tab provides world-wide behavior, tower defaults, and interface preferences.*
+*Configure world-wide behavior, tower defaults, and interface preferences in AFD's Mod Settings.*
 
 Open the AFD tab in the Mod Settings window for controls that are not available from an individual Forestry Tower:
 
