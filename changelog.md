@@ -1,4 +1,4 @@
-v0.4.1 [unreleased]
+v0.4.1 [packaged]
 
 * Fixed truck pooling retaining jobs tied to a previous tree harvester when reallocating a truck, preventing pooled trucks from becoming stuck at the old harvester.
 
