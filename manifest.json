@@ -1,6 +1,6 @@
 {
   "id": "AutoForestryDesignations",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "display_name": "Kayser's Automatic Forestry Designations",
   "description_short": "Create forestry designations with one click. See forestry information. Order vehicles and pool trucks on tower level.",
   "description_long": "<b>Auto Forestry Designations</b>\n\nAutomatically creates <b>forestry designations</b> for your forestry towers - no manual painting required.\n\n- <b>Create designations</b>: Scan the tower area and place valid forestry designations.\n- <b>Clear designations</b>: Remove forestry designations in the selected tower area without touching other designation types.\n- <b>World and tower settings</b>: Control terrain-designation overrides, fertile-only placement, existing trees, flat terrain, target yield, and marking grown trees for harvest.\n- <b>Vehicle enqueueing</b>: Enqueue vehicle construction directly for tower assignments, automatically routed to the closest depot by driving distance (ordered vehicles are pre-assigned and join the tower automatically once completed).\n\n<i>Compatible with vanilla saves - can be added to or removed from existing saves safely.</i>",
