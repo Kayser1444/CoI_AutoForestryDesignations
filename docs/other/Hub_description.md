@@ -91,7 +91,7 @@ Enable **Truck pooling** to manage trucks at the tower level. Trucks assigned to
 
 ### ⚙️ Additional settings
 
-[insert screenshot here]
+\[insert screenshot here\]
 
 *AFD's Mod Settings tab provides world-wide behavior, tower defaults, and interface preferences.*
 
