@@ -219,6 +219,7 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
             AutoForestryDesignationsTicker ticker = new GameObject("AutoForestryDesignationsTicker").AddComponent<AutoForestryDesignationsTicker>();
             UnityEngine.Object.DontDestroyOnLoad(ticker.gameObject);
             m_entitiesManager = entitiesManager;
+            DepotCache.Start(entitiesManager, m_gameLoopEvents);
             m_entitiesManager.EntityRemoved.AddNonSaveable(this, onEntityRemoved);
 
             AutoForestryDesignation.SetModRootDirectoryPath(Manifest.RootDirectoryPath);
@@ -296,6 +297,7 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
 
     private void unsubscribeWorldEvents()
     {
+        DepotCache.Stop();
         if (m_gameLoopEvents != null)
         {
             try { m_gameLoopEvents.Terminate.RemoveNonSaveable(this, onGameTerminated); }

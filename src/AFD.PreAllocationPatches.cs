@@ -374,13 +374,13 @@ namespace AutoForestryDesignations
             IEntityAssignedWithVehicles tower,
             bool logSelection = true)
         {
-            var depots = context.EntitiesManager.GetAllEntitiesOfType<VehicleDepotBase>();
+            var depots = DepotCache.Depots;
             VehicleDepotBase? closestDepot = null;
             float minDistanceSqr = float.MaxValue;
             int eligibleCount = 0;
             foreach (var depot in depots)
             {
-                if (depot.CanWork && depot.Prototype.BuildableEntities.Contains(proto))
+                if (!depot.IsDestroyed && depot.CanWork && depot.Prototype.BuildableEntities.Contains(proto))
                 {
                     eligibleCount++;
                     float distSqr = tower.Position2f.DistanceSqrTo(depot.Position2f).ToFloat();
@@ -459,7 +459,8 @@ namespace AutoForestryDesignations
                 new LocStrFormatted(AfdLocalization.EnqueueConfirmBtnText.TranslatedString),
                 delegate
                 {
-                    if (closestDepot.CanWork)
+                    if (!closestDepot.IsDestroyed && !tower.IsDestroyed && closestDepot.CanWork
+                        && closestDepot.Prototype.BuildableEntities.Contains(proto))
                     {
                         context.InputScheduler.ScheduleInputCmd(new AddVehicleToBuildQueueCmd(proto.Id, closestDepot.Id, count));
                         for (int i = 0; i < count; i++)

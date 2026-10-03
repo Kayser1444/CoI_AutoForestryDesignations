@@ -1,3 +1,7 @@
+v0.4.2 | 2026-10-03
+* Fixed: Ordering vehicles from forestry towers no longer scans the live entity collection from the UI, preventing concurrent enumeration errors
+* Updated maximum verified game version to 0.8.7d
+
 v0.4.1 | 2026-08-24
 * Fixed: Truck pooling now cancels stale jobs when reallocating trucks between tree harvesters, preventing trucks from becoming stuck at an old harvester
 
