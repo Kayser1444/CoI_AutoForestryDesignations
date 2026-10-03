@@ -1,4 +1,4 @@
-v0.4.2 [packaged]
+v0.4.2 [released]
 
 * Fixed unsafe main-thread entity enumeration in `FindClosestDepot`: seed depot references once during `SyncUpdate`, then apply queued `EntityAdded`/`EntityRemoved` changes at sync boundaries. Clear the non-saveable cache and subscriptions on world teardown and failed initialization; revalidate destroyed entities and depot eligibility when confirming an order.
 * Verified compatibility with Captain of Industry 0.8.7d (build 619).
