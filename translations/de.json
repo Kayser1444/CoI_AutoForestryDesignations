@@ -1,5 +1,13 @@
 [
   [
+    "panel.vehicles.show_unowned",
+    "Nicht besessene, freigeschaltete Fahrzeugtypen anzeigen, damit du sie von diesem Turm aus bestellen kannst. Eigene Fahrzeuge und bereits bei diesem Turm bestellte Fahrzeuge werden immer angezeigt."
+  ],
+  [
+    "panel.vehicles.hide_unowned",
+    "Nicht besessene Fahrzeugtypen ausblenden. Eigene Fahrzeuge und bereits bei diesem Turm bestellte Fahrzeuge bleiben sichtbar."
+  ],
+  [
     "AFD_ForestryDesignationsTitle",
     "Forstgebiete"
   ],

@@ -1,5 +1,13 @@
 [
   [
+    "panel.vehicles.show_unowned",
+    "Show unlocked vehicle types you do not own so you can order them from this tower. Owned vehicles and this tower's queued orders are always shown."
+  ],
+  [
+    "panel.vehicles.hide_unowned",
+    "Hide vehicle types you do not own. Owned vehicles and this tower's queued orders remain visible."
+  ],
+  [
     "AFD_ForestryDesignationsTitle",
     "Forestry designations"
   ],

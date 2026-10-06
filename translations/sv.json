@@ -1,5 +1,13 @@
 [
   [
+    "panel.vehicles.show_unowned",
+    "Visa upplåsta fordonstyper som du inte äger så att du kan beställa dem från det här tornet. Ägda fordon och tornets köade beställningar visas alltid."
+  ],
+  [
+    "panel.vehicles.hide_unowned",
+    "Dölj fordonstyper som du inte äger. Ägda fordon och tornets köade beställningar förblir synliga."
+  ],
+  [
     "AFD_ForestryDesignationsTitle",
     "Skogsbruksanvisningar"
   ],

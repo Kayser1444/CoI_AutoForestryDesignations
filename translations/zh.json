@@ -1,5 +1,13 @@
 [
   [
+    "panel.vehicles.show_unowned",
+    "显示已解锁但尚未拥有的车辆类型，以便从这座塔楼下单。已拥有的车辆和此塔楼的排队订单始终显示。"
+  ],
+  [
+    "panel.vehicles.hide_unowned",
+    "隐藏尚未拥有的车辆类型。已拥有的车辆和此塔楼的排队订单仍会显示。"
+  ],
+  [
     "AFD_ForestryDesignationsTitle",
     "林业规划"
   ],

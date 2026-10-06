@@ -4,6 +4,10 @@ namespace AutoForestryDesignations
 {
     internal static class AfdLocalization
     {
+        public static LocStr ShowUnownedVehicles =
+            Loc.Str("panel.vehicles.show_unowned", "Show unlocked vehicle types you do not own so you can order them from this tower. Owned vehicles and this tower's queued orders are always shown.", "Tooltip for the union symbol button in vehicle panel headers, when unowned types are hidden.");
+        public static LocStr HideUnownedVehicles =
+            Loc.Str("panel.vehicles.hide_unowned", "Hide vehicle types you do not own. Owned vehicles and this tower's queued orders remain visible.", "Tooltip for the intersection symbol button in vehicle panel headers, when unowned types are shown.");
         // --- Panel titles ---
         public static LocStr ForestryDesignationsTitle = Loc.Str(
             "AFD_ForestryDesignationsTitle",

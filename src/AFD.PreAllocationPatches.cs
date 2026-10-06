@@ -41,6 +41,10 @@ namespace AutoForestryDesignations
     public static class PreAllocationPatches
     {
         private static FloatingColumn? s_activePopup;
+        // UI-only state, shared by the cards within each vehicle panel.
+        private sealed class OrderCardsState { public bool ShowUnowned; }
+        private static readonly ConditionalWeakTable<UiComponent, OrderCardsState> s_orderCards =
+            new ConditionalWeakTable<UiComponent, OrderCardsState>();
         private sealed class OwnedQueueDecoration { }
         private sealed class OrderShortcutHintDecoration { }
         private class TruckPoolingFloaterDecoration
@@ -77,6 +81,12 @@ namespace AutoForestryDesignations
                 AutoForestryDesignation.LogDebug("Applying pre-allocation patches...");
 
                 var assembly = typeof(Mafi.Unity.Entities.EntityMb).Assembly;
+
+                var forestryInspectorCtor = assembly.GetType("Mafi.Unity.Ui.Inspectors.ForestryTowerInspector")?
+                    .GetConstructors().FirstOrDefault();
+                if (forestryInspectorCtor != null)
+                    harmony.Patch(forestryInspectorCtor, postfix: new HarmonyMethod(
+                        typeof(PreAllocationPatches), nameof(ForestryTowerInspector_Ctor_Postfix)));
 
                 // Patch VehicleProtoAssignerUi constructor
                 var assignerUiType = assembly.GetType("Mafi.Unity.Ui.Library.Inspectors.VehicleProtoAssignerUi");
@@ -158,6 +168,11 @@ namespace AutoForestryDesignations
                 if (parent.GetType().Name != "ForestryTowerInspector") return;
                 bool isSupportedTruck = (proto is TruckProto);
                 if (!(proto is TreeHarvesterProto) && !(proto is TreePlanterProto) && !isSupportedTruck) return;
+
+                var orderCards = new OrderCardsState();
+                s_orderCards.Add(__instance, orderCards);
+                var hiddenBecauseUnowned = __instance.GetType().GetProperty("IsHiddenBecauseOwnedIsZero",
+                    BindingFlags.Instance | BindingFlags.NonPublic);
 
                 // Find the column inside row
                 var col = __instance.AllChildren.OfType<Column>().FirstOrDefault();
@@ -243,10 +258,11 @@ namespace AutoForestryDesignations
                     parent.ObserveIndexable(() => entityProvider().AllVehiclesWithProto(proto))
                         .Observe(() => context.VehiclesManager.GetStats(proto, GetAssignmentZoneMask(entityProvider())))
                         .Observe(() => entityProvider().CanVehicleBeAssigned(proto) && context.UnlockedProtosDbForUi.IsUnlocked(proto))
-                        .Observe(() => PendingVehicleAllocations.GetQueuedCountForTower(entityProvider().Id, proto.Id))
+                        .Observe(() => (PendingVehicleAllocations.GetQueuedCountForTower(entityProvider().Id, proto.Id), orderCards.ShowUnowned))
                         .Observe(() => (entityProvider() is Vehicle v && v.AssignedTo.ValueOrNull is ForestryTower t) ? AutoForestryDesignation.GetTowerTruckPoolingEnabled(t) : false)
-                        .Do(delegate(Lyst<Vehicle> assignedVehicles, VehicleStats stats, bool canBeAssignedAndUnlocked, int queuedCount, bool isPooled)
+                        .Do(delegate(Lyst<Vehicle> assignedVehicles, VehicleStats stats, bool canBeAssignedAndUnlocked, (int Count, bool ShowUnowned) orders, bool isPooled)
                         {
+                            int queuedCount = orders.Count;
                             int assignedCount = assignedVehicles.Count;
                             bool isUnlocked = context.UnlockedProtosDbForUi.IsUnlocked(proto);
                             bool canBeAssigned = entityProvider().CanVehicleBeAssigned(proto);
@@ -280,7 +296,10 @@ namespace AutoForestryDesignations
                                 minusBtn.IconTint(null);
                             }
 
-                            __instance.Visible(assignedCount > 0 || queuedCount > 0 || (canBeAssigned && (isUnlocked || stats.Owned > 0)));
+                            // Suppress vanilla's fallback that reveals one unowned card in an empty panel.
+                            hiddenBecauseUnowned?.SetValue(__instance, false);
+                            __instance.Visible(assignedCount > 0 || queuedCount > 0
+                                || (canBeAssigned && (stats.Owned > 0 || (orders.ShowUnowned && isUnlocked))));
                         });
                 }
             }
@@ -288,6 +307,65 @@ namespace AutoForestryDesignations
             {
                 AutoForestryDesignation.s_log.Error("Error in VehicleProtoAssignerUi constructor postfix: " + ex);
             }
+        }
+
+        // AFD's inspector patch creates the truck panel before we decorate it.
+        [HarmonyPriority(Priority.Last)]
+        public static void ForestryTowerInspector_Ctor_Postfix(UiComponent __instance)
+        {
+            try
+            {
+                AttachOrderCardToggles(__instance);
+            }
+            catch (Exception ex)
+            {
+                AutoForestryDesignation.s_log.Error("Could not attach vehicle order toggles: " + ex);
+            }
+        }
+
+        private static void AttachOrderCardToggles(UiComponent component)
+        {
+            if (component is PanelWithHeader panel)
+            {
+                var assigner = panel.Body.AllChildren.OfType<VehicleAssignerUi>().FirstOrDefault();
+                if (assigner != null)
+                {
+                    var states = assigner.AllChildren
+                        .Select(card => s_orderCards.TryGetValue(card, out var state) ? state : null)
+                        .Where(state => state != null).ToList();
+                    if (states.Count == 0) return;
+                    bool showUnowned = false;
+                    var toggle = new ButtonText(Button.IconOnly, new LocStrFormatted("∪"))
+                        .Size(24.px()).Padding(2.px())
+                        .MinWidth(24.px()).MaxWidth(24.px())
+                        .MinHeight(24.px()).MaxHeight(24.px())
+                        .Background(new ColorRgba(3355443).SetA(150))
+                        .Border(1.px(), Theme.BorderColor, 4);
+                    // A button's pressed styling can replace its transform. Center a
+                    // non-button container so that animation cannot replace the
+                    // vertical-centering transform on the header control itself.
+                    var togglePosition = new Column().Size(24.px())
+                        .AbsolutePositionMiddle(right: 3.pt());
+                    togglePosition.Add(toggle);
+                    // Keep the hit target and glyph box independent of text measurement
+                    // and of header/body layout changes when cards are revealed.
+                    toggle.AllChildren.OfType<Label>().First()
+                        .AbsolutePositionFillParent().Margin(0.px()).TextCenterMiddle();
+                    toggle.Tooltip(new LocStrFormatted(AfdLocalization.ShowUnownedVehicles.TranslatedString));
+                    toggle.OnClick(() =>
+                    {
+                        showUnowned = !showUnowned;
+                        foreach (var state in states) state!.ShowUnowned = showUnowned;
+                        ((IComponentWithText)toggle).SetValue(new LocStrFormatted(showUnowned ? "∩" : "∪"));
+                        toggle.Tooltip(new LocStrFormatted((showUnowned
+                            ? AfdLocalization.HideUnownedVehicles : AfdLocalization.ShowUnownedVehicles).TranslatedString));
+                    });
+                    panel.TitleRow.PaddingRight(30.px());
+                    panel.Header.Add(togglePosition);
+                    return;
+                }
+            }
+            foreach (var child in component.AllChildren) AttachOrderCardToggles(child);
         }
 
         /// <summary>

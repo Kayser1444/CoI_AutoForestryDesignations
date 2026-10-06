@@ -145,6 +145,8 @@ namespace AutoForestryDesignations
                 foreach (var truck in trucks)
                 {
                     if (truck == null || !truck.Id.IsValid) continue;
+                    // KPIE specialists have their own tower jobs, never pooled cargo work.
+                    if (truck.Prototype.Id.Value == "KPIE_Forager" || truck.Prototype.Id.Value == "KPIE_Miner") continue;
 
                     // Unassign from previous tower if needed
                     if (s_truckToTower.TryGetValue(truck.Id, out var oldTowerId))
@@ -301,6 +303,7 @@ namespace AutoForestryDesignations
                     foreach (var truck in trucks)
                     {
                         if (truck == null || truck.IsDestroyed || !truck.Id.IsValid) continue;
+                        if (truck.Prototype.Id.Value == "KPIE_Forager" || truck.Prototype.Id.Value == "KPIE_Miner") continue;
 
                         if (!s_towerTrucks.TryGetValue(tower.Id, out var set))
                         {
@@ -345,7 +348,8 @@ namespace AutoForestryDesignations
                     var deadTrucks = new List<EntityId>();
                     foreach (var truckId in pair.Value)
                     {
-                        if (!entitiesManager.TryGetEntity<Truck>(truckId, out var truck) || truck.IsDestroyed)
+                        if (!entitiesManager.TryGetEntity<Truck>(truckId, out var truck) || truck.IsDestroyed
+                            || truck.Prototype.Id.Value == "KPIE_Forager" || truck.Prototype.Id.Value == "KPIE_Miner")
                         {
                             deadTrucks.Add(truckId);
                         }
@@ -421,7 +425,8 @@ namespace AutoForestryDesignations
                 var validTrucks = new List<Truck>();
                 foreach (var truckId in truckIds)
                 {
-                    if (entitiesManager.TryGetEntity<Truck>(truckId, out var truck) && !truck.IsDestroyed)
+                    if (entitiesManager.TryGetEntity<Truck>(truckId, out var truck) && !truck.IsDestroyed
+                        && truck.Prototype.Id.Value != "KPIE_Forager" && truck.Prototype.Id.Value != "KPIE_Miner")
                     {
                         validTrucks.Add(truck);
                     }

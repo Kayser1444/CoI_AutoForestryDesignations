@@ -1,5 +1,13 @@
 [
   [
+    "panel.vehicles.show_unowned",
+    "Mostrar os tipos de veículo desbloqueados que não possui para poder encomendá-los nesta torre. Os veículos que possui e as encomendas desta torre ficam sempre visíveis."
+  ],
+  [
+    "panel.vehicles.hide_unowned",
+    "Ocultar os tipos de veículo que não possui. Os veículos que possui e as encomendas desta torre continuam visíveis."
+  ],
+  [
     "AFD_ForestryDesignationsTitle",
     "Designações florestais"
   ],

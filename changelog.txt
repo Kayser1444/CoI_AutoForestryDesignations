@@ -1,3 +1,7 @@
+v0.4.3 | 2026-10-06
+* Added a vehicle-panel toggle to show unlocked vehicle types that you do not own so you can order them from a Forestry Tower
+* Fixed: Forestry truck pooling no longer claims KPIE Foragers or Miners, preserving their specialist tower jobs
+
 v0.4.2 | 2026-10-03
 * Fixed: Ordering vehicles from forestry towers no longer scans the live entity collection from the UI, preventing concurrent enumeration errors
 * Updated maximum verified game version to 0.8.7d

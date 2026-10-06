@@ -64,6 +64,8 @@ Order vehicle construction directly from the Forestry Tower's vehicle assignment
 
 Shift and Ctrl modifiers let you order 5 or 10 vehicles at once. Shift+Alt-click the **+** button to order directly even when a free vehicle could be assigned.
 
+Use the ∪ and ∩ controls in vehicle panel headers to show or hide unlocked vehicle types you do not own. Owned vehicles and orders queued at the tower remain visible.
+
 ### 🧭 Forestry vehicle optimizations
 
 ![image.png](/content-images/26783cf2c3e7297f8cf8028071611568271be7779265afe92622e07a3ae9be49/image.png)
@@ -85,7 +87,7 @@ Enable the default-on **Forestry vehicle optimizations** toggle in the world-lev
 
 ![image.png](/content-images/a32e5c6de86060d96a4862834955f583b5112a07140070e871374e8f0ccabf97/image.png)*Pooled trucks balanced across the tower's active Tree Harvesters.*
 
-Enable **Truck pooling** to manage trucks at the tower level. Trucks assigned to the Forestry Tower are pooled and automatically distributed to active Tree Harvesters based on capacity and physical footprint. Pausing, unpausing, or changing the harvester setup dynamically rebalances allocations.
+Enable **Truck pooling** to manage trucks at the tower level. Trucks assigned to the Forestry Tower are pooled and automatically distributed to active Tree Harvesters based on capacity and physical footprint. KPIE Foragers and Miners keep their specialist tower jobs and are excluded from cargo truck pools. Pausing, unpausing, or changing the harvester setup dynamically rebalances allocations.
 
 ### ⚙️ Additional settings
 

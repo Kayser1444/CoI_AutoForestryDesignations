@@ -1,5 +1,8 @@
 v0.4.3 [unreleased]
 
+* Added a vehicle-panel toggle to show or hide unlocked vehicle types that are not owned. Owned vehicles and orders queued at the tower remain visible.
+* Fixed: Forestry truck pooling no longer claims KPIE Foragers or Miners, and removes saved specialist entries from cargo truck pools so their tower jobs are preserved.
+
 v0.4.2 [released]
 
 * Fixed unsafe main-thread entity enumeration in `FindClosestDepot`: seed depot references once during `SyncUpdate`, then apply queued `EntityAdded`/`EntityRemoved` changes at sync boundaries. Clear the non-saveable cache and subscriptions on world teardown and failed initialization; revalidate destroyed entities and depot eligibility when confirming an order.
