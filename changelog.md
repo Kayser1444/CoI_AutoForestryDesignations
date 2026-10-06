@@ -1,3 +1,5 @@
+v0.4.4 [unreleased]
+
 v0.4.3 [released]
 
 * Added a vehicle-panel toggle to show or hide unlocked vehicle types that are not owned. Owned vehicles and orders queued at the tower remain visible.
