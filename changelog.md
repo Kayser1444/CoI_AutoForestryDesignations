@@ -1,4 +1,4 @@
-v0.4.3 [unreleased]
+v0.4.3 [packaged]
 
 * Added a vehicle-panel toggle to show or hide unlocked vehicle types that are not owned. Owned vehicles and orders queued at the tower remain visible.
 * Fixed: Forestry truck pooling no longer claims KPIE Foragers or Miners, and removes saved specialist entries from cargo truck pools so their tower jobs are preserved.
