@@ -9,7 +9,9 @@
 param(
     [ValidateSet('Debug', 'Release')]
     [string]$Configuration = 'Release',
-    [switch]$Package
+    [switch]$Package,
+    [string]$LegacyManagedPath = '',
+    [string]$CurrentManagedPath = ''
 )
 
 $ErrorActionPreference = 'Stop'
@@ -24,9 +26,12 @@ if (-not $PSBoundParameters.ContainsKey('Package')) {
 }
 
 Write-Host "Building AutoForestryDesignations ($Configuration)..."
-dotnet build $solution -c $Configuration
-if ($LASTEXITCODE -ne 0) {
-    exit $LASTEXITCODE
+if ($Package) {
+    . (Join-Path $PSScriptRoot 'external\CoI_AutoHelpers\build\VersionSwitching.Package.ps1')
+    Build-CoIVersionSwitchingPackageInputs -ModId 'AutoForestryDesignations' -Configuration $Configuration -LegacyManagedPath $LegacyManagedPath -CurrentManagedPath $CurrentManagedPath
+} else {
+    dotnet build $solution -c $Configuration
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }
 
 if (-not $Package) {
@@ -56,15 +61,20 @@ foreach ($oldZip in $oldZips) {
 }
 
 New-Item -ItemType Directory -Path $artifactsDir -Force | Out-Null
-if (Test-Path $stagingDir) {
-    Remove-Item $stagingDir -Recurse -Force
+if (Test-Path -LiteralPath $stagingDir) {
+    $resolvedStaging = [System.IO.Path]::GetFullPath($stagingDir)
+    $resolvedArtifacts = [System.IO.Path]::GetFullPath($artifactsDir).TrimEnd('\') + '\'
+    if (-not $resolvedStaging.StartsWith($resolvedArtifacts, [StringComparison]::OrdinalIgnoreCase)) { throw 'Unsafe staging path.' }
+    Remove-Item -LiteralPath $resolvedStaging -Recurse -Force
 }
 New-Item -ItemType Directory -Path $packageRootDir -Force | Out-Null
 
 $filesToInclude = @(
     'manifest.json',
     'config.json',
-    'AutoForestryDesignations.dll',
+    'AutoForestryDesignations.Loader.dll',
+        'implementations/pre-update-4.3/AutoForestryDesignations.dll',
+        'implementations/update-4.3/AutoForestryDesignations.dll',
     '0Harmony.dll',
     'Thumbnail.png',
     'changelog.txt',
@@ -74,7 +84,9 @@ $filesToInclude = @(
 
 foreach ($file in $filesToInclude) {
     $sourcePath = Join-Path $PSScriptRoot $file
-    if (Test-Path $sourcePath) {
+    if (-not (Test-Path -LiteralPath $sourcePath)) { throw "Missing package input: $sourcePath" }
+    if (Test-Path -LiteralPath $sourcePath) {
+        New-Item -ItemType Directory -Path (Split-Path -Parent (Join-Path $packageRootDir $file)) -Force | Out-Null
         Copy-Item $sourcePath -Destination (Join-Path $packageRootDir $file) -Force
     }
 }

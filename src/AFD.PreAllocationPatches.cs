@@ -630,9 +630,7 @@ namespace AutoForestryDesignations
 
         private static void PlayInvalidOpSound(UiContext context)
         {
-            var invalidOpSoundField = typeof(UiRoot).GetField("InvalidOpSound", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-            var invalidOpSound = (AudioSource?)invalidOpSoundField?.GetValue(context.UiRoot);
-            invalidOpSound?.Play();
+            CoI.AutoHelpers.Compatibility.UiAudio.Bind(context.UiRoot, "InvalidOp")();
         }
 
         private static void FindQueueItems(UiComponent parent, List<UiComponent> results)

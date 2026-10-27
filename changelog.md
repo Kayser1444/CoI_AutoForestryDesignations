@@ -1,5 +1,13 @@
 v0.4.4 [unreleased]
 
+- Release scope: technical/experimental compatibility with Captain of Industry Update 4.3 (0.8.8), retaining support for 0.8.7d. Extensive playtesting remains; successful startup and focused checks do not certify extended gameplay.
+
+- Release preparation: owner confirms the current features and successful game/save loading on both 0.8.7d and 0.8.8. Ship one version-switching Release package with both implementations. Retain current version until public distribution is confirmed.
+
+- Added an experimental automatic game-version selector with both 0.8.7d and 0.8.8 implementations in one installed mod. Native loader and binary-reference checks pass on both APIs; the owner subsequently confirmed game/save loading on both supported versions.
+
+* Restored UI click and invalid-operation sounds for Captain of Industry 0.8.8 (Update 4.3, build 622), retaining the previous prefab/field fallback. Debug build and shared audio contracts pass; in-game verification remains pending.
+
 v0.4.3 [released]
 
 * Added a vehicle-panel toggle to show or hide unlocked vehicle types that are not owned. Owned vehicles and orders queued at the tower remain visible.

@@ -24,7 +24,7 @@ is included by mistake, I intend to correct it promptly upon discovery or notice
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
-  <Target Name="CopyModFilesToProjectRoot" AfterTargets="Build">
+  <Target Name="CopyModFilesToProjectRoot" AfterTargets="Build" Condition="'$(SkipModDeployment)' != 'true'">
     <Message Text="Copying mod files to project root..." Importance="High" />
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)" OverwriteReadOnlyFiles="true" />
     <Copy SourceFiles="$(OutDir)0Harmony.dll" DestinationFolder="$(ProjectDir)" Condition="Exists('$(OutDir)0Harmony.dll')" OverwriteReadOnlyFiles="true" />
@@ -111,4 +111,5 @@ is included by mistake, I intend to correct it promptly upon discovery or notice
     </AssemblyAttribute>
   </ItemGroup>
 
+  <Import Project="external\CoI_AutoHelpers\build\CoI.Compatibility.targets" />
 </Project>

@@ -302,13 +302,13 @@ namespace AutoForestryDesignations
         internal static void SetTreesRenderer(TreesRenderer? renderer) => s_treesRenderer = renderer;
         internal static TreesRenderer? GetTreesRenderer() => s_treesRenderer;
 
-        private static AudioSource? s_clickSound;
-        internal static void SetClickSound(AudioSource? clickSound) => s_clickSound = clickSound;
+        private static Action? s_clickSound;
+        internal static void SetClickSound(Action? clickSound) => s_clickSound = clickSound;
         internal static void PlayClickSound()
         {
             if (s_clickSound != null)
             {
-                try { s_clickSound.Play(); } catch { }
+                try { s_clickSound(); } catch { }
             }
         }
 

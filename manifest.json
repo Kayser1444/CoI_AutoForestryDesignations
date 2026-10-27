@@ -8,10 +8,10 @@
     "Kayser"
   ],
   "min_game_version": "0.8.5",
-  "max_verified_game_version": "0.8.7d",
+  "max_verified_game_version": "0.8.8",
   "primary_dlls": [
     "0Harmony.dll",
-    "AutoForestryDesignations.dll"
+    "AutoForestryDesignations.Loader.dll"
   ],
   "mod_dependencies": [],
   "optional_mod_dependencies": [],

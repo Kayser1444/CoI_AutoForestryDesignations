@@ -209,6 +209,7 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
             m_saveManager.OnSaveDone += onSaveDone;
 
             AutoForestryDesignation.s_log.RegisterAutoConsoleMirroring(this, m_gameLoopEvents, resolver.Resolve<GameConsoleCommandsExecutor>());
+            ModDebugWebApi.Register(this, resolver, "[AFD]");
             RegisterLocalizationLateApply(resolver);
 
             ITerrainDesignationsManager desigManager = resolver.Resolve<ITerrainDesignationsManager>();
@@ -375,8 +376,8 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
             }
             try
             {
-                var audioDb = resolver.Resolve<Mafi.Unity.Audio.AudioDb>();
-                var clickSound = audioDb.GetSharedAudioUi("Assets/Unity/UserInterface/Audio/ButtonClick.prefab");
+                var uiRoot = resolver.Resolve<Mafi.Unity.UiToolkit.UiRoot>();
+                var clickSound = CoI.AutoHelpers.Compatibility.UiAudio.Bind(uiRoot, "ButtonClick");
                 AutoForestryDesignation.SetClickSound(clickSound);
                 AutoForestryDesignation.LogDebug("ButtonClick audio source resolved successfully.");
             }
