@@ -11,7 +11,7 @@
     "0.8.8"
   ],
   "compatibilityScope": "Technical/experimental Update 4.3 compatibility; extensive playtesting remains",
-  "publication": "Not published",
+  "publication": "Released; confirmed by owner",
   "verifiedInputs": [
     {
       "path": "0Harmony.dll",
@@ -117,5 +117,6 @@
     "nativeReleaseSelectorFixtureBothVersions": "pass",
     "fullGameSaveLoadingBothVersions": "owner-confirmed",
     "extensivePlaytesting": "remaining"
-  }
+  },
+  "releaseDate": "2026-10-27"
 }
