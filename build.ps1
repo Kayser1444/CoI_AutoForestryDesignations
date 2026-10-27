@@ -43,7 +43,7 @@ if (-not (Test-Path $manifestPath)) {
     throw 'manifest.json was not found.'
 }
 
-$manifest = Get-Content $manifestPath -Raw | ConvertFrom-Json
+$manifest = Get-Content $manifestPath -Raw -Encoding UTF8 | ConvertFrom-Json
 $packageId = if ($manifest.id) { [string]$manifest.id } else { 'AutoForestryDesignations' }
 $packageVersion = if ($manifest.version) { [string]$manifest.version } else { 'dev' }
 
