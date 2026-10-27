@@ -20,6 +20,9 @@ gameplay on either version.
 - The selector and `PRE_4_3_COMPAT` paths are temporary. They can be retired
   after Update 5 or when older-game support is no longer needed.
 
-Package hashes and exact contents will be recorded separately after the
-release-preparation commit has been pushed. No next-version advancement is
+The Release ZIP passed CRC, exact-content, UTF-8 manifest, DLL layout,
+translation-key/placeholder and byte-equality checks. Input and archive hashes
+are recorded in the adjacent versioned package JSON after the preparation
+commits were pushed. KPIE additionally passed its 14-bundle and nine-name-pool
+checks. No next-version advancement is
 authorized until public distribution is confirmed.

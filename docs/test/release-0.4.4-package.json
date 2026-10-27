@@ -1,0 +1,121 @@
+{
+  "version": "0.4.4",
+  "preparationCommit": "36b4b755ee54095a824f175b108a4476e5873d25",
+  "helpersCommit": "f216feac5684447bac8adff43f98f0a6ccafe6e5",
+  "branch": "main",
+  "package": "AutoForestryDesignations-0.4.4.zip",
+  "bytes": 1140477,
+  "sha256": "71F30B4FFC0956D2602548C99BA981A1C56095107F709E15BEB8AB7091B349CC",
+  "gameVersions": [
+    "0.8.7d",
+    "0.8.8"
+  ],
+  "compatibilityScope": "Technical/experimental Update 4.3 compatibility; extensive playtesting remains",
+  "publication": "Not published",
+  "verifiedInputs": [
+    {
+      "path": "0Harmony.dll",
+      "bytes": 2195456,
+      "sha256": "498EDE1D20A87AFAA6C7B1ED5B3BEB505B01DC418B952C1BE5C322204404B033"
+    },
+    {
+      "path": "AutoForestryDesignations.Loader.dll",
+      "bytes": 10752,
+      "sha256": "057DC511ECA95953856781369CC6DDA12AFF7FF9EDE49FC5979EBB48D0D84DC4"
+    },
+    {
+      "path": "LICENSE",
+      "bytes": 1063,
+      "sha256": "B94A282F8A6E25F57AB31097A7CCAA8EBC00976950B75AECB62A22E3F352022D"
+    },
+    {
+      "path": "Thumbnail.png",
+      "bytes": 141755,
+      "sha256": "C04FF4B7A8560CD8C97CF5F1FE71BCBD7B97CEC3C7FFAA709D3D4732B5C1AA42"
+    },
+    {
+      "path": "changelog.txt",
+      "bytes": 11432,
+      "sha256": "1C5FC0F4C70867874C2C44AFCFE1060CA966B158D4E64B56ACF61B48BB8B8D6F"
+    },
+    {
+      "path": "config.json",
+      "bytes": 538,
+      "sha256": "14C7C0C253BD4C07E59DAC1E335E1C7B1369223338C1483EB95BB0DAE79E5ED9"
+    },
+    {
+      "path": "implementations/pre-update-4.3/AutoForestryDesignations.dll",
+      "bytes": 267264,
+      "sha256": "4A96BBAA04964FC955BFD1A0C33971CEEE7AD9FA99D6A7B176FF84FDD9DABCB2"
+    },
+    {
+      "path": "implementations/update-4.3/AutoForestryDesignations.dll",
+      "bytes": 269312,
+      "sha256": "8305FA83CE07100D94030023809D5FDB5A830C34AA344888535C96FEE9DD7BDD"
+    },
+    {
+      "path": "manifest.json",
+      "bytes": 1612,
+      "sha256": "D41BB395A4D6104281D7A458D1ED16AE7DA15268E8224A058E5B6257D64F45E9"
+    },
+    {
+      "path": "readme.md",
+      "bytes": 3883,
+      "sha256": "2ED33D0D54EBD26679160599F5C0BDC493E794B562FFACF822158C1CEA497D19"
+    },
+    {
+      "path": "translations/de.json",
+      "bytes": 10526,
+      "sha256": "63D0F2EB4DB94445C863F399FABBFEAD8589B2B2AFFA3A2629222F4209100E87"
+    },
+    {
+      "path": "translations/en.json",
+      "bytes": 9902,
+      "sha256": "88906CF58CDFA70DA3D40E178532EC147DF6ADD2C42DD4508AB86BF50B2F7F03"
+    },
+    {
+      "path": "translations/es.json",
+      "bytes": 11104,
+      "sha256": "ED0361D4B9BE56314BCD41EB34887BDEEF774C71597809D16F7B0472C90442DB"
+    },
+    {
+      "path": "translations/it.json",
+      "bytes": 11141,
+      "sha256": "47971F02B578733C80C41C27E57014EC4BAC224A949E0B1727C04A3EB6409B03"
+    },
+    {
+      "path": "translations/pt.json",
+      "bytes": 10872,
+      "sha256": "D4E17AB17FDD6FE4C0216FDB5B92C0490DEF9C3D5E297A8221A37A6C4898D469"
+    },
+    {
+      "path": "translations/ru.json",
+      "bytes": 14848,
+      "sha256": "26838B6C16433B1ECC2CE85A4A1794940E19AE09782FB48D967EF269D7CBCA11"
+    },
+    {
+      "path": "translations/sv.json",
+      "bytes": 10310,
+      "sha256": "F5D0124A3658E3DF4F55F766F3021B8B7883EC0F11DC7DF79ABAAF8D6DB6A8E4"
+    },
+    {
+      "path": "translations/zh.json",
+      "bytes": 9394,
+      "sha256": "97FA0108A0C4BE4E2ADF011430D47F16D0FA1CAA68AA659AA8A647EF92C8430C"
+    }
+  ],
+  "entries": 18,
+  "runtimeLocales": 8,
+  "verification": {
+    "zipCrc": "pass",
+    "portableUniquePaths": "pass",
+    "reviewedManifest": "pass",
+    "selectorAndBothImplementations": "pass",
+    "byteEqualityWithInstalledAndReleaseStaging": "pass",
+    "localeKeysAndPlaceholders": "pass",
+    "gameReferencesAndReleaseGating": "pass",
+    "nativeReleaseSelectorFixtureBothVersions": "pass",
+    "fullGameSaveLoadingBothVersions": "owner-confirmed",
+    "extensivePlaytesting": "remaining"
+  }
+}

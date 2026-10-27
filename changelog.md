@@ -1,4 +1,4 @@
-v0.4.4 [unreleased]
+v0.4.4 [packaged]
 
 - Release scope: technical/experimental compatibility with Captain of Industry Update 4.3 (0.8.8), retaining support for 0.8.7d. Extensive playtesting remains; successful startup and focused checks do not certify extended gameplay.
 
