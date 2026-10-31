@@ -209,7 +209,6 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
             m_saveManager.OnSaveDone += onSaveDone;
 
             AutoForestryDesignation.s_log.RegisterAutoConsoleMirroring(this, m_gameLoopEvents, resolver.Resolve<GameConsoleCommandsExecutor>());
-            ModDebugWebApi.Register(this, resolver, "[AFD]");
             RegisterLocalizationLateApply(resolver);
 
             ITerrainDesignationsManager desigManager = resolver.Resolve<ITerrainDesignationsManager>();

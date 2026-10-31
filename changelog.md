@@ -1,5 +1,7 @@
 v0.4.5 [unreleased]
 
+- Move test web API startup to the game launch command; retain early AutoHelpers console mirroring for version and DLL timestamp rows.
+
 v0.4.4 [released]
 
 - Release scope: technical/experimental compatibility with Captain of Industry Update 4.3 (0.8.8), retaining support for 0.8.7d. Extensive playtesting remains; successful startup and focused checks do not certify extended gameplay.
