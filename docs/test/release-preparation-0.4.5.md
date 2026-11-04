@@ -17,3 +17,12 @@ Release evidence is retained locally in the workspace .scratch/shipping-20261104
 ## Scope and limits
 
 No public upload or Hub page publication is part of preparation. Historical Hub checkpoints remain preserved. No extended simulation, complete visual review, or new older-game runtime session was performed. Existing earlier owner confirmation of legacy game/save loading is separate from these build checks.
+
+## Verified shipping package
+
+- ZIP: AutoForestryDesignations-0.4.5.zip
+- Entries: 18; bytes: 1155485
+- SHA-256: 2CFCD84F4A61D357DF6468DBB490D3E6850806D7CB7698EFB3C1EF1A06F55D12
+- Exact runtime whitelist and every entry's source bytes verified; both implementation DLLs match the Release build overlays
+- No debug symbols, authoring tools, laboratory proposals or translation metadata in the ZIP
+- Preparation commit: d61f297; shared AutoHelpers commit: 765d2c1
