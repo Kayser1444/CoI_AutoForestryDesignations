@@ -1,3 +1,5 @@
+v0.4.6 [unreleased]
+
 v0.4.5 [released]
 
 - Release verification on 0.8.8a b628: dual Debug/Release builds and current/legacy compiled references pass; same-process English/Swedish/English settings reload preserves unique tabs and leaves the save unchanged. See docs/test/release-preparation-0.4.5.md for checks and limits.
