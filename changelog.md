@@ -1,4 +1,4 @@
-v0.4.5 [packaged]
+v0.4.5 [released]
 
 - Release verification on 0.8.8a b628: dual Debug/Release builds and current/legacy compiled references pass; same-process English/Swedish/English settings reload preserves unique tabs and leaves the save unchanged. See docs/test/release-preparation-0.4.5.md for checks and limits.
 
@@ -134,7 +134,7 @@ v0.1.9 [released]
 * Fixed release ZIP entry paths to use portable forward slashes, allowing reliable extraction on Linux.
 * Updated localized growth-range formatting across the supported non-English languages.
 
-v0.1.8 [packaged]
+v0.1.8 [released]
 * Added vehicle construction enqueueing for forestry tower assignments, including closest-depot by driving distance ordering, gold border highlighting on enqueued cards, and pre-assignment tooltips in the vehicle depot UI
 * Added confirmation dialog when enqueuing vehicles with camera panning to the target depot and bold entity highlights
 * Added click sound on confirmation popup buttons and support for canceling enqueued orders at the closest depot via the minus button when active vehicle allocation is zero
