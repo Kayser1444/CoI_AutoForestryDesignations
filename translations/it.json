@@ -1,374 +1,374 @@
 [
   [
-    "panel.vehicles.show_unowned",
+    "AutoForestryDesignations.PanelVehiclesShowUnowned",
     "Mostra i tipi di veicolo sbloccati che non possiedi, così puoi ordinarli da questa torre. I veicoli posseduti e gli ordini in coda di questa torre sono sempre visibili."
   ],
   [
-    "panel.vehicles.hide_unowned",
+    "AutoForestryDesignations.PanelVehiclesHideUnowned",
     "Nascondi i tipi di veicolo che non possiedi. I veicoli posseduti e gli ordini in coda di questa torre restano visibili."
   ],
   [
-    "AFD_ForestryDesignationsTitle",
+    "AutoForestryDesignations.ForestryDesignationsTitle",
     "Designazioni forestali"
   ],
   [
-    "AFD_ForestryInformationTitle",
+    "AutoForestryDesignations.ForestryInformationTitle",
     "Informazioni sul settore forestale"
   ],
   [
-    "AFD_ForestryDesignationsTitleTipFmt",
+    "AutoForestryDesignations.ForestryDesignationsTitleTipFmt",
     "Crea designazioni forestali automatiche. [Kayser's Automatic Forestry Designations v{0}]"
   ],
   [
-    "AFD_ForestryInformationTitleTipFmt",
+    "AutoForestryDesignations.ForestryInformationTitleTipFmt",
     "Alberi attuali e produzione di legname prevista nell'area forestale di questa torre. [Kayser's Automatic Forestry Designations v{0}]"
   ],
   [
-    "AFD_CreateDesignationsBtn",
+    "AutoForestryDesignations.CreateDesignationsBtn",
     "Crea designazioni"
   ],
   [
-    "AFD_CreateDesignationsBtnTip",
+    "AutoForestryDesignations.CreateDesignationsBtnTip",
     "Esamina l'area della torre e posiziona le designazioni forestali."
   ],
   [
-    "AFD_ClearDesignationsBtnTip",
+    "AutoForestryDesignations.ClearDesignationsBtnTip",
     "Cancella tutte le designazioni forestali nell'area di questa torre."
   ],
   [
-    "AFD_RefreshCompositionTip",
+    "AutoForestryDesignations.RefreshCompositionTip",
     "Aggiorna la composizione forestale"
   ],
   [
-    "AFD_BoolYes",
+    "AutoForestryDesignations.BoolYes",
     "Sì"
   ],
   [
-    "AFD_BoolNo",
+    "AutoForestryDesignations.BoolNo",
     "Disattivato"
   ],
   [
-    "AFD_OnlyFertileTilesLabel",
+    "AutoForestryDesignations.OnlyFertileTilesLabel",
     "Solo caselle fertili"
   ],
   [
-    "AFD_OnlyFertileTilesTip",
+    "AutoForestryDesignations.OnlyFertileTilesTip",
     "Posiziona designazioni solo dove il terreno è idoneo alla piantumazione di alberi: terreno fertile (non roccia, sabbia od oceano) e non occupato da edifici o altre entità."
   ],
   [
-    "AFD_OnlyReachableTilesLabel",
+    "AutoForestryDesignations.OnlyReachableTilesLabel",
     "Solo caselle raggiungibili"
   ],
   [
-    "AFD_OnlyReachableTilesTip",
+    "AutoForestryDesignations.OnlyReachableTilesTip",
     "Se questa opzione è attivata, salta le caselle designate che non sono raggiungibili tramite percorsi percorribili in veicolo dall'area della torre."
   ],
   [
-    "AFD_OverrideTerrainDesignationsLabel",
+    "AutoForestryDesignations.OverrideTerrainDesignationsLabel",
     "Sovrascrivi le designazioni del terreno"
   ],
   [
-    "AFD_OverrideTerrainDesignationsTip",
+    "AutoForestryDesignations.OverrideTerrainDesignationsTip",
     "Consente alle designazioni forestali di sostituire le designazioni del terreno esistenti, incluse quelle di estrazione, scarico o livellamento. Disattivato per impostazione predefinita."
   ],
   [
-    "AFD_AvoidFlatTilesLabel",
+    "AutoForestryDesignations.AvoidFlatTilesLabel",
     "Evita caselle pianeggianti"
   ],
   [
-    "AFD_AvoidFlatTilesTip",
+    "AutoForestryDesignations.AvoidFlatTilesTip",
     "Usa solo caselle irregolari e accidentate per la silvicoltura. (Così le caselle pianeggianti restano disponibili per gli edifici.)"
   ],
   [
-    "AFD_TargetYieldLabel",
+    "AutoForestryDesignations.TargetYieldLabel",
     "Produzione obiettivo"
   ],
   [
-    "AFD_TargetYieldTip",
+    "AutoForestryDesignations.TargetYieldTip",
     "Produzione sostenibile di legno per mese di gioco. 0 = nessun obiettivo (∞)."
   ],
   [
-    "AFD_TargetYieldLegacyTipFmt",
+    "AutoForestryDesignations.TargetYieldLegacyTipFmt",
     "Numero massimo di designazioni legacy conservato: {0}."
   ],
   [
-    "AFD_MaxTilesLabel",
+    "AutoForestryDesignations.MaxTilesLabel",
     "Numero massimo di designazioni"
   ],
   [
-    "AFD_MaxTilesTip",
+    "AutoForestryDesignations.MaxTilesTip",
     "Numero massimo di caselle di designazione da posizionare per ogni esecuzione. 0 = nessun limite (∞)."
   ],
   [
-    "AFD_TruckPoolingLabel",
+    "AutoForestryDesignations.TruckPoolingLabel",
     "Raggruppamento dei camion"
   ],
   [
-    "AFD_TruckPoolingTip",
+    "AutoForestryDesignations.TruckPoolingTip",
     "Raggruppa e bilancia automaticamente i camion assegnati tra tutte le raccoglitrici di alberi attive di questa torre."
   ],
   [
-    "AFD_ForestryVehicleOptimizationsLabel",
+    "AutoForestryDesignations.ForestryVehicleOptimizationsLabel",
     "Ottimizzazioni dei veicoli forestali"
   ],
   [
-    "AFD_ForestryVehicleOptimizationsTip",
+    "AutoForestryDesignations.ForestryVehicleOptimizationsTip",
     "Sopprime le pause bagno obbligatorie imposte dal Sindacato dei Lavoratori Forestali. Le piantatrici e le mietitrici inattive restano nel campo e si spostano in anticipo verso i luoghi dove si prevede che compaia del lavoro."
   ],
   [
-    "AFD_TruckPoolTitle",
+    "AutoForestryDesignations.TruckPoolTitle",
     "Piscina per camion"
   ],
   [
-    "AFD_TruckPoolingHarvesterButtonsDisabledTip",
+    "AutoForestryDesignations.TruckPoolingHarvesterButtonsDisabledTip",
     "Truck pooling abilitato. Gestisci i compiti tramite {0}."
   ],
   [
-    "AFD_TruckPoolingHarvesterNote",
+    "AutoForestryDesignations.TruckPoolingHarvesterNote",
     "Nota: Truck pooling abilitato su {0}. I veicoli assegnati possono essere ridistribuiti."
   ],
   [
-    "AFD_NoForestryTowerSelected",
+    "AutoForestryDesignations.NoForestryTowerSelected",
     "Non è stata selezionata alcuna torre forestale."
   ],
   [
-    "AFD_NoForestryDesignations",
+    "AutoForestryDesignations.NoForestryDesignations",
     "Nessuna designazione forestale."
   ],
   [
-    "AFD_PressToScanComposition",
+    "AutoForestryDesignations.PressToScanComposition",
     "Premere ↺ per analizzare la composizione del bosco."
   ],
   [
-    "AFD_AssignedTrucksForestryTowerTooltip",
+    "AutoForestryDesignations.AssignedTrucksForestryTowerTooltip",
     "I camion assegnati serviranno automaticamente tutti i raccoglitori di alberi assegnati a questa torre."
   ],
   [
-    "AFD_KpiTreesLabel",
+    "AutoForestryDesignations.KpiTreesLabel",
     "Alberi"
   ],
   [
-    "AFD_KpiMaturityLabel",
+    "AutoForestryDesignations.KpiMaturityLabel",
     "Maturità"
   ],
   [
-    "AFD_KpiSustainableYieldLabel",
+    "AutoForestryDesignations.KpiSustainableYieldLabel",
     "Rendimento sostenibile"
   ],
   [
-    "AFD_KpiTreesTip",
+    "AutoForestryDesignations.KpiTreesTip",
     "Conteggio in tempo reale degli alberi gestiti attuali all'interno dell'area forestale di questa torre. Il primo numero indica gli alberi presenti ora; il secondo numero indica il numero massimo stimato di alberi in base alle posizioni di piantumazione attualmente valide."
   ],
   [
-    "AFD_KpiMaturityTipFmt",
+    "AutoForestryDesignations.KpiMaturityTipFmt",
     "Maturità media ed età attuale degli alberi gestiti. La maturità completa è attualmente <b>{0}</b>, comprese le impostazioni di difficoltà."
   ],
   [
-    "AFD_KpiSustainableYieldTipFmt",
+    "AutoForestryDesignations.KpiSustainableYieldTipFmt",
     "Produzione massima di legname a lungo termine che può essere mantenuta per questa torre ogni mese di gioco, tenendo conto dell'area designata, della soglia di raccolta e della velocità di crescita degli alberi in base alle impostazioni di difficoltà (attualmente <b>{0}</b> media a piena maturità)."
   ],
   [
-    "AFD_GrowthBreakdownHeader",
+    "AutoForestryDesignations.GrowthBreakdownHeader",
     "Analisi della crescita"
   ],
   [
-    "AFD_GrowthBreakdownTipFmt",
+    "AutoForestryDesignations.GrowthBreakdownTipFmt",
     "Distribuzione della maturità degli alberi gestiti. L'età di piena maturità dipende dalla specie arborea e dal grado di difficoltà; attualmente, l'età media di piena maturità è {0}. Curva di resa standard della silvicoltura: al 40% dell'età = 30% di resa, al 60% = 60%, all'80% = 88%, al 100% = piena resa."
   ],
   [
-    "AFD_GrowthHeaderTipNoCutFmt",
+    "AutoForestryDesignations.GrowthHeaderTipNoCutFmt",
     "Distribuzione in base alla maturità rispetto all'età attuale di piena crescita di ciascun albero. Opzione di raccolta: nessun taglio. Maturità media: {0}."
   ],
   [
-    "AFD_GrowthHeaderTipWithCutFmt",
+    "AutoForestryDesignations.GrowthHeaderTipWithCutFmt",
     "Distribuzione in base alla maturità rispetto all'età attuale di piena crescita di ciascun albero. Opzione di raccolta: {0} ({1}% di un albero a piena crescita {2})."
   ],
   [
-    "AFD_HarvestThresholdTip",
+    "AutoForestryDesignations.HarvestThresholdTip",
     "Soglia di raccolta"
   ],
   [
-    "AFD_SegmentTipFmt",
+    "AutoForestryDesignations.SegmentTipFmt",
     "<b>{0}</b>\n{1} alberi ({2:P0} piantati, {3:P0} di capacità)\n{4}"
   ],
   [
-    "AFD_SegmentAboveHarvest",
+    "AutoForestryDesignations.SegmentAboveHarvest",
     "sopra la soglia di raccolta"
   ],
   [
-    "AFD_SegmentBelowHarvest",
+    "AutoForestryDesignations.SegmentBelowHarvest",
     "al di sotto della soglia di raccolta"
   ],
   [
-    "AFD_UnusedCapacityTipFmt",
+    "AutoForestryDesignations.UnusedCapacityTipFmt",
     "Capacità inutilizzata: {0} caselle ({1:P0} della capacità)"
   ],
   [
-    "AFD_SegmentInteractionHint",
+    "AutoForestryDesignations.SegmentInteractionHint",
     "Passa sopra per evidenziare gli alberi in questa fase.\nFai clic per marcarli o deselezionarli per la raccolta."
   ],
   [
-    "AFD_SettingsModName",
+    "AutoForestryDesignations.SettingsModName",
     "Designazioni forestali automatiche"
   ],
   [
-    "AFD_SettingsTabDefaults",
+    "AutoForestryDesignations.SettingsTabDefaults",
     "Predefiniti"
   ],
   [
-    "AFD_SettingsTabGameSettings",
+    "AutoForestryDesignations.SettingsTabGameSettings",
     "Impostazioni di gioco"
   ],
   [
-    "AFD_SettingsHeadingForestryTowerDefaults",
+    "AutoForestryDesignations.SettingsHeadingForestryTowerDefaults",
     "Impostazioni predefinite della torre"
   ],
   [
-    "AFD_SettingsHeadingDesignationDefaults",
+    "AutoForestryDesignations.SettingsHeadingDesignationDefaults",
     "Comportamenti di designazione"
   ],
   [
-    "AFD_SettingsHeadingScanPerformance",
+    "AutoForestryDesignations.SettingsHeadingScanPerformance",
     "Prestazioni scansione"
   ],
   [
-    "AFD_SettingsHeadingPanelDefaults",
+    "AutoForestryDesignations.SettingsHeadingPanelDefaults",
     "Impostazioni predefinite dei pannelli della torre"
   ],
   [
-    "AFD_SettingsHeadingOptimizations",
+    "AutoForestryDesignations.SettingsHeadingOptimizations",
     "Ottimizzazioni"
   ],
   [
-    "AFD_SettingsAvoidTilesWithTreesLabel",
+    "AutoForestryDesignations.SettingsAvoidTilesWithTreesLabel",
     "Evita caselle con alberi"
   ],
   [
-    "AFD_SettingsAvoidTilesWithTreesTip",
+    "AutoForestryDesignations.SettingsAvoidTilesWithTreesTip",
     "Salta le tessere che contengono già un albero durante la creazione delle designazioni."
   ],
   [
-    "AFD_SettingsMarkHarvestReadyLabel",
+    "AutoForestryDesignations.SettingsMarkHarvestReadyLabel",
     "Marca alberi pronti al raccolto"
   ],
   [
-    "AFD_SettingsMarkHarvestReadyTip",
+    "AutoForestryDesignations.SettingsMarkHarvestReadyTip",
     "Dopo aver creato le designazioni, contrassegna automaticamente gli alberi che soddisfano la soglia di raccolta della torre per la raccolta."
   ],
   [
-    "AFD_SettingsBatchSizeLabel",
+    "AutoForestryDesignations.SettingsBatchSizeLabel",
     "Dimensione batch"
   ],
   [
-    "AFD_SettingsBatchSizeTip",
+    "AutoForestryDesignations.SettingsBatchSizeTip",
     "Numero di designazioni piazzate per frame. Più basso = maggiore reattività; più alto = scansioni più rapide. Limitato a 1-200."
   ],
   [
-    "AFD_SettingsForestryPanelCollapsedLabel",
+    "AutoForestryDesignations.SettingsForestryPanelCollapsedLabel",
     "Pannello forestale compresso"
   ],
   [
-    "AFD_SettingsForestryPanelCollapsedTip",
+    "AutoForestryDesignations.SettingsForestryPanelCollapsedTip",
     "Stato compresso predefinito del pannello delle designazioni forestali quando si apre l'ispettore di una torre."
   ],
   [
-    "AFD_SettingsInfoPanelCollapsedLabel",
+    "AutoForestryDesignations.SettingsInfoPanelCollapsedLabel",
     "Pannello info compresso"
   ],
   [
-    "AFD_SettingsInfoPanelCollapsedTip",
+    "AutoForestryDesignations.SettingsInfoPanelCollapsedTip",
     "Stato compresso predefinito del pannello informazioni forestali quando si apre l'ispettore di una torre."
   ],
   [
-    "AFD_SettingsSaveAsGlobal",
+    "AutoForestryDesignations.SettingsSaveAsGlobal",
     "Salva come config"
   ],
   [
-    "AFD_SettingsSaveAsGlobalTooltip",
+    "AutoForestryDesignations.SettingsSaveAsGlobalTooltip",
     "Salva queste impostazioni in AFDsettings.json. Verranno usate come predefiniti per tutte le nuove partite."
   ],
   [
-    "AFD_SettingsSavedToFile",
+    "AutoForestryDesignations.SettingsSavedToFile",
     "Salvato in AFDsettings.json."
   ],
   [
-    "AFD_SettingsSaveFailed",
+    "AutoForestryDesignations.SettingsSaveFailed",
     "Salvataggio non riuscito - controlla il log"
   ],
   [
-    "AFD_SettingsRestoreDefaults",
+    "AutoForestryDesignations.SettingsRestoreDefaults",
     "Ripristina predefiniti"
   ],
   [
-    "AFD_SettingsRestoreDefaultsTooltip",
+    "AutoForestryDesignations.SettingsRestoreDefaultsTooltip",
     "Ripristina tutti i predefiniti di designazioni e pannelli ai valori integrati. (Non le salva automaticamente come config.)"
   ],
   [
-    "AFD_SettingsRestoredDefaults",
+    "AutoForestryDesignations.SettingsRestoredDefaults",
     "Predefiniti ripristinati"
   ],
   [
-    "AFD_NewlyPlantedTip",
+    "AutoForestryDesignations.NewlyPlantedTip",
     "Appena piantato / maturazione minima"
   ],
   [
-    "AFD_FullyGrownTipFmt",
+    "AutoForestryDesignations.FullyGrownTipFmt",
     "Piena maturazione / massima maturità ({0} è la maturità media in questa torre)."
   ],
   [
-    "AFD_BucketFullyMatureFmt",
+    "AutoForestryDesignations.BucketFullyMatureFmt",
     "Completamente maturo ({0}, 100%)"
   ],
   [
-    "AFD_BucketNewlyPlantedName",
+    "AutoForestryDesignations.BucketNewlyPlantedName",
     "Appena piantato"
   ],
   [
-    "AFD_BucketYoungName",
+    "AutoForestryDesignations.BucketYoungName",
     "Giovane"
   ],
   [
-    "AFD_BucketGrowingName",
+    "AutoForestryDesignations.BucketGrowingName",
     "In crescita"
   ],
   [
-    "AFD_BucketMaturingName",
+    "AutoForestryDesignations.BucketMaturingName",
     "In maturazione"
   ],
   [
-    "AFD_BucketNearlyMatureName",
+    "AutoForestryDesignations.BucketNearlyMatureName",
     "Quasi maturo"
   ],
   [
-    "AFD_BucketRangeFmt",
+    "AutoForestryDesignations.BucketRangeFmt",
     "{0} ({1}–{2}; {3:P0}–{4:P0})"
   ],
   [
-    "AFD_OrderConstructionTooltip",
+    "AutoForestryDesignations.OrderConstructionTooltip",
     "Ordina un nuovo {0} per {2} presso {1}"
   ],
   [
-    "AFD_OrderConstructionShortcutHint",
+    "AutoForestryDesignations.OrderConstructionShortcutHint",
     "Fai clic tenendo premuto Maiusc-Alt per ordinare un nuovo {0} per {2} presso {1}"
   ],
   [
-    "AFD_PreAssignedTooltipFmt",
+    "AutoForestryDesignations.PreAssignedTooltipFmt",
     "Preassegnato a {0}"
   ],
   [
-    "AFD_EnqueueConfirmPromptSingular",
+    "AutoForestryDesignations.EnqueueConfirmPromptSingular",
     "Ordinare un nuovo {0} per {2} presso {1}?"
   ],
   [
-    "AFD_EnqueueConfirmPromptPlural",
+    "AutoForestryDesignations.EnqueueConfirmPromptPlural",
     "Ordinare {0} nuove unità di {1} per {3} presso {2}?"
   ],
   [
-    "AFD_EnqueueConfirmBtnText",
+    "AutoForestryDesignations.EnqueueConfirmBtnText",
     "Ordina"
   ],
   [
-    "AFD_ZoomToDepotTooltip",
+    "AutoForestryDesignations.ZoomToDepotTooltip",
     "Zoom su {0}"
   ]
 ]

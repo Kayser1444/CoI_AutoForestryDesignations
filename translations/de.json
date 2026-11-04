@@ -1,374 +1,374 @@
 [
   [
-    "panel.vehicles.show_unowned",
+    "AutoForestryDesignations.PanelVehiclesShowUnowned",
     "Nicht besessene, freigeschaltete Fahrzeugtypen anzeigen, damit du sie von diesem Turm aus bestellen kannst. Eigene Fahrzeuge und bereits bei diesem Turm bestellte Fahrzeuge werden immer angezeigt."
   ],
   [
-    "panel.vehicles.hide_unowned",
+    "AutoForestryDesignations.PanelVehiclesHideUnowned",
     "Nicht besessene Fahrzeugtypen ausblenden. Eigene Fahrzeuge und bereits bei diesem Turm bestellte Fahrzeuge bleiben sichtbar."
   ],
   [
-    "AFD_ForestryDesignationsTitle",
+    "AutoForestryDesignations.ForestryDesignationsTitle",
     "Forstgebiete"
   ],
   [
-    "AFD_ForestryInformationTitle",
+    "AutoForestryDesignations.ForestryInformationTitle",
     "Forstinformationen"
   ],
   [
-    "AFD_ForestryDesignationsTitleTipFmt",
+    "AutoForestryDesignations.ForestryDesignationsTitleTipFmt",
     "Automatische Forstgebiete erstellen. [Kayser's Automatic Forestry Designations v{0}]"
   ],
   [
-    "AFD_ForestryInformationTitleTipFmt",
+    "AutoForestryDesignations.ForestryInformationTitleTipFmt",
     "Aktueller Baumbestand und prognostizierter Holzertrag im Forstgebiet dieses Turms. [Kayser's Automatic Forestry Designations v{0}]"
   ],
   [
-    "AFD_CreateDesignationsBtn",
+    "AutoForestryDesignations.CreateDesignationsBtn",
     "Gebiete erstellen"
   ],
   [
-    "AFD_CreateDesignationsBtnTip",
+    "AutoForestryDesignations.CreateDesignationsBtnTip",
     "Scannt den Bereich des Turms und platziert Forstgebiete."
   ],
   [
-    "AFD_ClearDesignationsBtnTip",
+    "AutoForestryDesignations.ClearDesignationsBtnTip",
     "Entfernt alle Forstgebiete im Bereich dieses Turms."
   ],
   [
-    "AFD_RefreshCompositionTip",
+    "AutoForestryDesignations.RefreshCompositionTip",
     "Forstübersicht aktualisieren"
   ],
   [
-    "AFD_BoolYes",
+    "AutoForestryDesignations.BoolYes",
     "Ja"
   ],
   [
-    "AFD_BoolNo",
+    "AutoForestryDesignations.BoolNo",
     "Nein"
   ],
   [
-    "AFD_OnlyFertileTilesLabel",
+    "AutoForestryDesignations.OnlyFertileTilesLabel",
     "Nur fruchtbare Felder"
   ],
   [
-    "AFD_OnlyFertileTilesTip",
+    "AutoForestryDesignations.OnlyFertileTilesTip",
     "Platziert Gebiete nur dort, wo der Boden für Baumpflanzung geeignet ist: fruchtbares Gelände (kein Fels, Sand oder Meer) und nicht durch ein Gebäude oder eine andere Entität blockiert."
   ],
   [
-    "AFD_OnlyReachableTilesLabel",
+    "AutoForestryDesignations.OnlyReachableTilesLabel",
     "Nur erreichbare Felder"
   ],
   [
-    "AFD_OnlyReachableTilesTip",
+    "AutoForestryDesignations.OnlyReachableTilesTip",
     "Überspringt Gebietsfelder, die vom Turmbereich aus nicht über Fahrzeugwege erreichbar sind."
   ],
   [
-    "AFD_OverrideTerrainDesignationsLabel",
+    "AutoForestryDesignations.OverrideTerrainDesignationsLabel",
     "Geländemarkierungen überschreiben"
   ],
   [
-    "AFD_OverrideTerrainDesignationsTip",
+    "AutoForestryDesignations.OverrideTerrainDesignationsTip",
     "Ermöglicht es Forstmarkierungen, bestehende Geländemarkierungen einschließlich Abbau, Kippen oder Einebnen zu ersetzen. Standard: aus."
   ],
   [
-    "AFD_AvoidFlatTilesLabel",
+    "AutoForestryDesignations.AvoidFlatTilesLabel",
     "Flache Felder vermeiden"
   ],
   [
-    "AFD_AvoidFlatTilesTip",
+    "AutoForestryDesignations.AvoidFlatTilesTip",
     "Nur unebene, raue Felder für Forstwirtschaft verwenden. (So bleiben flache Felder für Gebäude erhalten.)"
   ],
   [
-    "AFD_TargetYieldLabel",
+    "AutoForestryDesignations.TargetYieldLabel",
     "Zielertrag"
   ],
   [
-    "AFD_TargetYieldTip",
+    "AutoForestryDesignations.TargetYieldTip",
     "Nachhaltige Holzproduktion pro Spielmonat. 0 = kein Ziel (∞)."
   ],
   [
-    "AFD_TargetYieldLegacyTipFmt",
+    "AutoForestryDesignations.TargetYieldLegacyTipFmt",
     "Alte maximale Gebietsbegrenzung beibehalten: {0}."
   ],
   [
-    "AFD_MaxTilesLabel",
+    "AutoForestryDesignations.MaxTilesLabel",
     "Maximale Anzahl von Gebieten"
   ],
   [
-    "AFD_MaxTilesTip",
+    "AutoForestryDesignations.MaxTilesTip",
     "Maximale Anzahl von Gebietsfeldern pro Lauf. 0 = keine Begrenzung (∞)."
   ],
   [
-    "AFD_TruckPoolingLabel",
+    "AutoForestryDesignations.TruckPoolingLabel",
     "LKW-Pooling"
   ],
   [
-    "AFD_TruckPoolingTip",
+    "AutoForestryDesignations.TruckPoolingTip",
     "Bündeln und verteilen Sie zugewiesene LKWs automatisch auf alle aktiven Baumerntemaschinen dieses Turms."
   ],
   [
-    "AFD_ForestryVehicleOptimizationsLabel",
+    "AutoForestryDesignations.ForestryVehicleOptimizationsLabel",
     "Forstfahrzeug-Optimierungen"
   ],
   [
-    "AFD_ForestryVehicleOptimizationsTip",
+    "AutoForestryDesignations.ForestryVehicleOptimizationsTip",
     "Unterdrückt die vom Verband der Forstarbeiter vorgeschriebenen Toilettenpausen. Untätige Pflanzer und Holzfäller bleiben im Feld und fahren vorausschauend zu Orten, an denen bald Arbeit entstehen dürfte."
   ],
   [
-    "AFD_TruckPoolTitle",
+    "AutoForestryDesignations.TruckPoolTitle",
     "LKW-Pool"
   ],
   [
-    "AFD_TruckPoolingHarvesterButtonsDisabledTip",
+    "AutoForestryDesignations.TruckPoolingHarvesterButtonsDisabledTip",
     "LKW-Pooling aktiviert. Aufgaben über {0} verwalten."
   ],
   [
-    "AFD_TruckPoolingHarvesterNote",
+    "AutoForestryDesignations.TruckPoolingHarvesterNote",
     "Hinweis: LKW-Pooling aktiviert am {0}. Zugeteilte Fahrzeuge können umverteilt werden."
   ],
   [
-    "AFD_NoForestryTowerSelected",
+    "AutoForestryDesignations.NoForestryTowerSelected",
     "Kein Forstkontrollturm ausgewählt."
   ],
   [
-    "AFD_NoForestryDesignations",
+    "AutoForestryDesignations.NoForestryDesignations",
     "Keine Forstgebiete."
   ],
   [
-    "AFD_PressToScanComposition",
+    "AutoForestryDesignations.PressToScanComposition",
     "↺ drücken, um die Forstübersicht zu scannen."
   ],
   [
-    "AFD_AssignedTrucksForestryTowerTooltip",
+    "AutoForestryDesignations.AssignedTrucksForestryTowerTooltip",
     "Zugewiesene LKWs bedienen automatisch alle diesem Turm zugewiesenen Baumerntemaschinen."
   ],
   [
-    "AFD_KpiTreesLabel",
+    "AutoForestryDesignations.KpiTreesLabel",
     "Bäume"
   ],
   [
-    "AFD_KpiMaturityLabel",
+    "AutoForestryDesignations.KpiMaturityLabel",
     "Wachstum"
   ],
   [
-    "AFD_KpiSustainableYieldLabel",
+    "AutoForestryDesignations.KpiSustainableYieldLabel",
     "Nachhaltiger Holzertrag"
   ],
   [
-    "AFD_KpiTreesTip",
+    "AutoForestryDesignations.KpiTreesTip",
     "Live-Zählung der aktuell verwalteten Bäume im Forstgebiet dieses Turms. Die erste Zahl sind Bäume im Moment; die zweite Zahl ist die geschätzte maximale Baumzahl basierend auf aktuell gültigen Pflanzpositionen."
   ],
   [
-    "AFD_KpiMaturityTipFmt",
+    "AutoForestryDesignations.KpiMaturityTipFmt",
     "Durchschnittliches Wachstum und aktuelles Alter der verwalteten Bäume. Volles Wachstum ist derzeit <b>{0}</b>, einschließlich Schwierigkeitseinstellungen."
   ],
   [
-    "AFD_KpiSustainableYieldTipFmt",
+    "AutoForestryDesignations.KpiSustainableYieldTipFmt",
     "Maximaler langfristiger Holzertrag für diesen Turm pro Spielmonat, unter Berücksichtigung des Gebiets, der Ernteschwelle und der Baumwachstumsgeschwindigkeit gemäß den Schwierigkeitseinstellungen (derzeit <b>{0}</b> durchschnittliches volles Wachstum)."
   ],
   [
-    "AFD_GrowthBreakdownHeader",
+    "AutoForestryDesignations.GrowthBreakdownHeader",
     "Wachstumsaufschlüsselung"
   ],
   [
-    "AFD_GrowthBreakdownTipFmt",
+    "AutoForestryDesignations.GrowthBreakdownTipFmt",
     "Wachstumsprofil der verwalteten Bäume. Volles Wachstum hängt von Baumtyp und Schwierigkeit ab; das aktuelle durchschnittliche volle Wachstum ist {0}. Standardkurve für Holzertrag: 40% Alter = 30% Ertrag, 60% = 60%, 80% = 88%, 100% = voll."
   ],
   [
-    "AFD_GrowthHeaderTipNoCutFmt",
+    "AutoForestryDesignations.GrowthHeaderTipNoCutFmt",
     "Verteilung nach Wachstum relativ zum aktuellen Vollwachstumsalter jedes Baums. Ernteoption: kein Fällen. Durchschnittliches volles Wachstum: {0}."
   ],
   [
-    "AFD_GrowthHeaderTipWithCutFmt",
+    "AutoForestryDesignations.GrowthHeaderTipWithCutFmt",
     "Verteilung nach Wachstum relativ zum aktuellen Vollwachstumsalter jedes Baums. Ernteoption: {0} ({1}% eines {2} voll ausgewachsenen Baums)."
   ],
   [
-    "AFD_HarvestThresholdTip",
+    "AutoForestryDesignations.HarvestThresholdTip",
     "Ernte nach"
   ],
   [
-    "AFD_SegmentTipFmt",
+    "AutoForestryDesignations.SegmentTipFmt",
     "<b>{0}</b>\n{1} Bäume ({2:P0} der gepflanzten, {3:P0} der Kapazität)\n{4}"
   ],
   [
-    "AFD_SegmentAboveHarvest",
+    "AutoForestryDesignations.SegmentAboveHarvest",
     "über der Ernteschwelle"
   ],
   [
-    "AFD_SegmentBelowHarvest",
+    "AutoForestryDesignations.SegmentBelowHarvest",
     "unter der Ernteschwelle"
   ],
   [
-    "AFD_UnusedCapacityTipFmt",
+    "AutoForestryDesignations.UnusedCapacityTipFmt",
     "Ungenutzte Kapazität: {0} Felder ({1:P0} der Kapazität)"
   ],
   [
-    "AFD_SegmentInteractionHint",
+    "AutoForestryDesignations.SegmentInteractionHint",
     "Darüberfahren, um Bäume in diesem Stadium hervorzuheben.\nKlicken, um sie zur Ernte zu markieren oder die Markierung zu entfernen."
   ],
   [
-    "AFD_SettingsModName",
+    "AutoForestryDesignations.SettingsModName",
     "Automatische Forstmarkierungen"
   ],
   [
-    "AFD_SettingsTabDefaults",
+    "AutoForestryDesignations.SettingsTabDefaults",
     "Standardwerte"
   ],
   [
-    "AFD_SettingsTabGameSettings",
+    "AutoForestryDesignations.SettingsTabGameSettings",
     "Spieleinstellungen"
   ],
   [
-    "AFD_SettingsHeadingForestryTowerDefaults",
+    "AutoForestryDesignations.SettingsHeadingForestryTowerDefaults",
     "Standardeinstellungen für den Turm"
   ],
   [
-    "AFD_SettingsHeadingDesignationDefaults",
+    "AutoForestryDesignations.SettingsHeadingDesignationDefaults",
     "Benennungsverhalten"
   ],
   [
-    "AFD_SettingsHeadingScanPerformance",
+    "AutoForestryDesignations.SettingsHeadingScanPerformance",
     "Scanleistung"
   ],
   [
-    "AFD_SettingsHeadingPanelDefaults",
+    "AutoForestryDesignations.SettingsHeadingPanelDefaults",
     "Standardwerte für Turmpaneele"
   ],
   [
-    "AFD_SettingsHeadingOptimizations",
+    "AutoForestryDesignations.SettingsHeadingOptimizations",
     "Optimierungen"
   ],
   [
-    "AFD_SettingsAvoidTilesWithTreesLabel",
+    "AutoForestryDesignations.SettingsAvoidTilesWithTreesLabel",
     "Felder mit Bäumen vermeiden"
   ],
   [
-    "AFD_SettingsAvoidTilesWithTreesTip",
+    "AutoForestryDesignations.SettingsAvoidTilesWithTreesTip",
     "Überspringen Sie beim Erstellen von Bezeichnungen Kacheln, die bereits einen Baum enthalten."
   ],
   [
-    "AFD_SettingsMarkHarvestReadyLabel",
+    "AutoForestryDesignations.SettingsMarkHarvestReadyLabel",
     "Erntereife Bäume markieren"
   ],
   [
-    "AFD_SettingsMarkHarvestReadyTip",
+    "AutoForestryDesignations.SettingsMarkHarvestReadyTip",
     "Markieren Sie nach dem Erstellen von Bezeichnungen automatisch Bäume, die die Ernteschwelle des Turms für die Ernte erreichen."
   ],
   [
-    "AFD_SettingsBatchSizeLabel",
+    "AutoForestryDesignations.SettingsBatchSizeLabel",
     "Stapelgröße"
   ],
   [
-    "AFD_SettingsBatchSizeTip",
+    "AutoForestryDesignations.SettingsBatchSizeTip",
     "Anzahl der Markierungen pro Frame. Niedriger = reaktionsschneller; höher = schnellere Scans. Begrenzt auf 1-200."
   ],
   [
-    "AFD_SettingsForestryPanelCollapsedLabel",
+    "AutoForestryDesignations.SettingsForestryPanelCollapsedLabel",
     "Forstpanel eingeklappt"
   ],
   [
-    "AFD_SettingsForestryPanelCollapsedTip",
+    "AutoForestryDesignations.SettingsForestryPanelCollapsedTip",
     "Standard-Einklappzustand des Forstmarkierungs-Panels beim Öffnen eines Turminspektors."
   ],
   [
-    "AFD_SettingsInfoPanelCollapsedLabel",
+    "AutoForestryDesignations.SettingsInfoPanelCollapsedLabel",
     "Infopanel eingeklappt"
   ],
   [
-    "AFD_SettingsInfoPanelCollapsedTip",
+    "AutoForestryDesignations.SettingsInfoPanelCollapsedTip",
     "Standard-Einklappzustand des Forstinfo-Panels beim Öffnen eines Turminspektors."
   ],
   [
-    "AFD_SettingsSaveAsGlobal",
+    "AutoForestryDesignations.SettingsSaveAsGlobal",
     "Als Konfig speichern"
   ],
   [
-    "AFD_SettingsSaveAsGlobalTooltip",
+    "AutoForestryDesignations.SettingsSaveAsGlobalTooltip",
     "Speichert diese Einstellungen in AFDsettings.json. Sie werden als Standardwerte für alle neuen Spiele verwendet."
   ],
   [
-    "AFD_SettingsSavedToFile",
+    "AutoForestryDesignations.SettingsSavedToFile",
     "In AFDsettings.json gespeichert."
   ],
   [
-    "AFD_SettingsSaveFailed",
+    "AutoForestryDesignations.SettingsSaveFailed",
     "Speichern fehlgeschlagen - Log prüfen"
   ],
   [
-    "AFD_SettingsRestoreDefaults",
+    "AutoForestryDesignations.SettingsRestoreDefaults",
     "Standardwerte zurücksetzen"
   ],
   [
-    "AFD_SettingsRestoreDefaultsTooltip",
+    "AutoForestryDesignations.SettingsRestoreDefaultsTooltip",
     "Setzt alle Markierungs- und Panel-Standardwerte auf die eingebauten Werte zurück. (Speichert sie nicht automatisch als Konfig.)"
   ],
   [
-    "AFD_SettingsRestoredDefaults",
+    "AutoForestryDesignations.SettingsRestoredDefaults",
     "Standardwerte wiederhergestellt"
   ],
   [
-    "AFD_NewlyPlantedTip",
+    "AutoForestryDesignations.NewlyPlantedTip",
     "Neu gepflanzt / niedrigstes Wachstum"
   ],
   [
-    "AFD_FullyGrownTipFmt",
+    "AutoForestryDesignations.FullyGrownTipFmt",
     "Voll ausgewachsen / höchstes Wachstum ({0} durchschnittliches volles Wachstum in diesem Turm)."
   ],
   [
-    "AFD_BucketFullyMatureFmt",
+    "AutoForestryDesignations.BucketFullyMatureFmt",
     "Voll ausgewachsen ({0}, 100%)"
   ],
   [
-    "AFD_BucketNewlyPlantedName",
+    "AutoForestryDesignations.BucketNewlyPlantedName",
     "Neu gepflanzt"
   ],
   [
-    "AFD_BucketYoungName",
+    "AutoForestryDesignations.BucketYoungName",
     "Jung"
   ],
   [
-    "AFD_BucketGrowingName",
+    "AutoForestryDesignations.BucketGrowingName",
     "Wachsend"
   ],
   [
-    "AFD_BucketMaturingName",
+    "AutoForestryDesignations.BucketMaturingName",
     "Reifend"
   ],
   [
-    "AFD_BucketNearlyMatureName",
+    "AutoForestryDesignations.BucketNearlyMatureName",
     "Fast ausgewachsen"
   ],
   [
-    "AFD_BucketRangeFmt",
+    "AutoForestryDesignations.BucketRangeFmt",
     "{0} ({1}–{2}; {3:P0}–{4:P0})"
   ],
   [
-    "AFD_OrderConstructionTooltip",
+    "AutoForestryDesignations.OrderConstructionTooltip",
     "Bestellen Sie ein neues {0} für {2} bei {1}"
   ],
   [
-    "AFD_OrderConstructionShortcutHint",
+    "AutoForestryDesignations.OrderConstructionShortcutHint",
     "Umschalt-Alt-Klick, um ein neues {0} für {2} bei {1} zu bestellen"
   ],
   [
-    "AFD_PreAssignedTooltipFmt",
+    "AutoForestryDesignations.PreAssignedTooltipFmt",
     "Vorab zugewiesen an {0}"
   ],
   [
-    "AFD_EnqueueConfirmPromptSingular",
+    "AutoForestryDesignations.EnqueueConfirmPromptSingular",
     "Ein neues {0} für {2} bei {1} bestellen?"
   ],
   [
-    "AFD_EnqueueConfirmPromptPlural",
+    "AutoForestryDesignations.EnqueueConfirmPromptPlural",
     "{0} neue Fahrzeuge vom Typ {1} für {3} bei {2} bestellen?"
   ],
   [
-    "AFD_EnqueueConfirmBtnText",
+    "AutoForestryDesignations.EnqueueConfirmBtnText",
     "Bestellen"
   ],
   [
-    "AFD_ZoomToDepotTooltip",
+    "AutoForestryDesignations.ZoomToDepotTooltip",
     "Auf {0} zoomen"
   ]
 ]

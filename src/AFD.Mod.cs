@@ -7,7 +7,9 @@
 // intended to contain only original mod code/configuration; if MaFi Games material
 // is included by mistake, I intend to correct it promptly upon discovery or notice.
 using System;
+#if !COI_UPDATE_4_3
 using System.IO;
+#endif
 using System.Threading;
 using HarmonyLib;
 using Mafi;
@@ -35,7 +37,11 @@ using Mafi.Core.World;
 using Mafi.Unity.Terrain;
 using Mafi.Unity.Trees;
 using UnityEngine;
+#if !COI_UPDATE_4_3
 using CoI.AutoHelpers.Localization;
+#else
+using Mafi.Localization;
+#endif
 using CoI.AutoHelpers.Logging;
 using CoI.AutoHelpers.Persistence;
 using CoI.AutoHelpers.Settings;
@@ -209,7 +215,7 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
             m_saveManager.OnSaveDone += onSaveDone;
 
             AutoForestryDesignation.s_log.RegisterAutoConsoleMirroring(this, m_gameLoopEvents, resolver.Resolve<GameConsoleCommandsExecutor>());
-            RegisterLocalizationLateApply(resolver);
+            RegisterRendererServices(resolver);
 
             ITerrainDesignationsManager desigManager = resolver.Resolve<ITerrainDesignationsManager>();
             IVehiclePathFindingManager vehiclePathFindingManager = resolver.Resolve<IVehiclePathFindingManager>();
@@ -354,15 +360,21 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
         }
     }
 
-    private void RegisterLocalizationLateApply(DependencyResolver resolver)
+    private void RegisterRendererServices(DependencyResolver resolver)
     {
         IGameLoopEvents gameLoopEvents = resolver.Resolve<IGameLoopEvents>();
         gameLoopEvents.RegisterRendererInitState(this, () =>
         {
             AutoForestryDesignation.s_log.Info($"AutoForestryDesignations v{ModVersion} | dll: {ModLogger.GetDllBuildTimestamp(typeof(AutoForestryDesignationsMod).Assembly)}");
             AutoForestryDesignation.LogInfo($"Diagnostics: {AfdDiagnostics.Describe()}.");
-            AutoForestryDesignation.LogDebug("Localization: late apply at renderer init state.");
+#if COI_UPDATE_4_3
+            // The native loader merged mod translations after prototype registration.
+            // Build our UI afterwards; LocStr stays live, but formatted UI text does not.
+            AutoForestryDesignation.LogDebug($"Localization: native mod translations, culture='{LocalizationManager.CurrentLangInfo.CultureInfoId}'.");
+#else
+            // PRE_4_3_COMPAT: keep the proven late splice/rebind on older games only.
             ApplyLocalizedTextIfPresent();
+#endif
             RegisterSettingsTabs(resolver);
             try
             {
@@ -413,6 +425,8 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
         }
     }
 
+    // PRE_4_3_COMPAT: retire this path when pre-4.3 support ends.
+#if !COI_UPDATE_4_3
     private void ApplyLocalizedTextIfPresent()
     {
         string translationsDirectory = Path.Combine(Manifest.RootDirectoryPath, "translations");
@@ -516,6 +530,8 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
 
         return cultureInfoIdField.GetValue(currentLangInfo) as string;
     }
+
+#endif
 
     public void MigrateJsonConfig(VersionSlim savedVersion, Dict<string, object> savedValues)
     {

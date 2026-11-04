@@ -1,5 +1,13 @@
 v0.4.5 [unreleased]
 
+- Release verification on 0.8.8a b628: dual Debug/Release builds and current/legacy compiled references pass; same-process English/Swedish/English settings reload preserves unique tabs and leaves the save unchanged. See docs/test/release-preparation-0.4.5.md for checks and limits.
+
+- Use a stable defaults-tab ID and the shared scene-reset settings fix for native language changes through world reload. Add Debug-only inspection/reload commands for same-process regression testing.
+
+- Repair five stale English-template symbols to match the unchanged C# fallback; preserve all seven non-English bundles.
+
+- Pilot native Update 4.3 localization: migrate all 93 AFD keys to manifest-prefixed IDs, retain translation values, use native locale filenames, and exclude late splice/rebind code from the current payload. Keep the older-game localization path and serialized IDs unchanged.
+
 - Move test web API startup to the game launch command; retain early AutoHelpers console mirroring for version and DLL timestamp rows.
 
 v0.4.4 [released]

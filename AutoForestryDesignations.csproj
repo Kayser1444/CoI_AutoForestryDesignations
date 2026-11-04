@@ -17,7 +17,7 @@ is included by mistake, I intend to correct it promptly upon discovery or notice
     <CaptainIndustryManagedPath Condition="'$(CaptainIndustryManagedPath)' == '' and '$(CAPTAIN_INDUSTRY_MANAGED_PATH)' != ''">$(CAPTAIN_INDUSTRY_MANAGED_PATH)</CaptainIndustryManagedPath>
     <CaptainIndustryManagedPath Condition="'$(CaptainIndustryManagedPath)' == '' and Exists('$(MSBuildProjectDirectory)\..\..\Mafi\Mafi.Base.dll')">$(MSBuildProjectDirectory)\..\..\Mafi</CaptainIndustryManagedPath>
     <CaptainIndustryManagedPath Condition="'$(CaptainIndustryManagedPath)' == ''">C:\Program Files (x86)\Steam\steamapps\common\Captain of Industry\Captain of Industry_Data\Managed</CaptainIndustryManagedPath>
-    <DefaultItemExcludes>$(DefaultItemExcludes);external\**\*</DefaultItemExcludes>
+    <DefaultItemExcludes>$(DefaultItemExcludes);external\**\*;tools\**\*</DefaultItemExcludes>
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <AssemblyName>AutoForestryDesignations</AssemblyName>
     <RootNamespace>AutoForestryDesignations</RootNamespace>
@@ -112,4 +112,11 @@ is included by mistake, I intend to correct it promptly upon discovery or notice
   </ItemGroup>
 
   <Import Project="external\CoI_AutoHelpers\build\CoI.Compatibility.targets" />
+
+  <!-- Keep legacy reflection/rebind code out of the native localization payload. -->
+  <Target Name="SelectLocalizationImplementation" BeforeTargets="CoreCompile" DependsOnTargets="DetectCaptainIndustryApi">
+    <ItemGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(_CoIGameVersion)', '0.8.8.0'))">
+      <Compile Remove="external\CoI_AutoHelpers\src\CoI.AutoHelpers\Localization\**\*.cs" />
+    </ItemGroup>
+  </Target>
 </Project>

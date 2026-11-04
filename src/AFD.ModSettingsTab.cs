@@ -37,7 +37,8 @@ namespace AutoForestryDesignations
                 100,
                 BuildDefaultsContent,
                 DEFAULTS_ICON,
-                MOD_ICON);
+                MOD_ICON,
+                tabId: "defaults");
         }
 
         private static UiComponent BuildDefaultsContent()

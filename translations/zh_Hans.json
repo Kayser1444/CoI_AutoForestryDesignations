@@ -1,374 +1,374 @@
 [
   [
-    "panel.vehicles.show_unowned",
+    "AutoForestryDesignations.PanelVehiclesShowUnowned",
     "显示已解锁但尚未拥有的车辆类型，以便从这座塔楼下单。已拥有的车辆和此塔楼的排队订单始终显示。"
   ],
   [
-    "panel.vehicles.hide_unowned",
+    "AutoForestryDesignations.PanelVehiclesHideUnowned",
     "隐藏尚未拥有的车辆类型。已拥有的车辆和此塔楼的排队订单仍会显示。"
   ],
   [
-    "AFD_ForestryDesignationsTitle",
+    "AutoForestryDesignations.ForestryDesignationsTitle",
     "林业规划"
   ],
   [
-    "AFD_ForestryInformationTitle",
+    "AutoForestryDesignations.ForestryInformationTitle",
     "林业信息"
   ],
   [
-    "AFD_ForestryDesignationsTitleTipFmt",
+    "AutoForestryDesignations.ForestryDesignationsTitleTipFmt",
     "创建自动林业规划。[Kayser's Automatic Forestry Designations v{0}]"
   ],
   [
-    "AFD_ForestryInformationTitleTipFmt",
+    "AutoForestryDesignations.ForestryInformationTitleTipFmt",
     "该塔林业区域中的当前树木和预计木材产量。[Kayser's Automatic Forestry Designations v{0}]"
   ],
   [
-    "AFD_CreateDesignationsBtn",
+    "AutoForestryDesignations.CreateDesignationsBtn",
     "生成规划"
   ],
   [
-    "AFD_CreateDesignationsBtnTip",
+    "AutoForestryDesignations.CreateDesignationsBtnTip",
     "扫描林业塔区域并放置林业规划。"
   ],
   [
-    "AFD_ClearDesignationsBtnTip",
+    "AutoForestryDesignations.ClearDesignationsBtnTip",
     "清除该林业塔区域内的所有林业规划。"
   ],
   [
-    "AFD_RefreshCompositionTip",
+    "AutoForestryDesignations.RefreshCompositionTip",
     "刷新林业组成"
   ],
   [
-    "AFD_BoolYes",
+    "AutoForestryDesignations.BoolYes",
     "是"
   ],
   [
-    "AFD_BoolNo",
+    "AutoForestryDesignations.BoolNo",
     "否"
   ],
   [
-    "AFD_OnlyFertileTilesLabel",
+    "AutoForestryDesignations.OnlyFertileTilesLabel",
     "仅肥沃地块"
   ],
   [
-    "AFD_OnlyFertileTilesTip",
+    "AutoForestryDesignations.OnlyFertileTilesTip",
     "仅在适合植树的地面上放置规划：肥沃地形（不是岩石、沙地或海洋），且未被建筑或其他实体占用。"
   ],
   [
-    "AFD_OnlyReachableTilesLabel",
+    "AutoForestryDesignations.OnlyReachableTilesLabel",
     "仅可达地块"
   ],
   [
-    "AFD_OnlyReachableTilesTip",
+    "AutoForestryDesignations.OnlyReachableTilesTip",
     "启用后，跳过车辆无法从林业塔区域通过寻路到达的规划地块。"
   ],
   [
-    "AFD_OverrideTerrainDesignationsLabel",
+    "AutoForestryDesignations.OverrideTerrainDesignationsLabel",
     "覆盖地形指示"
   ],
   [
-    "AFD_OverrideTerrainDesignationsTip",
+    "AutoForestryDesignations.OverrideTerrainDesignationsTip",
     "允许林业指示替换现有的地形指示，包括采矿、倾倒或整平指示。默认关闭。"
   ],
   [
-    "AFD_AvoidFlatTilesLabel",
+    "AutoForestryDesignations.AvoidFlatTilesLabel",
     "避免平坦地块"
   ],
   [
-    "AFD_AvoidFlatTilesTip",
+    "AutoForestryDesignations.AvoidFlatTilesTip",
     "仅在不平整、崎岖的地块上进行林业作业。（这样可以为建筑保留平坦地块。）"
   ],
   [
-    "AFD_TargetYieldLabel",
+    "AutoForestryDesignations.TargetYieldLabel",
     "目标产量"
   ],
   [
-    "AFD_TargetYieldTip",
+    "AutoForestryDesignations.TargetYieldTip",
     "每个游戏月的可持续木材产量目标。0 = 无目标（∞）。"
   ],
   [
-    "AFD_TargetYieldLegacyTipFmt",
+    "AutoForestryDesignations.TargetYieldLegacyTipFmt",
     "已保留旧版最大指定数量限制：{0}。"
   ],
   [
-    "AFD_MaxTilesLabel",
+    "AutoForestryDesignations.MaxTilesLabel",
     "最大规划数量"
   ],
   [
-    "AFD_MaxTilesTip",
+    "AutoForestryDesignations.MaxTilesTip",
     "每次运行最多放置的规划地块数量。0 = 无限制（∞）。"
   ],
   [
-    "AFD_TruckPoolingLabel",
+    "AutoForestryDesignations.TruckPoolingLabel",
     "卡车拼车"
   ],
   [
-    "AFD_TruckPoolingTip",
+    "AutoForestryDesignations.TruckPoolingTip",
     "自动汇集和平衡该塔所有活动树木收割机上分配的卡车。"
   ],
   [
-    "AFD_ForestryVehicleOptimizationsLabel",
+    "AutoForestryDesignations.ForestryVehicleOptimizationsLabel",
     "林业车辆优化"
   ],
   [
-    "AFD_ForestryVehicleOptimizationsTip",
+    "AutoForestryDesignations.ForestryVehicleOptimizationsTip",
     "抑制森林工人联盟强制执行的上厕所休息。闲置的种树机和伐木机留在林区，并主动前往预计会出现工作的地点。"
   ],
   [
-    "AFD_TruckPoolTitle",
+    "AutoForestryDesignations.TruckPoolTitle",
     "卡车池"
   ],
   [
-    "AFD_TruckPoolingHarvesterButtonsDisabledTip",
+    "AutoForestryDesignations.TruckPoolingHarvesterButtonsDisabledTip",
     "卡车共享已启用。通过 {0} 管理分配。"
   ],
   [
-    "AFD_TruckPoolingHarvesterNote",
+    "AutoForestryDesignations.TruckPoolingHarvesterNote",
     "注意：卡车共用已于 {0} 启用。分配的车辆可能会重新分配。"
   ],
   [
-    "AFD_NoForestryTowerSelected",
+    "AutoForestryDesignations.NoForestryTowerSelected",
     "未选择林业塔。"
   ],
   [
-    "AFD_NoForestryDesignations",
+    "AutoForestryDesignations.NoForestryDesignations",
     "没有林业规划。"
   ],
   [
-    "AFD_PressToScanComposition",
+    "AutoForestryDesignations.PressToScanComposition",
     "按 ↺ 扫描林业组成。"
   ],
   [
-    "AFD_AssignedTrucksForestryTowerTooltip",
+    "AutoForestryDesignations.AssignedTrucksForestryTowerTooltip",
     "分配的卡车将自动为分配给该塔的所有树木收割机提供服务。"
   ],
   [
-    "AFD_KpiTreesLabel",
+    "AutoForestryDesignations.KpiTreesLabel",
     "树木"
   ],
   [
-    "AFD_KpiMaturityLabel",
+    "AutoForestryDesignations.KpiMaturityLabel",
     "成熟度"
   ],
   [
-    "AFD_KpiSustainableYieldLabel",
+    "AutoForestryDesignations.KpiSustainableYieldLabel",
     "可持续产量"
   ],
   [
-    "AFD_KpiTreesTip",
+    "AutoForestryDesignations.KpiTreesTip",
     "该林业塔区域内当前受管理树木的实时数量。第一个数字是当前树木数量；第二个数字是根据当前有效种植位置估算的最大树木数量。"
   ],
   [
-    "AFD_KpiMaturityTipFmt",
+    "AutoForestryDesignations.KpiMaturityTipFmt",
     "受管理树木的平均成熟度和当前年龄。完整成熟目前为 <b>{0}</b>，已包含难度设置。"
   ],
   [
-    "AFD_KpiSustainableYieldTipFmt",
+    "AutoForestryDesignations.KpiSustainableYieldTipFmt",
     "该林业塔每游戏月可长期维持的最大木材产量，已考虑规划区域、采伐阈值以及难度设置中的树木生长速度（当前平均完整成熟为 <b>{0}</b>）。"
   ],
   [
-    "AFD_GrowthBreakdownHeader",
+    "AutoForestryDesignations.GrowthBreakdownHeader",
     "生长细分"
   ],
   [
-    "AFD_GrowthBreakdownTipFmt",
+    "AutoForestryDesignations.GrowthBreakdownTipFmt",
     "受管理树木的成熟度分布。完整成熟年龄取决于树种和难度；当前平均完整成熟为 {0}。原版林业产量曲线：40% 年龄 = 30% 产量，60% = 60%，80% = 88%，100% = 完整。"
   ],
   [
-    "AFD_GrowthHeaderTipNoCutFmt",
+    "AutoForestryDesignations.GrowthHeaderTipNoCutFmt",
     "按每棵树当前完整生长年龄的相对成熟度分布。采伐选项：不采伐。平均完整成熟：{0}。"
   ],
   [
-    "AFD_GrowthHeaderTipWithCutFmt",
+    "AutoForestryDesignations.GrowthHeaderTipWithCutFmt",
     "按每棵树当前完整生长年龄的相对成熟度分布。采伐选项：{0}（一棵 {2} 完整生长树的 {1}%）。"
   ],
   [
-    "AFD_HarvestThresholdTip",
+    "AutoForestryDesignations.HarvestThresholdTip",
     "采伐阈值"
   ],
   [
-    "AFD_SegmentTipFmt",
+    "AutoForestryDesignations.SegmentTipFmt",
     "<b>{0}</b>\n{1} 棵树（已种植 {2:P0}，容量 {3:P0}）\n{4}"
   ],
   [
-    "AFD_SegmentAboveHarvest",
+    "AutoForestryDesignations.SegmentAboveHarvest",
     "高于采伐阈值"
   ],
   [
-    "AFD_SegmentBelowHarvest",
+    "AutoForestryDesignations.SegmentBelowHarvest",
     "低于采伐阈值"
   ],
   [
-    "AFD_UnusedCapacityTipFmt",
+    "AutoForestryDesignations.UnusedCapacityTipFmt",
     "未使用容量：{0} 个地块（容量的 {1:P0}）"
   ],
   [
-    "AFD_SegmentInteractionHint",
+    "AutoForestryDesignations.SegmentInteractionHint",
     "悬停可高亮此阶段的树木。\n点击可将其标记或取消标记为采伐。"
   ],
   [
-    "AFD_SettingsModName",
+    "AutoForestryDesignations.SettingsModName",
     "自动林业规划"
   ],
   [
-    "AFD_SettingsTabDefaults",
+    "AutoForestryDesignations.SettingsTabDefaults",
     "默认值"
   ],
   [
-    "AFD_SettingsTabGameSettings",
+    "AutoForestryDesignations.SettingsTabGameSettings",
     "游戏设置"
   ],
   [
-    "AFD_SettingsHeadingForestryTowerDefaults",
+    "AutoForestryDesignations.SettingsHeadingForestryTowerDefaults",
     "塔设置默认值"
   ],
   [
-    "AFD_SettingsHeadingDesignationDefaults",
+    "AutoForestryDesignations.SettingsHeadingDesignationDefaults",
     "指定行为"
   ],
   [
-    "AFD_SettingsHeadingScanPerformance",
+    "AutoForestryDesignations.SettingsHeadingScanPerformance",
     "扫描性能"
   ],
   [
-    "AFD_SettingsHeadingPanelDefaults",
+    "AutoForestryDesignations.SettingsHeadingPanelDefaults",
     "塔板默认设置"
   ],
   [
-    "AFD_SettingsHeadingOptimizations",
+    "AutoForestryDesignations.SettingsHeadingOptimizations",
     "优化"
   ],
   [
-    "AFD_SettingsAvoidTilesWithTreesLabel",
+    "AutoForestryDesignations.SettingsAvoidTilesWithTreesLabel",
     "避开已有树木的地块"
   ],
   [
-    "AFD_SettingsAvoidTilesWithTreesTip",
+    "AutoForestryDesignations.SettingsAvoidTilesWithTreesTip",
     "创建指定时跳过已包含树的图块。"
   ],
   [
-    "AFD_SettingsMarkHarvestReadyLabel",
+    "AutoForestryDesignations.SettingsMarkHarvestReadyLabel",
     "标记可采伐树木"
   ],
   [
-    "AFD_SettingsMarkHarvestReadyTip",
+    "AutoForestryDesignations.SettingsMarkHarvestReadyTip",
     "创建指定后，自动标记符合塔的采伐阈值的树木进行采伐。"
   ],
   [
-    "AFD_SettingsBatchSizeLabel",
+    "AutoForestryDesignations.SettingsBatchSizeLabel",
     "批量大小"
   ],
   [
-    "AFD_SettingsBatchSizeTip",
+    "AutoForestryDesignations.SettingsBatchSizeTip",
     "每帧放置的规划数量。较低 = 响应更流畅；较高 = 扫描更快。限制在 1-200。"
   ],
   [
-    "AFD_SettingsForestryPanelCollapsedLabel",
+    "AutoForestryDesignations.SettingsForestryPanelCollapsedLabel",
     "林业规划面板折叠"
   ],
   [
-    "AFD_SettingsForestryPanelCollapsedTip",
+    "AutoForestryDesignations.SettingsForestryPanelCollapsedTip",
     "打开林业塔检查器时，林业规划面板的默认折叠状态。"
   ],
   [
-    "AFD_SettingsInfoPanelCollapsedLabel",
+    "AutoForestryDesignations.SettingsInfoPanelCollapsedLabel",
     "信息面板折叠"
   ],
   [
-    "AFD_SettingsInfoPanelCollapsedTip",
+    "AutoForestryDesignations.SettingsInfoPanelCollapsedTip",
     "打开林业塔检查器时，林业信息面板的默认折叠状态。"
   ],
   [
-    "AFD_SettingsSaveAsGlobal",
+    "AutoForestryDesignations.SettingsSaveAsGlobal",
     "保存到文件"
   ],
   [
-    "AFD_SettingsSaveAsGlobalTooltip",
+    "AutoForestryDesignations.SettingsSaveAsGlobalTooltip",
     "将当前内存中的默认值保存到模组文件夹内的 AFDsettings.json。"
   ],
   [
-    "AFD_SettingsSavedToFile",
+    "AutoForestryDesignations.SettingsSavedToFile",
     "已保存到 AFDsettings.json"
   ],
   [
-    "AFD_SettingsSaveFailed",
+    "AutoForestryDesignations.SettingsSaveFailed",
     "保存失败，请检查日志"
   ],
   [
-    "AFD_SettingsRestoreDefaults",
+    "AutoForestryDesignations.SettingsRestoreDefaults",
     "重置为默认值"
   ],
   [
-    "AFD_SettingsRestoreDefaultsTooltip",
+    "AutoForestryDesignations.SettingsRestoreDefaultsTooltip",
     "将所有规划和面板默认值重置为内置值。（不会自动保存到文件。）"
   ],
   [
-    "AFD_SettingsRestoredDefaults",
+    "AutoForestryDesignations.SettingsRestoredDefaults",
     "已恢复默认值"
   ],
   [
-    "AFD_NewlyPlantedTip",
+    "AutoForestryDesignations.NewlyPlantedTip",
     "新种植 / 最低成熟度"
   ],
   [
-    "AFD_FullyGrownTipFmt",
+    "AutoForestryDesignations.FullyGrownTipFmt",
     "完全长成 / 最高成熟度（该林业塔平均完整成熟为 {0}）。"
   ],
   [
-    "AFD_BucketFullyMatureFmt",
+    "AutoForestryDesignations.BucketFullyMatureFmt",
     "完全成熟（{0}，100%）"
   ],
   [
-    "AFD_BucketNewlyPlantedName",
+    "AutoForestryDesignations.BucketNewlyPlantedName",
     "新种植"
   ],
   [
-    "AFD_BucketYoungName",
+    "AutoForestryDesignations.BucketYoungName",
     "幼树"
   ],
   [
-    "AFD_BucketGrowingName",
+    "AutoForestryDesignations.BucketGrowingName",
     "生长期"
   ],
   [
-    "AFD_BucketMaturingName",
+    "AutoForestryDesignations.BucketMaturingName",
     "成熟中"
   ],
   [
-    "AFD_BucketNearlyMatureName",
+    "AutoForestryDesignations.BucketNearlyMatureName",
     "接近成熟"
   ],
   [
-    "AFD_BucketRangeFmt",
+    "AutoForestryDesignations.BucketRangeFmt",
     "{0}（{1}-{2}、{3:P0}-{4:P0}）"
   ],
   [
-    "AFD_OrderConstructionTooltip",
+    "AutoForestryDesignations.OrderConstructionTooltip",
     "在 {1} 为 {2} 订购新的 {0}"
   ],
   [
-    "AFD_OrderConstructionShortcutHint",
+    "AutoForestryDesignations.OrderConstructionShortcutHint",
     "按住 Shift-Alt 键并单击即可在 {1} 为 {2} 订购新的 {0}"
   ],
   [
-    "AFD_PreAssignedTooltipFmt",
+    "AutoForestryDesignations.PreAssignedTooltipFmt",
     "预先分配给{0}"
   ],
   [
-    "AFD_EnqueueConfirmPromptSingular",
+    "AutoForestryDesignations.EnqueueConfirmPromptSingular",
     "在 {1} 为 {2} 订购新的 {0}？"
   ],
   [
-    "AFD_EnqueueConfirmPromptPlural",
+    "AutoForestryDesignations.EnqueueConfirmPromptPlural",
     "在 {2} 为 {3} 订购 {0} 个新的 {1}？"
   ],
   [
-    "AFD_EnqueueConfirmBtnText",
+    "AutoForestryDesignations.EnqueueConfirmBtnText",
     "订购"
   ],
   [
-    "AFD_ZoomToDepotTooltip",
+    "AutoForestryDesignations.ZoomToDepotTooltip",
     "缩放至 {0}"
   ]
 ]

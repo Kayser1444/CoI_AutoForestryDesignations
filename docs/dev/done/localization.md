@@ -1,136 +1,72 @@
-# Localization — Architecture Reference
+# AFD localization
 
-## Feature summary
+AFD uses native mod localization on Update 4.3 (0.8.8). Older games retain the
+AutoHelpers late splice/rebind path. This pilot changes translation IDs only;
+it does not rename prototypes, saved types, settings or shortcut IDs.
 
-AFD uses the Captain of Industry `Loc.Str` system for all user-visible strings.
-All strings are declared as `static LocStr` fields in `AfdLocalization.cs` and
-rebound from translation JSON files at renderer-init time via
-`CoI.AutoHelpers.Localization`.
+## String and file ownership
 
-## Source files
+`src/AFD.Localization.cs` declares the 93 AFD strings. Keys use the manifest ID
+`AutoForestryDesignations.` followed by a descriptive 4–64-character name made
+of letters, digits and underscores. Do not introduce nested dotted keys.
+All locale bundles and `.source-strings.json` use the same IDs. Existing
+translated values were preserved in the migration.
 
-| File | Role |
-|---|---|
-| `AFD.Localization.cs` | `AfdLocalization` static class; all `LocStr` field declarations |
-| `AFD.Mod.cs` | Registers late-apply callback in `Initialize`; calls `RegisterLocalizationLateApply` |
-| `translations/` | Per-locale JSON translation files (e.g. `en.json`, `de.json`, `zh.json`) |
+Files are native tuple-array JSON: `["key", "translated text"]`. Preserve
+numeric format placeholders and their format suffixes. Use the native filenames
+`de.json`, `en.json`, `es.json`, `it.json`, `pt_BR.json`, `ru.json`, `sv.json`
+and `zh_Hans.json`. Keep one source per locale. AutoHelpers authoring commands
+still use `pt` and `zh` work-order fields and resolve the native filenames.
 
----
+## Startup and cached text
 
-## String declaration pattern
+The game loader registers `<mod root>/Translations` and merges the selected
+language after mod loading and prototype registration. Windows treats the
+existing `translations` directory as that directory. The version selector scans
+the selected AFD payload within the native loading scope. Do not remove that
+scan when changing the old localization workaround.
 
-All strings are declared as `public static LocStr` fields:
+The 4.3 payload excludes AutoHelpers' localization runtime sources: no private
+dictionary writes, rebind pass or late translation apply runs. Renderer-init
+still builds AFD's settings tabs and resolves render services after native
+merging. The defaults tab uses stable ID `defaults`. The shared host resets its
+window and registrations for each new world UI so a language change/reload does
+not retain translated tabs or factories from the outgoing world. `LocStr` follows the current language; `LocStrFormatted` and already
+built UI retain a snapshot. Rebuild or refresh captured text where needed rather
+than assuming a language change updates an existing label. Shared Mod Settings
+chrome belongs to AutoHelpers and is outside this AFD-only string migration.
 
-```csharp
-internal static class AfdLocalization
-{
-    public static LocStr ForestryDesignationsTitle = Loc.Str(
-        "AFD_ForestryDesignationsTitle",
-        "Forestry designations",
-        "Title of the Forestry designations inspector panel.");
-    // ...
-}
-```
+Before 4.3, the renderer-init callback applies the original AutoHelpers pipeline.
+Locale selection now also checks `CurrentLangInfo.FileName`, so the same native
+Portuguese and Chinese bundles work without duplicate legacy filenames.
+The old fields stay mutable because that branch must rebind them.
 
-The `Loc.Str` call registers the English default with the game engine at
-startup. The key scheme is `AFD_` + PascalCase description. The third argument
-is a translator-facing description that appears in export tooling.
+## Translation maintenance
 
----
+Use the shared `CoI_AutoHelpers/tools/translate.py` workflow. New strings need a
+prefixed ID, English fallback and contextual comment; preserve existing locale
+values while migrating keys. Translation quality review remains separate from
+coverage. Use Swedish for the first in-game check.
 
-## Runtime rebind
+## Verification
 
-Translation files are applied at renderer-init state to ensure the game's
-localization system has finished loading before AFD overwrites the `LocStr`
-field values.
+Build both game-reference variants before deploying. The existing dual-build
+tool accepts `-ModIds AutoForestryDesignations` and `-Deploy`; it does not release
+or package the mod. The preserved 0.8.7d reference snapshot is local test data.
 
-`RegisterLocalizationLateApply` (called in `IMod.Initialize`) registers a
-`IGameLoopEvents.RegisterRendererInitState` callback that:
+`tools/LocalizationContracts` runs the actual game localization implementation
+and compiled AFD fields outside Unity. Supply the matching Managed directory,
+AFD DLL and repository root. For the native variant it checks all seven non-English
+bundles, strings captured before merging, language changes, English fallback,
+delayed versus captured formatting, and absence of the legacy runtime adapter.
+For the legacy variant pass one locale filename as the fourth argument and run
+each locale in a fresh process (`sv.json`, `pt_BR.json`, `zh_Hans.json`).
+These checks do not establish rendered UI or save/load behavior. Record those
+separately in `docs/test/`.
 
-1. Resolves the `translations/` directory relative to the mod root.
-2. Calls `ModTranslationLoader.LoadFromDirectory` (from
-   `CoI.AutoHelpers.Localization`).
-3. Calls `ModTranslations.Apply` with `AFD_` as the key prefix and
-   `typeof(AfdLocalization)` as the target type so only AFD fields are rebound.
-4. Logs a summary of the apply result via `AutoForestryDesignation.s_log`.
-
-### Key prefix scoping
-
-The `translationKeyPrefixes: new[] { "AFD_" }` parameter on
-`ModTranslationsApplyOptions` restricts the rebind to fields whose `LocStr` IDs
-begin with `AFD_`. This prevents accidental overwrites of vanilla or other mod
-strings if a user puts a file with broad keys in the translations folder.
-
----
-
-## Translation file format
-
-Files are JSON arrays of string tuples:
-
-```json
-[
-  ["AFD_Key", "Translated text"]
-]
-```
-
-Two-item tuples are ordinary strings. Three-item tuples are reserved for
-singular/plural translations:
-
-```json
-[
-  ["AFD_CountFmt", "{0} tree", "{0} trees"]
-]
-```
-
-Do not use the third item for translator notes or context; the loader treats it
-as plural UI text. Files are loaded in alphabetical order; later files override
-earlier ones for duplicate keys (controlled by
-`DuplicateTranslationKeyBehavior.LastWins`).
-
-Included locale bundles currently cover English, German, Spanish, Italian,
-Portuguese, Russian, Swedish, and Chinese.
-
-### Format placeholders
-
-Prefer numeric .NET placeholders such as `{0}`, `{1}`, and `{2:P0}` for all new
-localized strings. Avoid named placeholders such as `{entity}` unless a vanilla
-API explicitly requires that exact token. Numeric placeholders are harder for
-machine translation to mistranslate and are validated naturally by
-`string.Format` call sites.
-
-Translators may reorder numeric placeholders to fit the target language, but
-must preserve the exact placeholder spelling and format suffix. For example,
-`{2:P0}` must remain `{2:P0}`, not `{2}` or a translated word.
-
-### Rich text in UI strings
-
-AFD tooltips support Unity rich text. The following tags were verified in-game
-in a translated tooltip:
-
-| Markup | Result |
-|---|---|
-| `<b>text</b>` | Bold |
-| `<i>text</i>` | Italic |
-| `<u>text</u>` | Underline |
-| `<color=#66ff66>text</color>` | Hex color |
-| `<size=120%>text</size>` | Relative text size |
-| `\n` | Line break |
-
-Use rich text sparingly and only when it improves readability in a tooltip or
-other UI surface. Keep tags balanced, and preserve placeholders exactly when
-wrapping formatted text around them.
-
-The `TranslationTemplateExporter` from `CoI.AutoHelpers.Localization` can
-generate a template file from the declared `LocStr` fields for use by
-translators.
-
----
-
-## Adding a new string
-
-1. Add a `public static LocStr` field to `AfdLocalization` with a key following
-   the `AFD_` prefix scheme and a descriptive English default.
-2. Rebuild — the field is picked up automatically because `Apply` reflects over
-   `typeof(AfdLocalization)`.
-3. Run the template exporter (or `dotnet build` with the export target) to update
-   the English template in `translations/`.
+The historical rationale is DeznekCZ's
+[mod-localization proposal](https://coigame.com/Topic/54/Mod-localization): frozen
+localization values and already-captured UI text were separate failure modes.
+4.3 resolves the former; migration must still account for the latter. Update 5
+removes legacy ownership attribution, so keep new AFD IDs prefixed now and retire
+the older-game branch only when older-game support ends.

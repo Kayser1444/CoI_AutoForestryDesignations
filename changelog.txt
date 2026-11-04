@@ -1,3 +1,9 @@
+v0.4.5 | 2026-11-04
+
+* Improved interface translations on Update 4.3, including Portuguese and Simplified Chinese language selection
+* Fixed: Settings tabs and controls refresh correctly after changing language and reloading a world
+* Fixed: Restored missing symbols in several English interface texts
+
 v0.4.4 | 2026-10-27
 
 * This release provides technical/experimental compatibility with Captain of Industry Update 4.3 (0.8.8), while retaining support for 0.8.7d; extensive playtesting remains

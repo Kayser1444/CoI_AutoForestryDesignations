@@ -1,14 +1,185 @@
 {
   "mod": "AutoForestryDesignations",
   "source_file": "src\\AFD.Localization.cs",
-  "total_keys": 84,
+  "total_keys": 93,
   "skip_keys": [
-    "dtk.mod.name",
-    "dtk.rate_limit.items_per_min",
-    "dtk.settings.language.hybrid",
-    "dtk.settings.language.local",
-    "dtk.settings.number_format.auto"
+    "DesignerToolkit.ModName",
+    "DesignerToolkit.RateLimitItemsPerMin",
+    "DesignerToolkit.SettingsLanguageHybrid",
+    "DesignerToolkit.SettingsLanguageLocal",
+    "DesignerToolkit.SettingsNumberFormatAuto"
   ],
-  "keys": {},
-  "keys_needing_translation": 0
+  "keys": {
+    "AutoForestryDesignations.MaxTilesTip": {
+      "en": "Maximum number of designation tiles to place per run. 0 = no limit (∞).",
+      "context": "Tooltip for the Max Tiles step setting.",
+      "de": "Maximale Anzahl von Gebietsfeldern pro Lauf. 0 = keine Begrenzung (∞).",
+      "es": "Número máximo de casillas de designación a colocar por ejecución. 0 = sin límite (∞).",
+      "it": "Numero massimo di caselle di designazione da posizionare per ogni esecuzione. 0 = nessun limite (∞).",
+      "pt": "Número máximo de áreas de designação a colocar por execução. 0 = sem limite (∞).",
+      "ru": "Максимальное число клеток разметки за один запуск. 0 = без ограничения (∞).",
+      "sv": "Maximalt antal anvisningsrutor att placera per körning. 0 = ingen gräns (∞).",
+      "zh": "每次运行最多放置的规划地块数量。0 = 无限制（∞）。",
+      "references": {
+        "de": {
+          "Place": "Platzieren",
+          "No limit": "Keine Begrenzung",
+          "tiles": "Felder"
+        },
+        "es": {
+          "Place": "Colocar",
+          "No limit": "Sin límite",
+          "tiles": "casillas",
+          "Limit": "Límite"
+        },
+        "it": {
+          "Place": "Posiziona",
+          "No limit": "Nessun limite",
+          "tiles": "caselle",
+          "Limit": "max"
+        },
+        "pt": {
+          "Place": "Colocar",
+          "No limit": "Sem limite",
+          "tiles": "quadrados",
+          "Limit": "Limite"
+        },
+        "ru": {
+          "Place": "Разместить",
+          "No limit": "Не ограничено",
+          "tiles": "плиток",
+          "Limit": "Ограничить"
+        },
+        "sv": {
+          "Place": "Placera",
+          "No limit": "Ingen begränsning",
+          "tiles": "rutor",
+          "Limit": "Gräns"
+        },
+        "zh": {
+          "Place": "放置",
+          "No limit": "无限制",
+          "tiles": "格",
+          "Limit": "上限"
+        }
+      }
+    },
+    "AutoForestryDesignations.PressToScanComposition": {
+      "en": "Press ↺ to scan forestry composition.",
+      "context": "Prompt shown in the Forestry information panel before the first scan.",
+      "de": "↺ drücken, um die Forstübersicht zu scannen.",
+      "es": "Pulsa ↺ para escanear la composición forestal.",
+      "it": "Premere ↺ per analizzare la composizione del bosco.",
+      "pt": "Pressione ↺ para examinar a composição florestal.",
+      "ru": "Нажмите ↺, чтобы просканировать состав леса.",
+      "sv": "Tryck på ↺ för att skanna skogsbruksöversikten.",
+      "zh": "按 ↺ 扫描林业组成。",
+      "references": {
+        "de": {
+          "Composition": "Zusammensetzung",
+          "Forestry": "Forstwirtschaft"
+        },
+        "es": {
+          "Composition": "Composición",
+          "Forestry": "Bosques"
+        },
+        "it": {
+          "Composition": "Composizione",
+          "Forestry": "Gestione forestale"
+        },
+        "pt": {
+          "Composition": "Composição",
+          "Forestry": "Silvicultura"
+        },
+        "ru": {
+          "Composition": "Состав",
+          "Forestry": "Лесное хозяйство"
+        },
+        "sv": {
+          "Composition": "Komposition",
+          "Forestry": "Skogsbruk"
+        },
+        "zh": {
+          "Composition": "成分",
+          "Forestry": "林业"
+        }
+      }
+    },
+    "AutoForestryDesignations.SettingsBatchSizeTip": {
+      "en": "Number of designations placed per frame. Lower = more responsive; higher = faster scans. Clamped 1–200.",
+      "context": "Tooltip for the Batch Size step control in the settings tab.",
+      "de": "Anzahl der Markierungen pro Frame. Niedriger = reaktionsschneller; höher = schnellere Scans. Begrenzt auf 1-200.",
+      "es": "Número de designaciones colocadas por fotograma. Menor = más respuesta; mayor = escaneos más rápidos. Limitado a 1-200.",
+      "it": "Numero di designazioni piazzate per frame. Più basso = maggiore reattività; più alto = scansioni più rapide. Limitato a 1-200.",
+      "pt": "Número de designações colocadas por quadro. Menor = mais responsivo; maior = varreduras mais rápidas. Limitado a 1-200.",
+      "ru": "Количество разметок, размещаемых за кадр. Меньше = отзывчивее; больше = быстрее сканирование. Ограничено 1-200.",
+      "sv": "Antal markeringar som placeras per bildruta. Lägre = bättre respons; högre = snabbare skanning. Begränsat till 1-200.",
+      "zh": "每帧放置的规划数量。较低 = 响应更流畅；较高 = 扫描更快。限制在 1-200。",
+      "references": {
+        "de": {
+          "Place": "Platzieren",
+          "Designations": "Gebiete"
+        },
+        "es": {
+          "Place": "Colocar",
+          "Designations": "Designaciones"
+        },
+        "it": {
+          "Place": "Posiziona",
+          "Designations": "Designazioni"
+        },
+        "pt": {
+          "Place": "Colocar",
+          "Designations": "Designações"
+        },
+        "ru": {
+          "Place": "Разместить",
+          "Designations": "Разметка"
+        },
+        "sv": {
+          "Place": "Placera",
+          "Designations": "Anvisningar"
+        },
+        "zh": {
+          "Place": "放置",
+          "Designations": "规划"
+        }
+      }
+    },
+    "AutoForestryDesignations.SettingsSaveFailed": {
+      "en": "Save failed — check the log",
+      "context": "Status message shown when settings save fails.",
+      "de": "Speichern fehlgeschlagen - Log prüfen",
+      "es": "Error al guardar - revisa el registro",
+      "it": "Salvataggio non riuscito - controlla il log",
+      "pt": "Falha ao salvar - verifique o log",
+      "ru": "Не удалось сохранить — проверьте журнал",
+      "sv": "Sparning misslyckades - kontrollera loggen",
+      "zh": "保存失败，请检查日志",
+      "references": {
+        "de": {
+          "Save": "Speichern"
+        },
+        "es": {
+          "Save": "Guardado"
+        },
+        "it": {
+          "Save": "Salvataggi"
+        },
+        "pt": {
+          "Save": "Salvar"
+        },
+        "ru": {
+          "Save": "Сохранение"
+        },
+        "sv": {
+          "Save": "Sparfiler"
+        },
+        "zh": {
+          "Save": "保存"
+        }
+      }
+    }
+  },
+  "keys_needing_translation": 4
 }
