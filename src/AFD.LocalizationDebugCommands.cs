@@ -1,4 +1,4 @@
-#if DEBUG && COI_UPDATE_4_3
+#if DEBUG
 using System;
 using System.IO;
 using System.Text;

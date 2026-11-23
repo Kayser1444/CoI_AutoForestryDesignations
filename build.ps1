@@ -10,7 +10,6 @@ param(
     [ValidateSet('Debug', 'Release')]
     [string]$Configuration = 'Release',
     [switch]$Package,
-    [string]$LegacyManagedPath = '',
     [string]$CurrentManagedPath = ''
 )
 
@@ -26,13 +25,12 @@ if (-not $PSBoundParameters.ContainsKey('Package')) {
 }
 
 Write-Host "Building AutoForestryDesignations ($Configuration)..."
-if ($Package) {
-    . (Join-Path $PSScriptRoot 'external\CoI_AutoHelpers\build\VersionSwitching.Package.ps1')
-    Build-CoIVersionSwitchingPackageInputs -ModId 'AutoForestryDesignations' -Configuration $Configuration -LegacyManagedPath $LegacyManagedPath -CurrentManagedPath $CurrentManagedPath
-} else {
-    dotnet build $solution -c $Configuration
-    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+$buildArguments = @('-c', $Configuration)
+if ($CurrentManagedPath) {
+    $buildArguments += "-p:CaptainIndustryManagedPath=$CurrentManagedPath"
 }
+dotnet build $solution @buildArguments
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 if (-not $Package) {
     Write-Host 'Build completed.'
@@ -72,9 +70,7 @@ New-Item -ItemType Directory -Path $packageRootDir -Force | Out-Null
 $filesToInclude = @(
     'manifest.json',
     'config.json',
-    'AutoForestryDesignations.Loader.dll',
-        'implementations/pre-update-4.3/AutoForestryDesignations.dll',
-        'implementations/update-4.3/AutoForestryDesignations.dll',
+    'AutoForestryDesignations.dll',
     '0Harmony.dll',
     'Thumbnail.png',
     'changelog.txt',

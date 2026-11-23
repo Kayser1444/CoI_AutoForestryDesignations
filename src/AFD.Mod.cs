@@ -7,9 +7,6 @@
 // intended to contain only original mod code/configuration; if MaFi Games material
 // is included by mistake, I intend to correct it promptly upon discovery or notice.
 using System;
-#if !COI_UPDATE_4_3
-using System.IO;
-#endif
 using System.Threading;
 using HarmonyLib;
 using Mafi;
@@ -37,11 +34,7 @@ using Mafi.Core.World;
 using Mafi.Unity.Terrain;
 using Mafi.Unity.Trees;
 using UnityEngine;
-#if !COI_UPDATE_4_3
-using CoI.AutoHelpers.Localization;
-#else
 using Mafi.Localization;
-#endif
 using CoI.AutoHelpers.Logging;
 using CoI.AutoHelpers.Persistence;
 using CoI.AutoHelpers.Settings;
@@ -367,14 +360,9 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
         {
             AutoForestryDesignation.s_log.Info($"AutoForestryDesignations v{ModVersion} | dll: {ModLogger.GetDllBuildTimestamp(typeof(AutoForestryDesignationsMod).Assembly)}");
             AutoForestryDesignation.LogInfo($"Diagnostics: {AfdDiagnostics.Describe()}.");
-#if COI_UPDATE_4_3
             // The native loader merged mod translations after prototype registration.
             // Build our UI afterwards; LocStr stays live, but formatted UI text does not.
             AutoForestryDesignation.LogDebug($"Localization: native mod translations, culture='{LocalizationManager.CurrentLangInfo.CultureInfoId}'.");
-#else
-            // PRE_4_3_COMPAT: keep the proven late splice/rebind on older games only.
-            ApplyLocalizedTextIfPresent();
-#endif
             RegisterSettingsTabs(resolver);
             try
             {
@@ -425,113 +413,6 @@ public sealed class AutoForestryDesignationsMod : IMod, IDisposable
         }
     }
 
-    // PRE_4_3_COMPAT: retire this path when pre-4.3 support ends.
-#if !COI_UPDATE_4_3
-    private void ApplyLocalizedTextIfPresent()
-    {
-        string translationsDirectory = Path.Combine(Manifest.RootDirectoryPath, "translations");
-        AutoForestryDesignation.LogDebug($"Localization: probing directory '{translationsDirectory}'.");
-
-        if (!Directory.Exists(translationsDirectory))
-        {
-            AutoForestryDesignation.s_log.Warning("Localization: translations directory does not exist; skipping.");
-            return;
-        }
-
-        string[] jsonFiles = Array.FindAll(
-            Directory.GetFiles(translationsDirectory, "*.json", SearchOption.TopDirectoryOnly),
-            filePath => !Path.GetFileName(filePath).StartsWith(".", StringComparison.Ordinal));
-        Array.Sort(jsonFiles, StringComparer.OrdinalIgnoreCase);
-        if (jsonFiles.Length == 0)
-        {
-            AutoForestryDesignation.s_log.Warning("Localization: no translation JSON files found.");
-        }
-        else
-        {
-            AutoForestryDesignation.LogDebug($"Localization: discovered {jsonFiles.Length} file(s): {string.Join(", ", jsonFiles)}");
-        }
-
-        string currentCulture = ResolveCurrentCultureCodeForLogging() ?? "<null>";
-        AutoForestryDesignation.LogDebug($"Localization: current game culture before apply = '{currentCulture}'.");
-
-        ModTranslationsApplyResult result = new ModTranslations().Apply(new ModTranslationsApplyOptions(
-            translationsDirectory,
-            typeof(AutoForestryDesignationsMod).Assembly,
-            Array.Empty<string>()));
-
-        AutoForestryDesignation.LogInfo(
-            $"Localization: applied locale='{result.AppliedLocaleCode}', upserted={result.UpsertedEntryCount}, scannedFields={result.ScannedFieldCount}, reboundFields={result.ReboundFieldCount}, readonlySkipped={result.SkippedReadonlyFieldCount}, missingTranslationSkipped={result.SkippedMissingTranslationFieldCount}, failedWrites={result.FailedFieldCount}, diagnostics={result.Diagnostics.Count}.");
-
-        foreach (TranslationDiagnostic diagnostic in result.Diagnostics)
-        {
-            string itemInfo = diagnostic.ItemIndex.HasValue ? $", itemIndex={diagnostic.ItemIndex.Value}" : string.Empty;
-            string message = $"Localization diagnostic [{diagnostic.Severity}] source='{diagnostic.SourcePath}'{itemInfo}: {diagnostic.Message}";
-            if (diagnostic.Severity == TranslationDiagnosticSeverity.Info)
-                AutoForestryDesignation.LogDebug(message);
-            else
-                AutoForestryDesignation.s_log.Warning(message);
-        }
-
-        if (result.UpsertedEntryCount > 0 && result.ReboundFieldCount == 0)
-        {
-            AutoForestryDesignation.s_log.Warning("Localization: zero fields were rebound. Localized static LocStr fields may not have been discovered.");
-        }
-
-        if (result.SkippedReadonlyFieldCount > 0)
-        {
-            AutoForestryDesignation.s_log.Warning($"Localization: {result.SkippedReadonlyFieldCount} readonly field(s) could not be overwritten.");
-        }
-
-        if (result.SkippedMissingTranslationFieldCount > 0)
-        {
-            AutoForestryDesignation.s_log.Warning($"Localization: {result.SkippedMissingTranslationFieldCount} field(s) had no matching translation entry.");
-        }
-
-        if (result.FailedFieldCount > 0)
-        {
-            AutoForestryDesignation.s_log.Warning($"Localization: {result.FailedFieldCount} field write(s) failed unexpectedly.");
-        }
-
-        if (result.HasErrors)
-        {
-            AutoForestryDesignation.s_log.Warning($"Localization apply finished with {result.Diagnostics.Count} diagnostic(s).");
-        }
-    }
-
-    private static string? ResolveCurrentCultureCodeForLogging()
-    {
-        Type? localizationManagerType = Type.GetType("Mafi.Localization.LocalizationManager, Mafi", throwOnError: false);
-        if (localizationManagerType == null)
-        {
-            return null;
-        }
-
-        var currentLangInfoProperty = localizationManagerType.GetProperty(
-            "CurrentLangInfo",
-            System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
-        if (currentLangInfoProperty == null)
-        {
-            return null;
-        }
-
-        object? currentLangInfo = currentLangInfoProperty.GetValue(null);
-        if (currentLangInfo == null)
-        {
-            return null;
-        }
-
-        var cultureInfoIdField = currentLangInfo.GetType().GetField(
-            "CultureInfoId",
-            System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
-        if (cultureInfoIdField == null)
-        {
-            return null;
-        }
-
-        return cultureInfoIdField.GetValue(currentLangInfo) as string;
-    }
-
-#endif
 
     public void MigrateJsonConfig(VersionSlim savedVersion, Dict<string, object> savedValues)
     {

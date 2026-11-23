@@ -1,3 +1,8 @@
+v0.5.0 | 2026-11-23
+
+* Requires Captain of Industry Update 4.3 (0.8.8) or newer; removed the legacy version-switching loader
+* Updated bundled Harmony to 2.4.3, which includes a Unity Mono detour fix for affected Proton configurations
+
 v0.4.5 | 2026-11-04
 
 * Improved interface translations on Update 4.3, including Portuguese and Simplified Chinese language selection

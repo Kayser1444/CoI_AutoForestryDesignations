@@ -84,14 +84,12 @@ is included by mistake, I intend to correct it promptly upon discovery or notice
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Lib.Harmony" Version="2.3.3">
+    <PackageReference Include="Lib.Harmony" Version="2.4.3">
       <IncludeAssets>compile; runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="external\CoI_AutoHelpers\src\CoI.AutoHelpers\Localization\**\*.cs"
-             Link="CoI.AutoHelpers\Localization\%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="external\CoI_AutoHelpers\src\CoI.AutoHelpers\Logging\**\*.cs"
              Link="CoI.AutoHelpers\Logging\%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="external\CoI_AutoHelpers\src\CoI.AutoHelpers\Persistence\**\*.cs"
@@ -112,11 +110,4 @@ is included by mistake, I intend to correct it promptly upon discovery or notice
   </ItemGroup>
 
   <Import Project="external\CoI_AutoHelpers\build\CoI.Compatibility.targets" />
-
-  <!-- Keep legacy reflection/rebind code out of the native localization payload. -->
-  <Target Name="SelectLocalizationImplementation" BeforeTargets="CoreCompile" DependsOnTargets="DetectCaptainIndustryApi">
-    <ItemGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(_CoIGameVersion)', '0.8.8.0'))">
-      <Compile Remove="external\CoI_AutoHelpers\src\CoI.AutoHelpers\Localization\**\*.cs" />
-    </ItemGroup>
-  </Target>
 </Project>
