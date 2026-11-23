@@ -1,4 +1,4 @@
-v0.5.0 [unreleased]
+v0.5.0 [packaged]
 
 - Bundle Harmony 2.4.3 with MonoMod.Core 1.3.6, which includes the Unity Mono detour fix for affected Proton configurations. Keep the version aligned across ATD, AFD, BDT, and KPIE because the game can reuse the first loaded copy.
 
